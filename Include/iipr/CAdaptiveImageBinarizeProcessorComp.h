@@ -37,7 +37,7 @@ private:
 	bool ConvertImage(
 				const iimg::IBitmap& inputBitmap,
 				iimg::IBitmap& outputBitmap,
-			double minContrastThreshold = 0.05) const;
+			double minContrastThreshold) const;
 
 private:
 	I_ATTR(QByteArray, m_binarizationParamsIdAttrPtr);

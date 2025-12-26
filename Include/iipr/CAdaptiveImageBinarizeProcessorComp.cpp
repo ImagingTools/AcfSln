@@ -34,7 +34,7 @@ iproc::IProcessor::TaskState CAdaptiveImageBinarizeProcessorComp::DoProcessing(
 		return TS_INVALID;
 	}
 
-		// Get min contrast threshold parameter (default to 0.05 if not provided)
+	// Get min contrast threshold parameter (default to 0.05 if not provided)
 	double minContrastThreshold = 0.05;
 	if (paramsPtr != nullptr && m_binarizationParamsIdAttrPtr.IsValid()){
 		iprm::TParamsPtr<imeas::INumericValue> binarizationParamsPtr(paramsPtr, m_binarizationParamsIdAttrPtr);
