@@ -128,14 +128,15 @@ Use of C-style NULL macro instead of C++11 nullptr keyword.
 
 ### Issue 5: Manual Memory Management with new[]/delete[]
 
-**Locations:**
+**Locations (8 instances across 6 files):**
 ```
-- CImagePolarTransformProcessorComp.cpp:251-252 (cosTable, sinTable)
-- CCheckerboardPointGridExtractorComp.cpp:56
-- CPerspectiveCalibrationSupplierComp.cpp:35
-- CLensCorrFindSupplierComp.cpp:486
-- CCheckboardCalibSupplierComp.cpp:393
-- CSingleFeatureConsumer.cpp:89
+- CImagePolarTransformProcessorComp.cpp:251 (delete[] cosTable)
+- CImagePolarTransformProcessorComp.cpp:252 (delete[] sinTable)
+- CCheckerboardPointGridExtractorComp.cpp:56 (delete featurePtr)
+- CPerspectiveCalibrationSupplierComp.cpp:35 (delete featurePtr)
+- CLensCorrFindSupplierComp.cpp:486 (delete featurePtr)
+- CCheckboardCalibSupplierComp.cpp:393 (delete featurePtr)
+- CSingleFeatureConsumer.cpp:89 (delete featurePtr)
 ```
 
 **Problem:**

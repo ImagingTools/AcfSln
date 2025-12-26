@@ -63,16 +63,17 @@ The IIPR library provides image processing capabilities for the ACF Solutions fr
 
 **Severity: Medium**
 
-While the library uses smart pointers extensively, there are still instances of manual memory management:
+While the library uses smart pointers extensively, there are still 8 instances of manual memory management (counting individual allocations):
 
 ```cpp
-// Found in 7 locations:
-- CCheckerboardPointGridExtractorComp.cpp:56
-- CPerspectiveCalibrationSupplierComp.cpp:35
-- CLensCorrFindSupplierComp.cpp:486
-- CImagePolarTransformProcessorComp.cpp:251-252
-- CCheckboardCalibSupplierComp.cpp:393
-- CSingleFeatureConsumer.cpp:89
+// Found in these locations:
+- CCheckerboardPointGridExtractorComp.cpp:56 (1 delete)
+- CPerspectiveCalibrationSupplierComp.cpp:35 (1 delete)
+- CLensCorrFindSupplierComp.cpp:486 (1 delete)
+- CImagePolarTransformProcessorComp.cpp:251 (delete[] cosTable)
+- CImagePolarTransformProcessorComp.cpp:252 (delete[] sinTable)
+- CCheckboardCalibSupplierComp.cpp:393 (1 delete)
+- CSingleFeatureConsumer.cpp:89 (1 delete)
 ```
 
 **Recommendation:**
