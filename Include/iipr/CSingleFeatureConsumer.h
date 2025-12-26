@@ -58,7 +58,7 @@ public:
 
 	// reimplemented (iipr::IFeaturesConsumer)
 	virtual void ResetFeatures() override;
-	virtual bool AddFeature(const imeas::INumericValue* featurePtr, bool* isFullPtr = NULL) override;
+	virtual bool AddFeature(const imeas::INumericValue* featurePtr, bool* isFullPtr = nullptr) override;
 
 	// reimplemented (iipr::IFeaturesProvider)
 	virtual int GetFeaturesCount() const override;

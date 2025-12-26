@@ -71,7 +71,7 @@ bool CSearchFeature::Serialize(iser::IArchive& archive)
 bool CSearchFeature::CopyFrom(const IChangeable& object, CompatibilityMode mode)
 {
 	const CSearchFeature* objectPtr = dynamic_cast<const CSearchFeature*>(&object);
-	if (objectPtr != NULL){
+	if (objectPtr != nullptr){
 		istd::CChangeNotifier notifier(this);
 
 		m_isNegativeModelEnabled = objectPtr->IsNegativeModelEnabled();
@@ -92,7 +92,7 @@ istd::IChangeableUniquePtr CSearchFeature::CloneMe(CompatibilityMode mode) const
 		return retVal.PopPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

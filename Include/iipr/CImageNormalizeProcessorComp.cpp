@@ -51,7 +51,7 @@ bool DoAdjustTemplate(
 		int x = 0;
 
 		const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-		if (outputRangesPtr != NULL){
+		if (outputRangesPtr != nullptr){
 			const InputPixelType* inputLinePtr = static_cast<const InputPixelType*>(inputImage.GetLinePtr(y));
 
 			istd::CIntRanges::RangeList rangeList;
@@ -125,7 +125,7 @@ bool CImageNormalizeProcessorComp::DoAdjustFilter(
 	if (!outputImage.CreateBitmap(
 				outputPixelFormat,
 				imageSize)){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, QObject::tr("Could not create output image"), QObject::tr("ImageNormalizeProcessor"));
 		}
 
@@ -266,7 +266,7 @@ bool CImageNormalizeProcessorComp::DoAdjustFilter(
 		break;
 
 	default:
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -276,7 +276,7 @@ bool CImageNormalizeProcessorComp::DoAdjustFilter(
 		return false;
 	}
 
-	if (loggerPtr != NULL){
+	if (loggerPtr != nullptr){
 		const iimg::CPixelFormatList& formatList = iimg::CPixelFormatList::GetInstance();
 		loggerPtr->SendLogMessage(
 					istd::IInformationProvider::IC_ERROR,
@@ -350,7 +350,7 @@ bool CImageNormalizeProcessorComp::ProcessImage(
 		qint32 channelHistogram[256] = {0};
 		for (int y = 0; y < imageSize.GetY(); ++y){
 			const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-			if (outputRangesPtr != NULL){
+			if (outputRangesPtr != nullptr){
 				const quint8* inputLinePtr = static_cast<const quint8*>(inputImage.GetLinePtr(y));
 
 				istd::CIntRanges::RangeList rangeList;

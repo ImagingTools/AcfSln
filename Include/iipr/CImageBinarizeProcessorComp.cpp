@@ -21,12 +21,12 @@ iproc::IProcessor::TaskState CImageBinarizeProcessorComp::DoProcessing(
 				ibase::IProgressManager* /*progressManagerPtr*/)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
@@ -85,7 +85,7 @@ bool CImageBinarizeProcessorComp::ConvertImage(
 	}
 
 	const i2d::ICalibration2d* inputCalibrationPtr = inputBitmap.GetCalibration();
-	if (inputCalibrationPtr != NULL){
+	if (inputCalibrationPtr != nullptr){
 		istd::TUniqueInterfacePtr<i2d::ICalibration2d> outputCalibrationPtr;
 		outputCalibrationPtr.MoveCastedPtr(inputCalibrationPtr->CloneMe());
 

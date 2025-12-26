@@ -95,7 +95,7 @@ bool CBilinearLineProjectionProcessorComp::GetImagePosition(
             const iprm::IParamsSet* paramsPtr,
             i2d::CVector2d& result) const
 {
-    if (m_featureMapperCompPtr.IsValid() && (paramsPtr != NULL)){
+    if (m_featureMapperCompPtr.IsValid() && (paramsPtr != nullptr)){
         iprm::TParamsPtr<i2d::CLine2d> linePtr(paramsPtr, *m_lineParamIdAttrPtr);
         double position;
         if (		(linePtr.IsValid()) &&
@@ -164,16 +164,16 @@ iproc::IProcessor::TaskState CBilinearLineProjectionProcessorComp::DoProcessing(
             istd::IChangeable* outputPtr,
             ibase::IProgressManager* /*progressManagerPtr*/)
 {
-    if (outputPtr == NULL){
+    if (outputPtr == nullptr){
         return TS_OK;
     }
 
     const iimg::IBitmap* bitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
     imeas::IDataSequence* projectionPtr = dynamic_cast<imeas::IDataSequence*>(outputPtr);
 
-    if (		(bitmapPtr == NULL) ||
-                (projectionPtr == NULL) ||
-                (paramsPtr == NULL)){
+    if (		(bitmapPtr == nullptr) ||
+                (projectionPtr == nullptr) ||
+                (paramsPtr == nullptr)){
         return TS_INVALID;
     }
 
@@ -184,7 +184,7 @@ iproc::IProcessor::TaskState CBilinearLineProjectionProcessorComp::DoProcessing(
         return TS_INVALID;
     }
 
-    return DoProjection(*bitmapPtr, *linePtr, NULL, *projectionPtr)? TS_OK: TS_INVALID;
+    return DoProjection(*bitmapPtr, *linePtr, nullptr, *projectionPtr)? TS_OK: TS_INVALID;
 }
 
 

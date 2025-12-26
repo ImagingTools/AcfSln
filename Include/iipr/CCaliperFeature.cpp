@@ -100,7 +100,7 @@ bool CCaliperFeature::Serialize(iser::IArchive& archive)
 
 	bool retVal = true;
 
-	istd::CChangeNotifier notifier(archive.IsStoring()? NULL: this);
+	istd::CChangeNotifier notifier(archive.IsStoring()? nullptr: this);
 	Q_UNUSED(notifier);
 
 	retVal = retVal && BaseClass::Serialize(archive);

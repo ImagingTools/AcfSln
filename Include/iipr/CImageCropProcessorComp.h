@@ -29,7 +29,7 @@ public:
 				const iimg::IBitmap& inputBitmap,
 				const i2d::IObject2d& aoi,
 				iimg::IBitmap& outputBitmap,
-				istd::ILogger* loggerPtr = NULL);
+				istd::ILogger* loggerPtr = nullptr);
 
 protected:
 	// reimplemented (CImageRegionProcessorCompBase)

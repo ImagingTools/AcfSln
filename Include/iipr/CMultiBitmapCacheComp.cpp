@@ -20,7 +20,7 @@ CMultiBitmapCacheComp::CMultiBitmapCacheComp()
 const iprm::IOptionsList* CMultiBitmapCacheComp::GetBitmapListInfo() const
 {
 	if (!m_copyConstraints){
-		return NULL;
+		return nullptr;
 	}
 
 	return &m_bitmapConstraints;
@@ -46,7 +46,7 @@ const iimg::IBitmap* CMultiBitmapCacheComp::GetBitmap(int bitmapIndex) const
 
 const iprm::IOptionsList* CMultiBitmapCacheComp::GetCalibrationSelectionContraints() const
 {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -77,7 +77,7 @@ bool CMultiBitmapCacheComp::CopyFrom(const IChangeable& object, CompatibilityMod
 	}
 
 	const iimg::IMultiBitmapProvider* providerPtr = CompCastPtr<const iimg::IMultiBitmapProvider>(&object);
-	if (providerPtr != NULL){
+	if (providerPtr != nullptr){
 		int bitmapsCount = providerPtr->GetBitmapsCount();
 
 		m_bitmapsPtr.SetCount(bitmapsCount);
@@ -85,7 +85,7 @@ bool CMultiBitmapCacheComp::CopyFrom(const IChangeable& object, CompatibilityMod
 		for (int i = 0; i < bitmapsCount; ++i){
 			istd::TUniqueInterfacePtr<iimg::IBitmap> clonedBitmapPtr;
 			const iimg::IBitmap* bitmapPtr = providerPtr->GetBitmap(i);
-			if (bitmapPtr != NULL){
+			if (bitmapPtr != nullptr){
 				clonedBitmapPtr.MoveCastedPtr(bitmapPtr->CloneMe(mode));
 			}
 			m_bitmapsPtr.SetElementAt(i, clonedBitmapPtr.PopInterfacePtr());
@@ -95,7 +95,7 @@ bool CMultiBitmapCacheComp::CopyFrom(const IChangeable& object, CompatibilityMod
 
 		if (m_copyConstraints){
 			const iprm::IOptionsList* bitmapConstraintsPtr = providerPtr->GetBitmapListInfo();
-			if (bitmapConstraintsPtr != NULL){
+			if (bitmapConstraintsPtr != nullptr){
 				m_bitmapConstraints.m_count = bitmapConstraintsPtr->GetOptionsCount();
 				m_bitmapConstraints.m_flags = bitmapConstraintsPtr->GetOptionsFlags();
 				for (int i = 0; i < m_bitmapConstraints.m_count; i++){
@@ -109,7 +109,7 @@ bool CMultiBitmapCacheComp::CopyFrom(const IChangeable& object, CompatibilityMod
 	}
 
 	const i2d::IMultiCalibrationProvider* calibrationProviderPtr = CompCastPtr<const i2d::IMultiCalibrationProvider>(&object);
-	if (calibrationProviderPtr != NULL){
+	if (calibrationProviderPtr != nullptr){
 		int calibrationsCount = calibrationProviderPtr->GetCalibrationsCount();
 
 		m_transformsPtr.SetCount(calibrationsCount);
@@ -117,7 +117,7 @@ bool CMultiBitmapCacheComp::CopyFrom(const IChangeable& object, CompatibilityMod
 		for (int i = 0; i < calibrationsCount; ++i){
 			istd::TUniqueInterfacePtr<i2d::ICalibration2d> clonedTransformPtr;
 			const i2d::ICalibration2d* calibrationPtr = calibrationProviderPtr->GetCalibration(i);
-			if (calibrationPtr != NULL){
+			if (calibrationPtr != nullptr){
 				clonedTransformPtr.MoveCastedPtr(calibrationPtr->CloneMe(mode));
 			}
 			m_transformsPtr.SetElementAt(i, clonedTransformPtr.PopInterfacePtr());

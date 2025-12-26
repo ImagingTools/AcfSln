@@ -116,7 +116,7 @@ bool CBitmapOperations::ReduceBitmapToRegion(
 
 		istd::CIntRanges::RangeList rangesList;
 		const istd::CIntRanges* rangesPtr = bitmapRegion.GetPixelRanges(y);
-		if (rangesPtr == NULL){
+		if (rangesPtr == nullptr){
 			continue;
 		}
 
@@ -159,7 +159,7 @@ bool CBitmapOperations::JoinBitmaps(
 	int inputBitmapsCount = bitmapList.count();
 
 	if (inputBitmapsCount <= 0){
-		if (operationLogPtr != NULL){
+		if (operationLogPtr != nullptr){
 			operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "The list of input bitmaps is empty", "BitmapOperations");
 		}
 
@@ -182,7 +182,7 @@ bool CBitmapOperations::JoinBitmaps(
 	}
 
 	if (!outputBitmap.CreateBitmap(outputPixelFormat, istd::CIndex2d(width, height))){
-		if (operationLogPtr != NULL){
+		if (operationLogPtr != nullptr){
 			operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Output bitmap could not be created", "BitmapOperations");
 		}
 
@@ -200,7 +200,7 @@ bool CBitmapOperations::JoinBitmaps(
 
 		// If there is a bitmap in the list with different pixel format, cancel the calculation and exit:
 		if (inputSingleBitmap.GetPixelFormat() != outputPixelFormat){
-			if (operationLogPtr != NULL){
+			if (operationLogPtr != nullptr){
 				operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Input bitmaps have different pixel format", "BitmapOperations");
 			}
 
@@ -212,7 +212,7 @@ bool CBitmapOperations::JoinBitmaps(
 		int lineBytes = inputSingleBitmap.GetLineBytesCount();
 
 		for (int y = 0; y < singleBitmapHeight; y++){
-			void* outputLinePtr = NULL;
+			void* outputLinePtr = nullptr;
 
 			// Do vertical joining:
 			if (joinMode == JM_VERTICAL){
@@ -225,8 +225,8 @@ bool CBitmapOperations::JoinBitmaps(
 
 			const void* inputLinePtr = inputSingleBitmap.GetLinePtr(y);
 
-			Q_ASSERT(outputLinePtr != NULL);
-			Q_ASSERT(inputLinePtr != NULL);
+			Q_ASSERT(outputLinePtr != nullptr);
+			Q_ASSERT(inputLinePtr != nullptr);
 
 			memcpy(outputLinePtr, inputLinePtr, lineBytes);
 		}
@@ -248,7 +248,7 @@ bool CBitmapOperations::CombineBitmaps(
 	int inputBitmapsCount = bitmapList.count();
 
 	if (inputBitmapsCount <= 0){
-		if (operationLogPtr != NULL){
+		if (operationLogPtr != nullptr){
 			operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "The list of input bitmaps is empty", "BitmapOperations");
 		}
 
@@ -264,7 +264,7 @@ bool CBitmapOperations::CombineBitmaps(
 			break;
 
 		default:
-			if (operationLogPtr != NULL){
+			if (operationLogPtr != nullptr){
 				operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Currently the image format is not supported for this operation", "BitmapOperations");
 			}
 
@@ -283,7 +283,7 @@ bool CBitmapOperations::CombineBitmaps(
 	}
 
 	if (!outputBitmap.CreateBitmap(outputPixelFormat, istd::CIndex2d(width, height))){
-		if (operationLogPtr != NULL){
+		if (operationLogPtr != nullptr){
 			operationLogPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Output bitmap could not be created", "BitmapOperations");
 		}
 
@@ -323,7 +323,7 @@ bool CBitmapOperations::CombineBitmaps(
 
 					switch (combineMode){
 						case CM_AVERAGE:
-							if (weghtsPtr == NULL){
+							if (weghtsPtr == nullptr){
 								outputPixelComponentValue += *inputPixelPtr;
 								weightSum += 1.0;
 							}
@@ -367,7 +367,7 @@ bool CBitmapOperations::CaclulateBitmapDifference(
 	iimg::IBitmap::PixelFormat pixelFormat = inputBitmap1.GetPixelFormat();
 
 	if (pixelFormat != inputBitmap2.GetPixelFormat()){
-		if (messageConsumerPtr != NULL){
+		if (messageConsumerPtr != nullptr){
 			messageConsumerPtr->AddMessage(
 						ilog::IMessageConsumer::MessagePtr(
 									new ilog::CMessage(
@@ -385,7 +385,7 @@ bool CBitmapOperations::CaclulateBitmapDifference(
 
 	istd::CIndex2d outputImageSize = istd::CIndex2d(qMin(firstImageSize.GetX(), secondImageSize.GetX()), qMin(firstImageSize.GetY(), secondImageSize.GetY()));
 	if (!outputBitmap.CreateBitmap(pixelFormat, outputImageSize)){
-		if (messageConsumerPtr != NULL){
+		if (messageConsumerPtr != nullptr){
 			messageConsumerPtr->AddMessage(
 						ilog::IMessageConsumer::MessagePtr(
 									new ilog::CMessage(
@@ -423,7 +423,7 @@ bool CBitmapOperations::CaclulateBitmapDifference(
 		return true;
 
 	default:
-		if (messageConsumerPtr != NULL){
+		if (messageConsumerPtr != nullptr){
 			messageConsumerPtr->AddMessage(
 						ilog::IMessageConsumer::MessagePtr(
 									new ilog::CMessage(

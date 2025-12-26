@@ -10,7 +10,7 @@ namespace iipr
 int CMultiLineSupplierCompBase::GetFeaturesCount() const
 {
 	const ProductType* resultPtr = GetWorkProduct();
-	if (resultPtr != NULL){
+	if (resultPtr != nullptr){
 		return resultPtr->count();
 	}
 
@@ -21,7 +21,7 @@ int CMultiLineSupplierCompBase::GetFeaturesCount() const
 const imeas::INumericValue& CMultiLineSupplierCompBase::GetFeature(int index) const
 {
 	const ProductType* resultPtr = GetWorkProduct();
-	if (resultPtr != NULL){
+	if (resultPtr != nullptr){
 		const i2d::CLine2d& line = resultPtr->at(index);
 
 		Line lineValue(line);
@@ -68,7 +68,7 @@ bool CMultiLineSupplierCompBase::Line::IsValueTypeSupported(ValueTypeId valueTyp
 
 const imeas::INumericConstraints* CMultiLineSupplierCompBase::Line::GetNumericConstraints() const
 {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -111,7 +111,7 @@ bool CMultiLineSupplierCompBase::Line::Serialize(iser::IArchive& /*archive*/)
 bool CMultiLineSupplierCompBase::Line::CopyFrom(const IChangeable& object, CompatibilityMode /*mode*/)
 {
 	const Line* linePtr = dynamic_cast<const Line*>(&object);
-	if (linePtr != NULL){
+	if (linePtr != nullptr){
 		m_values = linePtr->m_values;
 
 		return true;

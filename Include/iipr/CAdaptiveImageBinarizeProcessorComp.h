@@ -31,12 +31,13 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = nullptr) override;
 
 private:
 	bool ConvertImage(
 				const iimg::IBitmap& inputBitmap,
-				iimg::IBitmap& outputBitmap) const;
+				iimg::IBitmap& outputBitmap,
+			double minContrastThreshold = 0.05) const;
 
 private:
 	I_ATTR(QByteArray, m_binarizationParamsIdAttrPtr);

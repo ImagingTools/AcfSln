@@ -35,7 +35,7 @@ bool DoCopyTemplate(
 
 	for (int y = 0; y < imageSize.GetY(); ++y){
 		const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-		if (outputRangesPtr != NULL){
+		if (outputRangesPtr != nullptr){
 			const InputPixelType* inputLinePtr = static_cast<const InputPixelType*>(inputImage.GetLinePtr(y));
 
 			OutputPixelType* outputLinePtr = static_cast<OutputPixelType*>(outputImage.GetLinePtr(y));
@@ -82,7 +82,7 @@ bool DoCopyTemplate(
 
 	for (int y = 0; y < imageSize.GetY(); ++y) {
 		const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-		if (outputRangesPtr != NULL) {
+		if (outputRangesPtr != nullptr) {
 			const InputPixelType* inputLinePtr = static_cast<const InputPixelType*>(inputImage.GetLinePtr(y));
 
 			OutputPixelType* outputLinePtr = static_cast<OutputPixelType*>(outputImage.GetLinePtr(y));
@@ -126,7 +126,7 @@ bool DoFastCopyTemplate(
 
 	for (int y = 0; y < imageSize.GetY(); ++y){
 		const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-		if (outputRangesPtr != NULL){
+		if (outputRangesPtr != nullptr){
 			const PixelType* inputLinePtr = static_cast<const PixelType*>(inputImage.GetLinePtr(y));
 
 			PixelType* outputLinePtr = static_cast<PixelType*>(outputImage.GetLinePtr(y));
@@ -163,7 +163,7 @@ bool CImageCopyProcessorComp::DoImageCopy(
 
 	istd::CIndex2d imageSizeIn = inputImage.GetImageSize();
 	if (!outputImage.CreateBitmap(outputPixelFormat, imageSizeIn)){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, QObject::tr("Could not create output image"), QObject::tr("ImageCopyProcessor"));
 		}
 
@@ -280,7 +280,7 @@ bool CImageCopyProcessorComp::DoImageCopy(
 
 			for (int y = 0; y < imageSizeOut.GetY(); ++y) {
 				const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-				if (outputRangesPtr != NULL) {
+				if (outputRangesPtr != nullptr) {
 					auto inputLinePtr = static_cast<const float*>(inputImage.GetLinePtr(y));
 					//auto outputLinePtr = static_cast<quint8*>(outputImage.GetLinePtr(y));
 
@@ -331,7 +331,7 @@ bool CImageCopyProcessorComp::DoImageCopy(
 		break;
 
 	default:
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -341,7 +341,7 @@ bool CImageCopyProcessorComp::DoImageCopy(
 		return false;
 	}
 
-	if (loggerPtr != NULL){
+	if (loggerPtr != nullptr){
 		const iimg::CPixelFormatList& formatList = iimg::CPixelFormatList::GetInstance();
 		loggerPtr->SendLogMessage(
 					istd::IInformationProvider::IC_ERROR,

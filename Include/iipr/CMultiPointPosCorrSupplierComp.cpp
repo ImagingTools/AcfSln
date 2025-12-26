@@ -22,11 +22,11 @@ namespace iipr
 const i2d::ICalibration2d* CMultiPointPosCorrSupplierComp::GetCalibration() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -34,12 +34,12 @@ const i2d::ICalibration2d* CMultiPointPosCorrSupplierComp::GetCalibration() cons
 
 iipr::IImageToFeatureProcessor* CMultiPointPosCorrSupplierComp::GetCompatibleProcessor(const iprm::IParamsSet* paramsSetPtr) const
 {
-	if (!m_paramsSetTypeIdsAttrPtr.IsValid() || (paramsSetPtr == NULL)){
+	if (!m_paramsSetTypeIdsAttrPtr.IsValid() || (paramsSetPtr == nullptr)){
 		if (m_featureProcessorsCompPtr.GetCount() > 0){
 			return m_featureProcessorsCompPtr[0];
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	QByteArray paramTypeId = paramsSetPtr->GetFactoryId();
@@ -53,7 +53,7 @@ iipr::IImageToFeatureProcessor* CMultiPointPosCorrSupplierComp::GetCompatiblePro
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -67,12 +67,12 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 		return WS_FAILED;
 	}
 
-	const iimg::IBitmap* inputImagePtr = NULL;
+	const iimg::IBitmap* inputImagePtr = nullptr;
 	if (m_bitmapProviderCompPtr.IsValid()){
 		inputImagePtr = m_bitmapProviderCompPtr->GetBitmap();
 	}
 
-	if (inputImagePtr == NULL){
+	if (inputImagePtr == nullptr){
 		SendErrorMessage(0, QObject::tr("No input image"));
 
 		return WS_FAILED;
@@ -97,11 +97,11 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 	int pointsCount = pointParamsManagerPtr->GetParamsSetsCount();
 	for (int i = 0; i < pointsCount; ++i){
 		iprm::IParamsSet* paramSetPtr = pointParamsManagerPtr->GetParamsSet(i);
-		if (paramSetPtr != NULL){
+		if (paramSetPtr != nullptr){
 			iprm::TParamsPtr<i2d::CPosition2d> destPosPtr(paramSetPtr, *m_destPositionIdAttrPtr, false);
 			if (destPosPtr.IsValid()){
 				iipr::IImageToFeatureProcessor* processorPtr = GetCompatibleProcessor(paramSetPtr);
-				if (processorPtr == NULL){
+				if (processorPtr == nullptr){
 					SendCriticalMessage(0, QString("No processor found for %1").arg(pointParamsManagerPtr->GetParamsSetName(i)));
 
 					return WS_FAILED;
@@ -109,12 +109,12 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 
 				iipr::CSingleFeatureConsumer consumer(iipr::CSingleFeatureConsumer::FP_HEAVIEST);
 				if (processorPtr->DoExtractFeatures(paramSetPtr, *inputImagePtr, consumer) == iproc::IProcessor::TS_OK){
-					const i2d::CPosition2d* foundPositionPtr = NULL;
+					const i2d::CPosition2d* foundPositionPtr = nullptr;
 					if (consumer.GetFeaturesCount() > 0){
 						foundPositionPtr = dynamic_cast<const i2d::CPosition2d*>(&consumer.GetFeature(0));
 					}
 
-					if (foundPositionPtr != NULL){
+					if (foundPositionPtr != nullptr){
 						destPoints.push_back(destPosPtr->GetPosition());
 						foundPoints.push_back(foundPositionPtr->GetPosition());
 
@@ -137,7 +137,7 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 
 	AddMessage(foundPointsMessagePtr.PopPtr(), MCT_TEMP);
 
-	const i2d::ICalibration2d* inputCalibrationPtr = NULL;
+	const i2d::ICalibration2d* inputCalibrationPtr = nullptr;
 	if (m_calibrationProviderCompPtr.IsValid()){
 		inputCalibrationPtr = m_calibrationProviderCompPtr->GetCalibration();
 	}
@@ -149,7 +149,7 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 		iipr::CPerspCalibFinder finder;
 		
 		if (finder.FindPerspCalib(destPoints.constData(), foundPoints.constData(), destPoints.size(), localCalib, false)){
-			if (inputCalibrationPtr != NULL){
+			if (inputCalibrationPtr != nullptr){
 				result = inputCalibrationPtr->CreateCombinedCalibration(localCalib);
 			}
 			else{
@@ -184,7 +184,7 @@ iinsp::ISupplier::WorkStatus CMultiPointPosCorrSupplierComp::ProduceObject(Produ
 				"MultiPointReference");
 	AddMessage(resultMessagePtr);
 
-	if (inputCalibrationPtr != NULL){
+	if (inputCalibrationPtr != nullptr){
 		result.MoveCastedPtr(inputCalibrationPtr->CloneMe());
 	}
 	else{

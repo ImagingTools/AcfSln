@@ -41,11 +41,11 @@ void CSingleFeatureConsumer::ResetFeatures()
 
 bool CSingleFeatureConsumer::AddFeature(const imeas::INumericValue* featurePtr, bool* isFullPtr)
 {
-	Q_ASSERT(featurePtr != NULL);
+	Q_ASSERT(featurePtr != nullptr);
 
 	switch (m_featurePolicy){
 	case FP_FIRST:
-		if (isFullPtr != NULL){
+		if (isFullPtr != nullptr){
 			*isFullPtr = true;
 		}
 

@@ -78,7 +78,7 @@ bool CCaliperParams::Serialize(iser::IArchive& archive)
 	static iser::CArchiveTag polarityModeTag("PolarityMode", "Polarity mode code", iser::CArchiveTag::TT_LEAF);
 	static iser::CArchiveTag directionModeTag("DirectionMode", "Direction mode code", iser::CArchiveTag::TT_LEAF);
 
-	istd::CChangeNotifier notifier(archive.IsStoring()? NULL: this);
+	istd::CChangeNotifier notifier(archive.IsStoring()? nullptr: this);
 	Q_UNUSED(notifier);
 
 	bool retVal = true;

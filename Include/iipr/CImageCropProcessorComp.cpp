@@ -26,7 +26,7 @@ bool CImageCropProcessorComp::DoImageCrop(
 	iimg::CScanlineMask bitmapRegion;
 	i2d::CRect clipArea(inputBitmapSize);
 	if (!bitmapRegion.CreateFromGeometry(aoi, &clipArea)){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Cannot create the region", "Image Crop");
 		}
 
@@ -53,7 +53,7 @@ bool CImageCropProcessorComp::DoImageCrop(
 				int(regionRight - regionLeft),
 				int(regionBottom - regionTop));
 	if (!outputBitmap.CreateBitmap(inputBitmap.GetPixelFormat(), outputBitmapSize)){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(istd::IInformationProvider::IC_ERROR, 0, "Cannot create bitmap", "Image Crop");
 		}
 
@@ -75,7 +75,7 @@ bool CImageCropProcessorComp::DoImageCrop(
 
 		istd::CIntRanges::RangeList rangesList;
 		const istd::CIntRanges* rangesPtr = bitmapRegion.GetPixelRanges(y);
-		if (rangesPtr == NULL){
+		if (rangesPtr == nullptr){
 			continue;
 		}
 
@@ -123,14 +123,14 @@ bool CImageCropProcessorComp::ProcessImageRegion(
 		return false;
 	}
 
-	if (aoiPtr == NULL){
+	if (aoiPtr == nullptr){
 		SendWarningMessage(0, "Crop region is not defined");
 
 		return false;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		SendWarningMessage(0, "Output bitmap is not set");
 
 		return false;

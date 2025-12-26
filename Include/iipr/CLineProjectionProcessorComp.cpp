@@ -29,7 +29,7 @@ bool ProjectionFunction(
 			const PixelConversion& conversion,
 			imeas::IDataSequence& results)
 {
-	Q_ASSERT(firstPixelAddress != NULL);
+	Q_ASSERT(firstPixelAddress != nullptr);
 
 	Q_ASSERT(bitmapLine.GetPoint1().GetX() <= bitmapLine.GetPoint2().GetX());
 	Q_ASSERT(clippedLine.GetPoint1().GetX() <= clippedLine.GetPoint2().GetX());
@@ -63,7 +63,7 @@ bool ProjectionFunction(
 		// special case: 1-pixel sized projection
 		if (projectionSize == 1){
 			const quint8* firstLinePixelAddress = firstPixelAddress + (axis1Begin * addressDiffs[0]);
-			Q_ASSERT(firstLinePixelAddress != NULL);
+			Q_ASSERT(firstLinePixelAddress != nullptr);
 
 			typename PixelConversion::CalcPixelType value;
 			value = conversion.GetCalc(*(const typename PixelConversion::SourcePixelType*)(firstLinePixelAddress));
@@ -77,7 +77,7 @@ bool ProjectionFunction(
 		int sampleIndex = 0;
 		for (int axis1Index = axis1Begin; axis1Index < axis1End; ++axis1Index, axis2Position += axis2Delta, ++sampleIndex){
 			const quint8* firstLinePixelAddress = firstPixelAddress + (axis1Index * addressDiffs[0]);
-			Q_ASSERT(firstLinePixelAddress != NULL);
+			Q_ASSERT(firstLinePixelAddress != nullptr);
 
 			int axis2Index = int(axis2Position);
 			typename PixelConversion::CalcPixelType value;
@@ -138,7 +138,7 @@ bool CLineProjectionProcessorComp::DoAutosizeProjection(
 	}
 
 	const quint8* firstPixelAddress = (const quint8*)bitmap.GetLinePtr(0);
-	if (firstPixelAddress == NULL){
+	if (firstPixelAddress == nullptr){
 		return false;
 	}
 
@@ -192,7 +192,7 @@ bool CLineProjectionProcessorComp::GetImagePosition(
 			const iprm::IParamsSet* paramsPtr,
 			i2d::CVector2d& result) const
 {
-	if (m_featureMapperCompPtr.IsValid() && (paramsPtr != NULL)){
+	if (m_featureMapperCompPtr.IsValid() && (paramsPtr != nullptr)){
 		iprm::TParamsPtr<i2d::CLine2d> linePtr(paramsPtr, *m_lineParamIdAttrPtr);
 		double position;
 		if (		(linePtr.IsValid()) &&
@@ -262,16 +262,16 @@ iproc::IProcessor::TaskState CLineProjectionProcessorComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const iimg::IBitmap* bitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	imeas::IDataSequence* projectionPtr = dynamic_cast<imeas::IDataSequence*>(outputPtr);
 
-	if (		(bitmapPtr == NULL) ||
-				(projectionPtr == NULL) ||
-				(paramsPtr == NULL)){
+	if (		(bitmapPtr == nullptr) ||
+				(projectionPtr == nullptr) ||
+				(paramsPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -282,7 +282,7 @@ iproc::IProcessor::TaskState CLineProjectionProcessorComp::DoProcessing(
 		return TS_INVALID;
 	}
 
-	return DoProjection(*bitmapPtr, *linePtr, NULL, *projectionPtr)? TS_OK: TS_INVALID;
+	return DoProjection(*bitmapPtr, *linePtr, nullptr, *projectionPtr)? TS_OK: TS_INVALID;
 }
 
 

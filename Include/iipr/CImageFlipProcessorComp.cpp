@@ -24,12 +24,12 @@ iproc::IProcessor::TaskState CImageFlipProcessorComp::DoProcessing(
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
@@ -69,7 +69,7 @@ bool CImageFlipProcessorComp::ConvertImage(
 
 		// check if we can take QImage directly
 		const iimg::CBitmap* inputCBitmapPtr = dynamic_cast<const iimg::CBitmap*>(&inputBitmap);
-		if (inputCBitmapPtr != NULL){
+		if (inputCBitmapPtr != nullptr){
 			tempImage = inputCBitmapPtr->GetQImage().mirrored(mirrorX, mirrorY);
 		}
 		else{
@@ -82,7 +82,7 @@ bool CImageFlipProcessorComp::ConvertImage(
 
 		// then put it back...
 		iimg::CBitmap* outputCBitmapPtr = dynamic_cast<iimg::CBitmap*>(&outputBitmap);
-		if (outputCBitmapPtr != NULL){
+		if (outputCBitmapPtr != nullptr){
 			return outputCBitmapPtr->CopyImageFrom(tempImage);
 		}
 		else{

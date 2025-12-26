@@ -5,9 +5,11 @@
 #include <istd/CChangeNotifier.h>
 #include <iprm/TParamsPtr.h>
 #include <iimg/CGeneralBitmap.h>
+#include <imath/CVarVector.h>
 
 // ACF-Solutions includes
 #include <iipr/CRectImageSmoothProcessorComp.h>
+#include <imeas/INumericValue.h>
 
 
 namespace iipr
@@ -17,22 +19,34 @@ namespace iipr
 // reimplemented (iproc::IProcessor)
 
 iproc::IProcessor::TaskState CAdaptiveImageBinarizeProcessorComp::DoProcessing(
-				const iprm::IParamsSet* /*paramsPtr*/,
+				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
 				ibase::IProgressManager* /*progressManagerPtr*/)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
-	return ConvertImage(*inputBitmapPtr, *outputBitmapPtr) ? TS_OK : TS_INVALID;
+		// Get min contrast threshold parameter (default to 0.05 if not provided)
+	double minContrastThreshold = 0.05;
+	if (paramsPtr != nullptr && m_binarizationParamsIdAttrPtr.IsValid()){
+		iprm::TParamsPtr<imeas::INumericValue> binarizationParamsPtr(paramsPtr, m_binarizationParamsIdAttrPtr);
+		if (binarizationParamsPtr.IsValid()){
+			imath::CVarVector values = binarizationParamsPtr->GetValues();
+			if (values.GetElementsCount() >= 1){
+				minContrastThreshold = values[0];
+			}
+		}
+	}
+
+	return ConvertImage(*inputBitmapPtr, *outputBitmapPtr, minContrastThreshold) ? TS_OK : TS_INVALID;
 }
 
 
@@ -40,7 +54,8 @@ iproc::IProcessor::TaskState CAdaptiveImageBinarizeProcessorComp::DoProcessing(
 
 bool CAdaptiveImageBinarizeProcessorComp::ConvertImage(
 			const iimg::IBitmap& inputBitmap,
-			iimg::IBitmap& outputBitmap) const
+			iimg::IBitmap& outputBitmap,
+			double minContrastThreshold) const
 {
 	if (inputBitmap.IsEmpty()){
 		SendWarningMessage(0, "Input bitmap is empty.");
@@ -67,7 +82,8 @@ bool CAdaptiveImageBinarizeProcessorComp::ConvertImage(
 	double threshold = 0.0;
 	int pixelCount = 0;
 
-	int minContrast = 0.05 * 255; // TODO: Use parameterization!
+	// Use parameterized minContrast threshold (value is in range 0.0 - 1.0)
+	int minContrast = static_cast<int>(minContrastThreshold * 255);
 
 	for (int y = 0; y < imageHeight; ++y){
 		quint8* inputImageBufferPtr = (quint8*)inputBitmap.GetLinePtr(y);

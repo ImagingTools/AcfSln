@@ -25,7 +25,7 @@ iproc::IProcessor::TaskState CImageRegionProcessorCompBase::DoProcessing(
 				ibase::IProgressManager* /*progressManagerPtr*/)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		SendErrorMessage(0, "Processor input is not a bitmap");
 
 		return TS_INVALID;
@@ -40,11 +40,11 @@ iproc::IProcessor::TaskState CImageRegionProcessorCompBase::DoProcessing(
 	iprm::TParamsPtr<i2d::IObject2d> aoiPtr(paramsPtr, m_aoiParamIdAttrPtr, m_defaultAoiCompPtr, false);
 	if (aoiPtr.IsValid()){
 		const i2d::ICalibration2d* logToPhysicalTransformPtr = aoiPtr->GetCalibration();
-		if (logToPhysicalTransformPtr != NULL){
+		if (logToPhysicalTransformPtr != nullptr){
 			transformedRegionPtr.MoveCastedPtr<istd::IChangeable>(aoiPtr->CloneMe());
 			if (transformedRegionPtr.IsValid()){
 				transformedRegionPtr->Transform(*logToPhysicalTransformPtr);
-				transformedRegionPtr->SetCalibration(NULL);
+				transformedRegionPtr->SetCalibration(nullptr);
 
 				aoiPtr.SetPtr(transformedRegionPtr.GetPtr());
 			}
@@ -59,9 +59,9 @@ iproc::IProcessor::TaskState CImageRegionProcessorCompBase::DoProcessing(
 	bool retVal = ProcessImageRegion(*inputBitmapPtr, paramsPtr, aoiPtr.GetPtr(), outputPtr);
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr != NULL){
+	if (outputBitmapPtr != nullptr){
 		const i2d::ICalibration2d* inputCalibrationPtr = inputBitmapPtr->GetCalibration();
-		if (inputCalibrationPtr != NULL){
+		if (inputCalibrationPtr != nullptr){
 			istd::TUniqueInterfacePtr<i2d::ICalibration2d> outputCalibrationPtr;
 			outputCalibrationPtr.MoveCastedPtr(inputCalibrationPtr->CloneMe());
 

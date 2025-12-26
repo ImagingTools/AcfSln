@@ -21,7 +21,7 @@ const i2d::ICalibration2d* CTubeProjectionLinesProviderComp::GetCalibration() co
 		return m_calibrationProviderCompPtr->GetCalibration();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -32,7 +32,7 @@ iinsp::ISupplier::WorkStatus CTubeProjectionLinesProviderComp::ProduceObject(Pro
 	result.clear();
 
 	iprm::IParamsSet* paramsPtr = GetModelParametersSet();
-	if (paramsPtr == NULL){
+	if (paramsPtr == nullptr){
 		return WS_FAILED;
 	}
 
@@ -52,7 +52,7 @@ iinsp::ISupplier::WorkStatus CTubeProjectionLinesProviderComp::ProduceObject(Pro
 		if (iipr::CTubeProjectionsGenerator::GenerateProjections(*tubeRegionPtr, projectionsCount, result)){
 			if (m_calibrationProviderCompPtr.IsValid()){
 				const i2d::ICalibration2d* transformPtr = m_calibrationProviderCompPtr->GetCalibration();
-				if (transformPtr == NULL){
+				if (transformPtr == nullptr){
 					return WS_FAILED;
 				}
 				else{

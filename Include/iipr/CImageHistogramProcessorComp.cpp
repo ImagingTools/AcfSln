@@ -39,7 +39,7 @@ bool CImageHistogramProcessorComp::CalculateHistogram(
 			QString& errorString)
 {
 	imeas::IDiscreteDataSequence* histogramPtr = dynamic_cast<imeas::IDiscreteDataSequence*>(outputPtr);
-	if (histogramPtr == NULL){
+	if (histogramPtr == nullptr){
 		errorString = QCoreApplication::tr("Bad output type");
 		return false;
 	}
@@ -58,7 +58,7 @@ bool CImageHistogramProcessorComp::CalculateHistogram(
 	ibase::CSize inputBitmapSize(inputBitmap.GetImageSize());
 	i2d::CRectangle realArea = i2d::CRectangle(inputBitmapSize);
 
-	const i2d::IObject2d* usedAoiPtr = (aoiPtr != NULL) ? aoiPtr : &realArea;
+	const i2d::IObject2d* usedAoiPtr = (aoiPtr != nullptr) ? aoiPtr : &realArea;
 
 	iimg::CScanlineMask bitmapRegion;
 	i2d::CRect clipArea(inputBitmap.GetImageSize());
@@ -116,7 +116,7 @@ bool CImageHistogramProcessorComp::CalculateHistogram(
 
 		istd::CIntRanges::RangeList rangesList;
 		const istd::CIntRanges* rangesPtr = bitmapRegion.GetPixelRanges(y);
-		if (rangesPtr == NULL){
+		if (rangesPtr == nullptr){
 			continue;
 		}
 

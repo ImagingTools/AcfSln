@@ -260,7 +260,7 @@ bool CConvolutionKernel2d::Serialize(iser::IArchive& archive)
 	bool retVal = true;
 
 	bool isStoring = archive.IsStoring();
-	istd::CChangeNotifier notifier(isStoring? NULL: this);
+	istd::CChangeNotifier notifier(isStoring? nullptr: this);
 	Q_UNUSED(notifier);
 
 	if (isStoring){

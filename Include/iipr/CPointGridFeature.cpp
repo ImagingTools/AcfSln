@@ -72,7 +72,7 @@ istd::IChangeableUniquePtr CPointGridFeature::CloneMe(CompatibilityMode mode) co
 		return retVal.PopPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

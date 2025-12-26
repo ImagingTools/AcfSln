@@ -18,7 +18,7 @@ iproc::IProcessor::TaskState CCheckerboardPatternGeneratorComp::DoProcessing(
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		SendErrorMessage(0, "Output bitmap is not defined");
 
 		return TS_INVALID;

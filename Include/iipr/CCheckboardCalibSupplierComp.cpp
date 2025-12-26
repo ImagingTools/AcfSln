@@ -323,7 +323,7 @@ iinsp::ISupplier::WorkStatus CCheckboardCalibSupplierComp::ProduceObject(Product
 	}
 
 	const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-	if (bitmapPtr == NULL){
+	if (bitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("Input image could not be provided"), "CheckboardCalibSupplier"));
 
 		return WS_FAILED;
@@ -363,9 +363,9 @@ void CCheckboardCalibSupplierComp::LinesConsumer::ResetFeatures()
 
 bool CCheckboardCalibSupplierComp::LinesConsumer::AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr*/)
 {
-	if (featurePtr != NULL){
+	if (featurePtr != nullptr){
 		const i2d::CLine2d* linePtr = dynamic_cast<const i2d::CLine2d*>(featurePtr);
-		if (linePtr != NULL){
+		if (linePtr != nullptr){
 			LineInfo info;
 
 			info.line = *linePtr;
@@ -402,7 +402,7 @@ CCheckboardCalibSupplierComp::ChessboardParamsContraints::ChessboardParamsContra
 :	m_cellSizeUnit(imath::IUnitInfo::UT_PHYSICAL, "", 1, istd::CRange(0, 100)),
 	m_parentPtr(parentPtr)
 {
-	Q_ASSERT(m_parentPtr != NULL);
+	Q_ASSERT(m_parentPtr != nullptr);
 
 	if (m_parentPtr->m_distanceUnitInfoCompPtr.IsValid()){
 		m_cellSizeUnit.SetUnitName(m_parentPtr->m_distanceUnitInfoCompPtr->GetUnitName());

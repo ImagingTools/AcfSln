@@ -19,7 +19,7 @@ bool CTubeProjectionsGenerator::GenerateProjections(const i2d::CTubePolyline& tu
 	i2d::CVector2d prevNode = tube.GetNodePos(0);
 	i2d::CVector2d kneeVector = tube.GetKneeVector(0);
 	const i2d::CTubeNode* tubeNodePtr = dynamic_cast<const i2d::CTubeNode*>(&tube.GetNodeData(0));
-	if (tubeNodePtr == NULL){
+	if (tubeNodePtr == nullptr){
 		return false;
 	}
 	istd::CRange prevAoiRange = tubeNodePtr->GetTubeRange();
@@ -41,7 +41,7 @@ bool CTubeProjectionsGenerator::GenerateProjections(const i2d::CTubePolyline& tu
 			nextNodeInex = (nextNodeInex + 1) % nodesCount;
 			const i2d::CVector2d& nextNode = tube.GetNodePos(nextNodeInex);
 			const i2d::CTubeNode* nextTubeDataPtr = dynamic_cast<const i2d::CTubeNode*>(&tube.GetNodeData(nextNodeInex));
-			if (nextTubeDataPtr == NULL){
+			if (nextTubeDataPtr == nullptr){
 				return false;
 			}
 			const istd::CRange& nextAoiRange = nextTubeDataPtr->GetTubeRange();

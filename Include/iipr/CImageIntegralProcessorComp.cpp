@@ -26,7 +26,7 @@ bool DoIntegralFilter(
 
 	QVector<WorkingType> prevLineBuffer(imageSize.GetX(), 0);
 
-	if (maskPtr != NULL){
+	if (maskPtr != nullptr){
 		i2d::CRect commonRect = maskPtr->GetBoundingRect().GetIntersection(i2d::CRect(imageSize));
 
 		int y = 0;
@@ -42,7 +42,7 @@ bool DoIntegralFilter(
 
 		for (y = commonRect.GetTop(); y < commonRect.GetBottom(); ++y){
 			const istd::CIntRanges* maskRangesPtr = maskPtr->GetPixelRanges(y);
-			if (maskRangesPtr != NULL){
+			if (maskRangesPtr != nullptr){
 				OutputPixelType* outputPtr = (OutputPixelType*)outputImage.GetLinePtr(y);
 
 				const InputPixelType* inputLinePtr = (const InputPixelType*)inputImage.GetLinePtr(y);
@@ -176,7 +176,7 @@ bool DoIntegralReference(const iimg::CScanlineMask& mask, iimg::IBitmap& outputI
 
 	for (; y < commonRect.GetBottom(); ++y){
 		const istd::CIntRanges* maskRangesPtr = mask.GetPixelRanges(y);
-		if (maskRangesPtr != NULL){
+		if (maskRangesPtr != nullptr){
 			PixelType* outputPtr = (PixelType*)outputImage.GetLinePtr(y);
 
 			PixelType lineSum = 0;

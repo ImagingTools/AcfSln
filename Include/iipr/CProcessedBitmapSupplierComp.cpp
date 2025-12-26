@@ -29,7 +29,7 @@ const iimg::IBitmapProvider* CProcessedBitmapSupplierBase::GetBitmapProvider() c
 const i2d::ICalibration2d* CProcessedBitmapSupplierBase::GetCalibration() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		// If exists, provide the calibration filled by underlaying processor:
 		if (m_outputBitmapCalibrationCompPtr.IsValid()){
 			return m_outputBitmapCalibrationCompPtr.GetPtr();
@@ -40,7 +40,7 @@ const i2d::ICalibration2d* CProcessedBitmapSupplierBase::GetCalibration() const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -49,11 +49,11 @@ const i2d::ICalibration2d* CProcessedBitmapSupplierBase::GetCalibration() const
 const iimg::IBitmap* CProcessedBitmapSupplierBase::GetBitmap() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -100,7 +100,7 @@ iinsp::ISupplier::WorkStatus CProcessedBitmapSupplierBase::ProduceObject(Product
 	Q_ASSERT(result.IsValid());
 
 	const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-	if (bitmapPtr == NULL){
+	if (bitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "BitmapProcessing"));
 
 		return WS_FAILED;
@@ -203,7 +203,7 @@ bool CProcessedBitmapSupplierBase::GetLastImage(iimg::IBitmap& snapBitmap) const
 	}
 
 	iproc::IProcessor* imageProcessorPtr = GetImageProcessor();
-	if (imageProcessorPtr == NULL) {
+	if (imageProcessorPtr == nullptr) {
 		return false;
 	}
 

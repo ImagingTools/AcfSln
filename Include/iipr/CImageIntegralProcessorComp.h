@@ -31,7 +31,7 @@ public:
 	static bool CalculateIntegralImage(
 				const iimg::IBitmap& inputImage,
 				iimg::IBitmap& outputImage,
-				const iimg::CScanlineMask* maskPtr = NULL,
+				const iimg::CScanlineMask* maskPtr = nullptr,
 				iimg::IBitmap::PixelFormat outputPixelFormat = iimg::IBitmap::PF_UNKNOWN,
 				bool fillOutOfMask = true);
 

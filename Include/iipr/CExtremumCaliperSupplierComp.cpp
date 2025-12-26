@@ -16,7 +16,7 @@ namespace iipr
 int CExtremumCaliperSupplierComp::GetFeaturesCount() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL)
+	if (productPtr != nullptr)
 	{
 		return productPtr->GetFeaturesCount();
 	}
@@ -30,7 +30,7 @@ const imeas::INumericValue& CExtremumCaliperSupplierComp::GetFeature(int index) 
 	static imeas::CSimpleNumericValue emptyValue;
 
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL)
+	if (productPtr != nullptr)
 	{
 		return productPtr->GetFeature(index);
 	}

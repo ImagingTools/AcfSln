@@ -64,15 +64,15 @@ public:
 				int cellSize,
 				const iimg::IBitmap& inputBitmap,
 				iimg::IBitmap& outputBitmap,
-				istd::CIndex2d* outputImageSizePtr = NULL,
+				istd::CIndex2d* outputImageSizePtr = nullptr,
 				int interpolationMode = IM_LINEAR,
 				int orientationMode = OM_SIMPLE,
-				ilog::IMessageConsumer* resultConsumerPtr = NULL);
+				ilog::IMessageConsumer* resultConsumerPtr = nullptr);
 
 	static bool CalcCalibration(
 				const i2d::CRectangle& sourceAoi,
 				icalib::CAffineCalibration2d& outputCalib,
-				istd::CIndex2d* outputImageSizePtr = NULL,
+				istd::CIndex2d* outputImageSizePtr = nullptr,
 				int orientationMode = OM_SIMPLE);
 
 	// reimplemented (iproc::IProcessor)
@@ -80,7 +80,7 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = nullptr) override;
 
 protected:
 	static bool CalcOutputImageSize(

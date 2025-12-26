@@ -42,7 +42,7 @@ public:
 	I_END_COMPONENT;
 
 	// reimplemented (iipr::IPatternController)
-	virtual bool TeachPattern(const istd::IChangeable* sourceObjectPtr = NULL);
+	virtual bool TeachPattern(const istd::IChangeable* sourceObjectPtr = nullptr);
 	virtual void ResetPattern();
 	virtual bool IsPatternValid() const;
 	const iser::ISerializable* GetPatternObject() const;

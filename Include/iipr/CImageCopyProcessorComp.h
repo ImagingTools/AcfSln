@@ -35,7 +35,7 @@ public:
 				const iimg::IBitmap& inputImage,
 				const iimg::CScanlineMask& resultMask,
 				iimg::IBitmap& outputImage,
-				istd::ILogger* loggerPtr = NULL);
+				istd::ILogger* loggerPtr = nullptr);
 
 protected:
 	// reimplemented (iipr::CImageProcessorCompBase)

@@ -437,14 +437,14 @@ bool CMorphologicalProcessorComp::ProcessImageRegion(
 		return false;
 	}
 
-	if (aoiPtr == NULL){
+	if (aoiPtr == nullptr){
 		SendWarningMessage(0, "Filter region is not defined");
 
 		return false;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		SendWarningMessage(0, "Output bitmap is not set");
 
 		return false;
@@ -474,7 +474,7 @@ bool CMorphologicalProcessorComp::ProcessImageRegion(
 	}
 
 	iprm::TParamsPtr<imeas::INumericValue> filterSizePtr(paramsPtr, *m_filterSizeParamsIdAttrPtr);
-	if (filterSizePtr == NULL){
+	if (filterSizePtr == nullptr){
 		SendErrorMessage(0, "No fiter dimension was set");
 
 		return false;
@@ -613,7 +613,7 @@ CMorphologicalProcessorComp::ProcessingMode  CMorphologicalProcessorComp::GetPro
 {
 	int mode = *m_defaultProcessingModeAttrPtr;
 
-	if ((paramsPtr != NULL) && m_processingModeIdAttrPtr.IsValid()){
+	if ((paramsPtr != nullptr) && m_processingModeIdAttrPtr.IsValid()){
 		iprm::TParamsPtr<iprm::ISelectionParam> processingModeParamPtr(paramsPtr, *m_processingModeIdAttrPtr, false);
 		if (processingModeParamPtr.IsValid()){
 			int index = processingModeParamPtr->GetSelectedOptionIndex();
@@ -634,7 +634,7 @@ CMorphologicalProcessorComp::KernelType CMorphologicalProcessorComp::GetKernelTy
 {
 	int formType = *m_defaultFilterFormTypeAttrPtr;
 
-	if ((paramsPtr != NULL) && m_filterFormTypeIdAttrPtr.IsValid()){
+	if ((paramsPtr != nullptr) && m_filterFormTypeIdAttrPtr.IsValid()){
 		iprm::TParamsPtr<iprm::ISelectionParam> filterFormTypeParamPtr(paramsPtr, *m_filterFormTypeIdAttrPtr, false);
 		if (filterFormTypeParamPtr.IsValid()){
 			int index = filterFormTypeParamPtr->GetSelectedOptionIndex();

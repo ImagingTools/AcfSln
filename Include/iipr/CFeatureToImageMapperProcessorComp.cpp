@@ -58,15 +58,15 @@ iproc::IProcessor::TaskState CFeatureToImageMapperProcessorComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const IFeaturesProvider* containerPtr = dynamic_cast<const IFeaturesProvider*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(containerPtr == NULL) ||
-				(consumerPtr == NULL)){
+	if (		(containerPtr == nullptr) ||
+				(consumerPtr == nullptr)){
 		return TS_INVALID;
 	}
 

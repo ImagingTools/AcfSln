@@ -28,7 +28,7 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const iimg::IBitmap& image,
 				IFeaturesConsumer& results,
-				ibase::IProgressManager* progressManagerPtr = NULL) = 0;
+				ibase::IProgressManager* progressManagerPtr = nullptr) = 0;
 };
 
 

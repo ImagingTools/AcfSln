@@ -36,7 +36,7 @@ bool CColorPatternControllerComp::TeachPattern(const istd::IChangeable* /*source
 
 
 	const iimg::IBitmap* bitmapPtr = m_patternBitmapProviderCompPtr->GetBitmap();
-	if (bitmapPtr == NULL){
+	if (bitmapPtr == nullptr){
 		SendErrorMessage(0, "Empty bitmap cannot be used for color pattern teaching");
 
 		return false;
@@ -46,7 +46,7 @@ bool CColorPatternControllerComp::TeachPattern(const istd::IChangeable* /*source
 
 	i2d::CRectangle patternBoundingBox = m_bitmapRegionCompPtr->GetBoundingBox();
 	const i2d::ICalibration2d* aoiCalibrationPtr = m_bitmapRegionCompPtr->GetCalibration();
-	if (aoiCalibrationPtr != NULL){
+	if (aoiCalibrationPtr != nullptr){
 		if (!patternBoundingBox.Transform(*aoiCalibrationPtr)){
 			SendErrorMessage(0, "Teaching region could not be defined");
 
@@ -118,7 +118,7 @@ bool CColorPatternControllerComp::Serialize(iser::IArchive& archive)
 	static iser::CArchiveTag patternBitmapTag("PatternBitmap", "Bitmap used as pattern", iser::CArchiveTag::TT_GROUP);
 	static iser::CArchiveTag histogramTag("Histogram", "Histogram of the pattern bitmap", iser::CArchiveTag::TT_GROUP);
 
-	istd::CChangeNotifier notifier(archive.IsStoring() ? NULL : this);
+	istd::CChangeNotifier notifier(archive.IsStoring() ? nullptr : this);
 	Q_UNUSED(notifier);
 
 	bool retVal = true;
@@ -140,7 +140,7 @@ bool CColorPatternControllerComp::Serialize(iser::IArchive& archive)
 bool CColorPatternControllerComp::CopyFrom(const IChangeable& object, CompatibilityMode mode)
 {
 	const CColorPatternControllerComp* sourcePtr = dynamic_cast<const CColorPatternControllerComp*>(&object);
-	if (sourcePtr != NULL){
+	if (sourcePtr != nullptr){
 		istd::CChangeNotifier notifier(this);
 
 		bool retVal = m_patternBitmap.CopyFrom(sourcePtr->m_patternBitmap, mode);

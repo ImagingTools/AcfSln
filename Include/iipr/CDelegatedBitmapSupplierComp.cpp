@@ -23,7 +23,7 @@ const iimg::IBitmap* CDelegatedBitmapSupplierComp::GetBitmap() const
 		return m_bitmapCompPtr.GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 	
@@ -39,7 +39,7 @@ const i2d::ICalibration2d* CDelegatedBitmapSupplierComp::GetCalibration() const
 		return m_calibrationCompPtr.GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -65,7 +65,7 @@ imod::IModel* CDelegatedBitmapSupplierComp::GetWorkStatusModel() const
 		return m_bitmapSupplierCompPtr->GetWorkStatusModel();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -107,7 +107,7 @@ const ilog::IMessageContainer* CDelegatedBitmapSupplierComp::GetWorkMessages(Mes
 		return m_bitmapSupplierCompPtr->GetWorkMessages(containerType);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -117,7 +117,7 @@ iprm::IParamsSet* CDelegatedBitmapSupplierComp::GetModelParametersSet() const
 		return m_bitmapSupplierCompPtr->GetModelParametersSet();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

@@ -34,12 +34,12 @@ iproc::IProcessor::TaskState CProcessedAcquisitionComp::DoProcessing(
 		return TS_INVALID;
 	}
 
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if ((outputBitmapPtr == NULL) || !m_slaveAcquisitionCompPtr.IsValid()){
+	if ((outputBitmapPtr == nullptr) || !m_slaveAcquisitionCompPtr.IsValid()){
 		return TS_INVALID;
 	}
 

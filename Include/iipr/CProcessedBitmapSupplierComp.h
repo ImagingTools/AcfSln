@@ -122,7 +122,7 @@ protected:
 	virtual iimg::IBitmapUniquePtr CreateBitmap() const override
 	{
 		if (!m_bitmapCompFact.IsValid()){
-			return NULL;
+			return nullptr;
 		}
 
 		return m_bitmapCompFact.CreateInstance();

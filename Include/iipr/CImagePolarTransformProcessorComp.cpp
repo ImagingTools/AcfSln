@@ -10,6 +10,9 @@
 #include <imeas/INumericValue.h>
 #include <iipr/TImagePixelInterpolator.h>
 
+// Standard includes
+#include <vector>
+
 
 namespace iipr
 {
@@ -115,13 +118,13 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 	}
 	
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		return false;
 	}
 
 	const i2d::IObject2d* realAoiPtr = aoiPtr;
 	i2d::CRectangle imageRect(inputBitmap.GetImageSize());
-	if (aoiPtr == NULL){
+	if (aoiPtr == nullptr){
 		realAoiPtr = &imageRect;
 	}
 
@@ -159,7 +162,7 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 	}
 
 	const i2d::CAnnulus* annulusPtr = dynamic_cast<const i2d::CAnnulus*>(realAoiPtr);
-	if (annulusPtr != NULL){
+	if (annulusPtr != nullptr){
 		r1 = qCeil(annulusPtr->GetInnerRadius());
 		r2 = qFloor(annulusPtr->GetOuterRadius());
 		radius = (r2 - r1);
@@ -169,7 +172,7 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 	}
 
 	const i2d::CCircle* circlePtr = dynamic_cast<const i2d::CCircle*>(realAoiPtr);
-	if (circlePtr != NULL){
+	if (circlePtr != nullptr){
 		r1 = 0;
 		r2 = qFloor(circlePtr->GetRadius());
 		radius = r2;
@@ -179,7 +182,7 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 	}
 
 	const i2d::CAnnulusSegment* annulusSegmentPtr = dynamic_cast<const i2d::CAnnulusSegment*>(realAoiPtr);
-	if (annulusSegmentPtr != NULL){
+	if (annulusSegmentPtr != nullptr){
 		r1 = qCeil(annulusSegmentPtr->GetInnerRadius());
 		r2 = qFloor(annulusSegmentPtr->GetOuterRadius());
 		radius = (r2 - r1);
@@ -199,8 +202,8 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 
 	int pixelComponentsCount = inputBitmap.GetComponentsCount();
 
-	float* cosTable = new float[angleDimension];
-	float* sinTable = new float[angleDimension];
+	std::vector<float> cosTable(angleDimension);
+	std::vector<float> sinTable(angleDimension);
 
 	for (int alpha = 0; alpha < angleDimension; alpha++){
 		float angle = alpha / float(angleDimension) * angleRange * angleResolution;
@@ -248,8 +251,7 @@ bool CImagePolarTransformProcessorComp::ProcessImageRegion(
 		}
 	}
 		
-	delete [] cosTable;
-	delete [] sinTable;
+	// cosTable and sinTable automatically cleaned up by std::vector destructor
 
 	return true;
 }

@@ -53,7 +53,7 @@ const i2d::ICalibration2d* CSearchBasedFeaturesSupplierComp::GetCalibration(int 
 int CSearchBasedFeaturesSupplierComp::GetFeaturesCount() const
 {
 	const CFeaturesContainer* containerPtr = GetWorkProduct();
-	if (containerPtr != NULL){
+	if (containerPtr != nullptr){
 		return containerPtr->GetFeaturesCount();
 	}
 
@@ -64,7 +64,7 @@ int CSearchBasedFeaturesSupplierComp::GetFeaturesCount() const
 const imeas::INumericValue& CSearchBasedFeaturesSupplierComp::GetFeature(int index) const
 {
 	const CFeaturesContainer* containerPtr = GetWorkProduct();
-	Q_ASSERT (containerPtr != NULL);
+	Q_ASSERT (containerPtr != nullptr);
 
 	return containerPtr->GetFeature(index);
 }
@@ -209,7 +209,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::SearchOneParamsSe
 	// logical backup status set to error if no models found
 	const iipr::ISearchParams* searchParamsPtr = dynamic_cast<const iipr::ISearchParams*>(paramsPtr->GetParameter(*m_searchParamsIdAttrPtr));
 	int nominalModelsCount = -1;
-	if (searchParamsPtr != NULL) {
+	if (searchParamsPtr != nullptr) {
 		nominalModelsCount = searchParamsPtr->GetNominalModelsCount();
 	}
 
@@ -218,7 +218,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::SearchOneParamsSe
 
 	// extract region name
 	const iprm::INameParam* paramsSetNamePtr = dynamic_cast<const iprm::INameParam*>(paramsPtr->GetParameter("Name"));
-	if (paramsSetNamePtr != NULL){
+	if (paramsSetNamePtr != nullptr){
 		QString name = paramsSetNamePtr->GetName() + ": ";
 		searchResultText.prepend(name);
 	}
@@ -238,7 +238,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::SearchOneParamsSe
 bool CSearchBasedFeaturesSupplierComp::IsNegativeModelFound(const imeas::INumericValue* featurePtr, const QString& sourceName) const
 {
 	const iipr::CSearchFeature* searchFeaturePtr = dynamic_cast<const iipr::CSearchFeature*>(featurePtr);
-	if ((searchFeaturePtr != NULL) && (m_defaultInformationCategory != istd::IInformationProvider::IC_ERROR && searchFeaturePtr->IsNegativeModelEnabled())){
+	if ((searchFeaturePtr != nullptr) && (m_defaultInformationCategory != istd::IInformationProvider::IC_ERROR && searchFeaturePtr->IsNegativeModelEnabled())){
 		m_defaultInformationCategory = istd::IInformationProvider::IC_ERROR;
 		QString searchResultText = QT_TR_NOOP("Some not allowed feature(s) found");
 
@@ -260,7 +260,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::LabelAndStoreResu
 	const int featuresCount = fromContainer.GetFeaturesCount();
 	for (int featureIndex = 0; featureIndex < featuresCount; featureIndex++) {
 		const iipr::CObjectFeature* objectFeaturePtr = dynamic_cast<const iipr::CObjectFeature*>(&fromContainer.GetFeature(featureIndex));
-		if (objectFeaturePtr == NULL) {
+		if (objectFeaturePtr == nullptr) {
 			return WS_FAILED;
 		}
 
@@ -279,7 +279,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::LabelAndStoreResu
 		}
 		
 		imeas::INumericValue* valuePtr = dynamic_cast<imeas::INumericValue*>(featurePtr.PopInterfacePtr());
-		if (valuePtr == NULL) {
+		if (valuePtr == nullptr) {
 			return WS_FAILED;
 		}
 
@@ -297,7 +297,7 @@ void CSearchBasedFeaturesSupplierComp::UpdateCalibrationList(const CFeaturesCont
 		CalibrationInfo calibrationInfo;
 
 		const iipr::CObjectFeature* objectFeaturePtr = dynamic_cast<const iipr::CObjectFeature*>(&results.GetFeature(featureIndex));
-		if (objectFeaturePtr != NULL) {
+		if (objectFeaturePtr != nullptr) {
 
 			i2d::CAffine2d globalAffine;
 			if (
@@ -346,7 +346,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::ProduceObject(CFe
 	if (		m_bitmapProviderCompPtr.IsValid() &&
 				m_searchProcessorCompPtr.IsValid()){
 		const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "FeatureSearch"));
 
 			return WS_FAILED;
@@ -354,7 +354,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::ProduceObject(CFe
 
 		iprm::IParamsSet* paramsSetPtr = GetModelParametersSet();
 
-		const iprm::IParamsManager* multiSearchParamsManagerPtr = NULL;
+		const iprm::IParamsManager* multiSearchParamsManagerPtr = nullptr;
 		if (m_searchParamsManagerParamIdAttrPtr.IsValid()){
 			iprm::TParamsPtr<iprm::IParamsManager> paramsManagerPtr(paramsSetPtr, *m_searchParamsManagerParamIdAttrPtr);
 			if (!paramsManagerPtr.IsValid()){
@@ -371,7 +371,7 @@ iinsp::ISupplier::WorkStatus CSearchBasedFeaturesSupplierComp::ProduceObject(CFe
 
 		Timer performanceTimer(this, "Search of features");
 
-		if (multiSearchParamsManagerPtr != NULL){
+		if (multiSearchParamsManagerPtr != nullptr){
 			int searchCount = multiSearchParamsManagerPtr->GetParamsSetsCount();
 			m_defaultInformationCategory = istd::IInformationProvider::IC_NONE;
 
@@ -453,7 +453,7 @@ void CSearchBasedFeaturesSupplierComp::OnComponentDestroyed()
 // public methods of the embedded class CalibrationList
 
 CSearchBasedFeaturesSupplierComp::CalibrationList::CalibrationList()
-	:m_parentPtr(NULL)
+	:m_parentPtr(nullptr)
 {
 }
 
@@ -474,7 +474,7 @@ int CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionsFlags() const
 
 int CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionsCount() const
 {
-	Q_ASSERT(m_parentPtr != NULL);
+	Q_ASSERT(m_parentPtr != nullptr);
 
 	return m_parentPtr->m_calibrations.count();
 }
@@ -482,7 +482,7 @@ int CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionsCount() const
 
 QString CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionName(int index) const
 {
-	Q_ASSERT(m_parentPtr != NULL);
+	Q_ASSERT(m_parentPtr != nullptr);
 
 	return m_parentPtr->m_calibrations[index].calibrationName;
 }
@@ -496,7 +496,7 @@ QString CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionDescription(
 
 QByteArray CSearchBasedFeaturesSupplierComp::CalibrationList::GetOptionId(int index) const
 {
-	Q_ASSERT(m_parentPtr != NULL);
+	Q_ASSERT(m_parentPtr != nullptr);
 
 	return m_parentPtr->m_calibrations[index].calibrationId;
 }

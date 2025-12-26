@@ -409,7 +409,7 @@ iinsp::ISupplier::WorkStatus CLensCorrFindSupplierComp::ProduceObject(ProductTyp
 	}
 
 	const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-	if (bitmapPtr == NULL){
+	if (bitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("Input image could not be provided"), "LensCorrectionFinder"));
 
 		return WS_FAILED;
@@ -455,9 +455,9 @@ void CLensCorrFindSupplierComp::FeaturesConsumer::ResetFeatures()
 
 bool CLensCorrFindSupplierComp::FeaturesConsumer::AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr*/)
 {
-	if (featurePtr != NULL){
+	if (featurePtr != nullptr){
 		const i2d::CPosition2d* positionPtr = dynamic_cast<const i2d::CPosition2d*>(featurePtr);
-		if (positionPtr != NULL){
+		if (positionPtr != nullptr){
 			FeatureInfo info;
 
 			info.position = positionPtr->GetPosition();

@@ -64,7 +64,7 @@ iproc::IProcessor::TaskState CHoughLineFinderComp::DoExtractFeatures(
 		const quint8* nextLinePtr = (const quint8*)image.GetLinePtr(y + 1);
 
 		const istd::CIntRanges* inputRangesPtr = mask.GetPixelRanges(y);
-		if (inputRangesPtr != NULL){
+		if (inputRangesPtr != nullptr){
 			istd::CIntRanges::RangeList rangeList;
 			inputRangesPtr->GetAsList(clipArea.GetHorizontalRange(), rangeList);
 
@@ -200,15 +200,15 @@ iproc::IProcessor::TaskState CHoughLineFinderComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* progressManagerPtr)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const iimg::IBitmap* imagePtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(imagePtr == NULL) ||
-				(consumerPtr == NULL)){
+	if (		(imagePtr == nullptr) ||
+				(consumerPtr == nullptr)){
 		return TS_INVALID;
 	}
 

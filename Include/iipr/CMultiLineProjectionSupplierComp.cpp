@@ -19,7 +19,7 @@ iinsp::ISupplier::WorkStatus CMultiLineProjectionSupplierComp::ProduceObject(Pro
 	if (m_bitmapProviderCompPtr.IsValid() &&
 		m_linesProviderCompPtr.IsValid()){
 		const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "MultiLineProjection"));
 
 			return WS_FAILED;
@@ -56,7 +56,7 @@ iinsp::ISupplier::WorkStatus CMultiLineProjectionSupplierComp::ProduceObject(Pro
 				varVector.GetElement(2),
 				varVector.GetElement(3));
 
-			bool isOk = m_projectionProcessorCompPtr->DoProjection(*bitmapPtr, line, NULL, lineResult);
+			bool isOk = m_projectionProcessorCompPtr->DoProjection(*bitmapPtr, line, nullptr, lineResult);
 			if (!isOk){
 				AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("Calculation of projection %1 failed").arg(i + 1), "MultiLineProjection"));
 
@@ -106,7 +106,7 @@ void CMultiLineProjectionSupplierComp::OnComponentCreated()
 int CMultiLineProjectionSupplierComp::GetSequencesCount() const
 {
 	const ProductType* resultPtr = GetWorkProduct();
-	if (resultPtr != NULL){
+	if (resultPtr != nullptr){
 		return resultPtr->count();
 	}
 
@@ -117,13 +117,13 @@ int CMultiLineProjectionSupplierComp::GetSequencesCount() const
 const imeas::IDataSequence* CMultiLineProjectionSupplierComp::GetDataSequence(int index) const
 {
 	const ProductType* resultPtr = GetWorkProduct();
-	if (resultPtr != NULL){
+	if (resultPtr != nullptr){
 		if (index >= 0 && index < resultPtr->count()){
 			return &resultPtr->at(index);
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -132,7 +132,7 @@ const imeas::IDataSequence* CMultiLineProjectionSupplierComp::GetDataSequence(in
 const imeas::IDataSequence* CMultiLineProjectionSupplierComp::GetDataSequence() const
 {
 	const ProductType* resultPtr = GetWorkProduct();
-	if (resultPtr != NULL){
+	if (resultPtr != nullptr){
 		imeas::CGeneralDataSequence* averageDataSequence = new imeas::CGeneralDataSequence;
 
 		int sequenceCount = resultPtr->count();
@@ -160,7 +160,7 @@ const imeas::IDataSequence* CMultiLineProjectionSupplierComp::GetDataSequence() 
 		}
 		return averageDataSequence;
 	}
-	return NULL;
+	return nullptr;
 }
 
 

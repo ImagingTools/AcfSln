@@ -42,7 +42,7 @@ iproc::IProcessor::TaskState CCircleFindProcessorComp::DoExtractFeatures(
 			IFeaturesConsumer& results,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (!m_featuresMapperCompPtr.IsValid() || (paramsPtr == NULL)){
+	if (!m_featuresMapperCompPtr.IsValid() || (paramsPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -58,11 +58,11 @@ iproc::IProcessor::TaskState CCircleFindProcessorComp::DoExtractFeatures(
 
 	const istd::IChangeable* aoiPtr = aoiObjectPtr.GetPtr();
 	const iprm::IVariableParam* variableAoiPtr = dynamic_cast<const iprm::IVariableParam*>(aoiPtr);
-	if (variableAoiPtr != NULL){
+	if (variableAoiPtr != nullptr){
 		aoiPtr = variableAoiPtr->GetParameter();
 	}
 
-	if (aoiPtr == NULL){
+	if (aoiPtr == nullptr){
 		SendErrorMessage(0, QObject::tr("Search region for the circle was not defined"));
 
 		return TS_INVALID;
@@ -168,15 +168,15 @@ iproc::IProcessor::TaskState CCircleFindProcessorComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* progressManagerPtr)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const iimg::IBitmap* imagePtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(imagePtr == NULL) ||
-				(consumerPtr == NULL)){
+	if (		(imagePtr == nullptr) ||
+				(consumerPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -199,14 +199,14 @@ bool CCircleFindProcessorComp::AddAoiToRays(
 {
 	totalRaysCount = 0;
 	const iprm::CParamsSet* setPtr = dynamic_cast<const iprm::CParamsSet*>(&aoiObject);
-	if (setPtr != NULL){
+	if (setPtr != nullptr){
 		int aoisCount = 0;
 
 		const iprm::CParamsSet::ParameterInfos& infos = setPtr->GetParameterInfos();
 		int paramsCount = infos.GetCount();
 		for (int i = 0; i < paramsCount; ++i){
 			const iprm::CParamsSet::ParameterInfo* infoPtr = infos.GetAt(i);
-			if ((infoPtr != NULL) && infoPtr->parameterPtr.IsValid()){
+			if ((infoPtr != nullptr) && infoPtr->parameterPtr.IsValid()){
 				int raysCount = 0;
 
 				if (!AddAoiToRays(*infoPtr->parameterPtr, params, image, circleFinderParams, inRays, outRays, projectionLine, center, raysCount)){
@@ -223,7 +223,7 @@ bool CCircleFindProcessorComp::AddAoiToRays(
 	}
 
 	const i2d::CAnnulus* annulusAoiPtr = dynamic_cast<const i2d::CAnnulus*>(&aoiObject);
-	if (annulusAoiPtr != NULL){
+	if (annulusAoiPtr != nullptr){
 		const i2d::ICalibration2d* aoiCalibrationPtr = annulusAoiPtr->GetCalibration();
 		i2d::CLine2d aoiLine;
 		aoiLine.SetCalibration(aoiCalibrationPtr);
@@ -231,7 +231,7 @@ bool CCircleFindProcessorComp::AddAoiToRays(
 		double beginAngle = 0;
 		double endAngle = 2 * I_PI;
 		const i2d::CAnnulusSegment* segmentPtr = dynamic_cast<const i2d::CAnnulusSegment*>(annulusAoiPtr);
-		if (segmentPtr != NULL){
+		if (segmentPtr != nullptr){
 			beginAngle = segmentPtr->GetBeginAngle();
 			endAngle = segmentPtr->GetEndAngle();
 		}
@@ -258,7 +258,7 @@ bool CCircleFindProcessorComp::AddAoiToRays(
 
 		double middleBowBitmapLength = (minRadius + maxRadius) * (endAngle - beginAngle) * 0.5;
 
-		if (aoiCalibrationPtr != NULL){
+		if (aoiCalibrationPtr != nullptr){
 			i2d::CAffine2d affineTransform;
 			if (aoiCalibrationPtr->GetLocalTransform(center, affineTransform)){
 				middleBowBitmapLength *= affineTransform.GetDeformMatrix().GetApproxScale();
@@ -560,7 +560,7 @@ void CCircleFindProcessorComp::AddProjectionResultsToRays(
 	int featuresCount = container.GetFeaturesCount();
 	for (int featureIndex = 0; featureIndex < featuresCount; featureIndex++){
 		const CCaliperFeature* featurePtr = dynamic_cast<const CCaliperFeature*>(&container.GetFeature(featureIndex));
-		if (featurePtr != NULL){
+		if (featurePtr != nullptr){
 			Point point;
 			point.weight = featurePtr->GetWeight();
 			point.wasChecked = false;

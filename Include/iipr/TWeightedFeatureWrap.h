@@ -99,7 +99,7 @@ bool TWeightedFeatureWrap<BaseObject>::Serialize(iser::IArchive& archive)
 {
 	iser::CArchiveTag weightTag("Weight", "Weight", iser::CArchiveTag::TT_LEAF);
 
-	istd::CChangeNotifier notifier(archive.IsStoring()? NULL: this);
+	istd::CChangeNotifier notifier(archive.IsStoring()? nullptr: this);
 	Q_UNUSED(notifier);
 
 	bool retVal = true;
@@ -121,7 +121,7 @@ template <class BaseObject>
 bool TWeightedFeatureWrap<BaseObject>::CopyFrom(const IChangeable& object, CompatibilityMode mode)
 {
 	const TWeightedFeatureWrap<BaseObject>* objectPtr = dynamic_cast<const TWeightedFeatureWrap<BaseObject>*>(&object);
-	if (objectPtr != NULL){
+	if (objectPtr != nullptr){
 		m_weight = objectPtr->GetWeight();
 	}
 

@@ -28,10 +28,10 @@ struct LinesConsumer: virtual public iipr::IFeaturesConsumer
 
 	virtual bool AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr*/) override
 	{
-		if (featurePtr != NULL){
+		if (featurePtr != nullptr){
 			const i2d::CLine2d* linePtr = dynamic_cast<const i2d::CLine2d*>(featurePtr);
 			LineInfo info;
-			if (linePtr != NULL){
+			if (linePtr != nullptr){
 				info.line = *linePtr;
 				info.weight = 1;
 			}
@@ -134,7 +134,7 @@ iproc::IProcessor::TaskState CCheckerboardPointGridExtractorComp::DoExtractFeatu
 	//clusterize lines per its angle
 	//make 1D metric space with angle
 	struct LineWithAngle {
-		LineWithAngle() :  m_lineRef(NULL),m_angle(0){}
+		LineWithAngle() :  m_lineRef(nullptr),m_angle(0){}
 		LineWithAngle(const i2d::CLine2d & line) :
 			m_lineRef(&line)
 		{
@@ -363,17 +363,17 @@ iproc::IProcessor::TaskState CCheckerboardPointGridExtractorComp::DoProcessing(
 	ibase::IProgressManager* progressManagerPtr)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		SendCriticalMessage(0, "Input image is not defined");
 		return TS_INVALID;
 	}
 
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	iipr::IFeaturesConsumer* outputConsumerPtr = dynamic_cast<iipr::IFeaturesConsumer*>(outputPtr);
-	if (outputConsumerPtr == NULL){
+	if (outputConsumerPtr == nullptr){
 		return TS_INVALID;
 	}
 

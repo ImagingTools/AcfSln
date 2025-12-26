@@ -28,7 +28,7 @@ iinsp::ISupplier::WorkStatus CImageHistogramSupplierComp::ProduceObject(imod::TM
 	if (		m_bitmapProviderCompPtr.IsValid() &&
 				m_histogramProcessorCompPtr.IsValid()){
 		const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "ImageHistogram"));
 
 			return WS_FAILED;

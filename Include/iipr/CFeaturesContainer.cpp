@@ -21,7 +21,7 @@ imeas::INumericValue& CFeaturesContainer::GetFeatureRef(int index)
 	Q_ASSERT(index < m_featuresList.GetCount());
 
 	imeas::INumericValue* featurePtr = m_featuresList.GetAt(index);
-	Q_ASSERT(featurePtr != NULL);
+	Q_ASSERT(featurePtr != nullptr);
 
 	return *featurePtr;
 }
@@ -39,7 +39,7 @@ void CFeaturesContainer::ResetFeatures()
 
 bool CFeaturesContainer::AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr*/)
 {
-	if (featurePtr != NULL){
+	if (featurePtr != nullptr){
 		istd::CChangeNotifier changePtr(this);
 
 		m_featuresList.PushBack(const_cast<imeas::INumericValue*>(featurePtr));
@@ -66,7 +66,7 @@ const imeas::INumericValue& CFeaturesContainer::GetFeature(int index) const
 	Q_ASSERT(index < m_featuresList.GetCount());
 
 	const imeas::INumericValue* featurePtr = m_featuresList.GetAt(index);
-	Q_ASSERT(featurePtr != NULL);
+	Q_ASSERT(featurePtr != nullptr);
 
 	return *featurePtr;
 }

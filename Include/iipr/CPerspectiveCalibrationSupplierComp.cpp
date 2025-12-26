@@ -24,11 +24,11 @@ struct PointGridConsumer : public iipr::IFeaturesConsumer
 		m_points.Reset();
 	}
 
-	virtual bool AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr = NULL*/) override
+	virtual bool AddFeature(const imeas::INumericValue* featurePtr, bool* /*isFullPtr = nullptr*/) override
 	{
-		if (featurePtr != NULL){
+		if (featurePtr != nullptr){
 			const icalib::CPointGrid* pointGridPtr = dynamic_cast<const icalib::CPointGrid*>(featurePtr);
-			if (pointGridPtr != NULL){
+			if (pointGridPtr != nullptr){
 				m_points.CopyFrom(*pointGridPtr);
 			}
 
@@ -80,7 +80,7 @@ bool CPerspectiveCalibrationSupplierComp::CalculateCalibration(const iimg::IBitm
 		}
 	}
 
-	const i2d::ICalibration2d* gridTransformPtr = m_pointGridTransformation.IsValid() ? m_pointGridTransformation->GetCalibration() : NULL;
+	const i2d::ICalibration2d* gridTransformPtr = m_pointGridTransformation.IsValid() ? m_pointGridTransformation->GetCalibration() : nullptr;
 
 	icalib::CPointGrid nominalPositions;
 	nominalPositions.SetSizes(imagePoints.m_points.GetSizes());
@@ -101,7 +101,7 @@ bool CPerspectiveCalibrationSupplierComp::CalculateCalibration(const iimg::IBitm
 			ind.SetAt(0, x);
 			ind.SetAt(1, y);
 			
-			if (gridTransformPtr != NULL){
+			if (gridTransformPtr != nullptr){
 				i2d::CVector2d transform;
 				if (gridTransformPtr->GetPositionAt(normalPos, transform)){
 					nominalPositions.SetAt(ind, transform);
@@ -137,7 +137,7 @@ iinsp::ISupplier::WorkStatus CPerspectiveCalibrationSupplierComp::ProduceObject(
 	}
 
 	const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-	if (bitmapPtr == NULL){
+	if (bitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("Input image could not be provided"), "PerspectiveCalibrationSupplier"));
 
 		return WS_FAILED;

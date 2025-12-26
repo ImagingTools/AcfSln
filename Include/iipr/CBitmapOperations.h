@@ -76,7 +76,7 @@ public:
 				const BitmapList& bitmapList,
 				JoinMode joinMode,
 				iimg::IBitmap& outputBitmap,
-				istd::ILogger* operationLogPtr = NULL);
+				istd::ILogger* operationLogPtr = nullptr);
 
 	/**
 		Join more bitmaps into a single one by calculation of the pixel values from the input bitmap list.
@@ -86,8 +86,8 @@ public:
 				const BitmapList& bitmapList,
 				CombineMode combineMode,
 				iimg::IBitmap& outputBitmap,
-				imath::CVarVector* weghtsPtr = NULL,
-				istd::ILogger* operationLogPtr = NULL);
+				imath::CVarVector* weghtsPtr = nullptr,
+				istd::ILogger* operationLogPtr = nullptr);
 
 	/**
 		Calculate the difference of two bitmaps.
@@ -97,7 +97,7 @@ public:
 				const iimg::IBitmap& inputBitmap2,
 				iimg::IBitmap& outputBitmap,
 				double offset = 0,
-				ilog::IMessageConsumer* messageConsumerPtr = NULL);
+				ilog::IMessageConsumer* messageConsumerPtr = nullptr);
 };
 
 

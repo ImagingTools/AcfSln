@@ -197,7 +197,7 @@ bool CObjectFeature::CopyFrom(const IChangeable& object, CompatibilityMode mode)
 {
 	const CObjectFeature* objectPtr = dynamic_cast<const CObjectFeature*>(&object);
 
-	if (objectPtr != NULL){
+	if (objectPtr != nullptr){
 		istd::CChangeNotifier notifier(this);
 
 		m_angle = objectPtr->m_angle;
@@ -221,7 +221,7 @@ istd::IChangeableUniquePtr CObjectFeature::CloneMe(CompatibilityMode mode) const
 		return retVal.PopPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

@@ -26,19 +26,19 @@ const i2d::ICalibration2d* CBitmapProviderCacheComp::GetCalibration() const
 bool CBitmapProviderCacheComp::CopyFrom(const IChangeable& object, CompatibilityMode mode)
 {
 	const iimg::IBitmapProvider* providerPtr = dynamic_cast<const iimg::IBitmapProvider*>(&object);
-	if (providerPtr != NULL){
+	if (providerPtr != nullptr){
 		m_bitmapPtr.Reset();
 		const iimg::IBitmap* bitmapPtr = providerPtr->GetBitmap();
-		if (bitmapPtr != NULL){
+		if (bitmapPtr != nullptr){
 			m_bitmapPtr.MoveCastedPtr(bitmapPtr->CloneMe(mode));
 		}
 
 		m_transformPtr.Reset();
 
 		const i2d::ICalibrationProvider* calibrationProviderPtr = dynamic_cast<const i2d::ICalibrationProvider*>(&object);
-		if (calibrationProviderPtr != NULL){
+		if (calibrationProviderPtr != nullptr){
 			const i2d::ICalibration2d* transformPtr = calibrationProviderPtr->GetCalibration();
-			if (transformPtr != NULL){
+			if (transformPtr != nullptr){
 				m_transformPtr.MoveCastedPtr(transformPtr->CloneMe(mode));
 			}
 		}

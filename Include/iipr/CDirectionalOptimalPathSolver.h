@@ -51,7 +51,7 @@ public:
 	*/
 	double GetOptimalPath(
 				const i2d::CVector2d& destPoint,
-				i2d::CPolypoint* optimalPathPtr = NULL) const;
+				i2d::CPolypoint* optimalPathPtr = nullptr) const;
 
 protected:
 	typedef std::multimap<double, istd::CIndex2d> ProcessingQueue;

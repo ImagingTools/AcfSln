@@ -254,7 +254,7 @@ bool CImageCropDecalibrateProcessorComp::CropImage(
 	}
 
 	istd::CIndex2d outputImageSize;
-	if (outputImageSizePtr != NULL){
+	if (outputImageSizePtr != nullptr){
 		outputImageSize = *outputImageSizePtr;
 	}
 	else{
@@ -280,7 +280,7 @@ bool CImageCropDecalibrateProcessorComp::CropImage(
 	bool flipHorizontal = false;
 	bool flipVertical = false;
 	if ((orientationMode == OM_NO_REFLEXION) || (orientationMode == OM_VISUAL)){
-		if (calibrationPtr != NULL){
+		if (calibrationPtr != nullptr){
 			i2d::CAffine2d approxTransform;
 			if (calibrationPtr->GetLocalTransform(i2d::CVector2d::GetZero(), approxTransform)){
 				if (orientationMode == OM_VISUAL){
@@ -312,7 +312,7 @@ bool CImageCropDecalibrateProcessorComp::CropImage(
 			}
 			double cornerDestX = sourceAoi.GetHorizontalRange().GetValueFromAlpha(propX);
 
-			if (calibrationPtr != NULL){
+			if (calibrationPtr != nullptr){
 				i2d::CVector2d originalPos;
 				if (calibrationPtr->GetPositionAt(i2d::CVector2d(cornerDestX, cornerDestY), originalPos)){
 					cornerArray.SetAt(gridIndex, originalPos);
@@ -356,7 +356,7 @@ bool CImageCropDecalibrateProcessorComp::CropImage(
 		break;
 
 	default:
-		if (resultConsumerPtr != NULL){
+		if (resultConsumerPtr != nullptr){
 			ilog::CMessage* messagePtr = new ilog::CMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -378,7 +378,7 @@ bool CImageCropDecalibrateProcessorComp::CalcCalibration(
 			int orientationMode)
 {
 	istd::CIndex2d outputImageSize;
-	if (outputImageSizePtr != NULL){
+	if (outputImageSizePtr != nullptr){
 		outputImageSize = *outputImageSizePtr;
 	}
 	else{
@@ -391,7 +391,7 @@ bool CImageCropDecalibrateProcessorComp::CalcCalibration(
 	bool flipVertical = false;
 	if ((orientationMode == OM_NO_REFLEXION) || (orientationMode == OM_VISUAL)){
 		const i2d::ICalibration2d* calibrationPtr = sourceAoi.GetCalibration();
-		if (calibrationPtr != NULL){
+		if (calibrationPtr != nullptr){
 			i2d::CAffine2d approxTransform;
 			if (calibrationPtr->GetLocalTransform(i2d::CVector2d::GetZero(), approxTransform)){
 				if (orientationMode == OM_VISUAL){
@@ -459,17 +459,17 @@ iproc::IProcessor::TaskState CImageCropDecalibrateProcessorComp::DoProcessing(
 	}
 
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		icalib::CAffineCalibration2d* outputCalibPtr = dynamic_cast<icalib::CAffineCalibration2d*>(outputPtr);
-		if (outputCalibPtr != NULL){
-			return CalcCalibration(*aoiParamPtr, *outputCalibPtr, NULL, orientationMode)? TS_OK: TS_INVALID;
+		if (outputCalibPtr != nullptr){
+			return CalcCalibration(*aoiParamPtr, *outputCalibPtr, nullptr, orientationMode)? TS_OK: TS_INVALID;
 		}
 
 		return TS_INVALID;
 	}
 
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
-	if (inputBitmapPtr == NULL){
+	if (inputBitmapPtr == nullptr){
 		return TS_INVALID;
 	}
 
@@ -484,7 +484,7 @@ iproc::IProcessor::TaskState CImageCropDecalibrateProcessorComp::DoProcessing(
 				*m_cellSizeAttrPtr,
 				*inputBitmapPtr,
 				*outputBitmapPtr,
-				NULL,
+				nullptr,
 				interpolationMode,
 				orientationMode,
 				GetLogPtr())? TS_OK: TS_INVALID;
@@ -505,7 +505,7 @@ bool CImageCropDecalibrateProcessorComp::CalcOutputImageSize(
 	i2d::CVector2d inputRightTopPos = sourceAoi.GetRightTop();
 	i2d::CVector2d inputLeftBottomPos = sourceAoi.GetLeftBottom();
 	i2d::CVector2d inputRightBottomPos = sourceAoi.GetRightBottom();
-	if (calibrationPtr != NULL){
+	if (calibrationPtr != nullptr){
 		double leftDist = 0;
 		double rightDist = 0;
 		double topDist = 0;

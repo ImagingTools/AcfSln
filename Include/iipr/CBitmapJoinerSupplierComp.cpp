@@ -13,11 +13,11 @@ namespace iipr
 const iimg::IBitmap* CBitmapJoinerSupplierComp::GetBitmap() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->second.GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -26,11 +26,11 @@ const iimg::IBitmap* CBitmapJoinerSupplierComp::GetBitmap() const
 const i2d::ITransformation2d* CBitmapJoinerSupplierComp::GetLogTransform() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->first;
 	}
 	else{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -48,7 +48,7 @@ iinsp::ISupplier::WorkStatus CBitmapJoinerSupplierComp::ProduceObject(ProductTyp
 	
 	Q_ASSERT(result.second.IsValid());
 
-	result.first = NULL;
+	result.first = nullptr;
 
 	int inputBitmapsCount = m_bitmapsProviderCompPtr->GetBitmapsCount();
 
@@ -60,7 +60,7 @@ iinsp::ISupplier::WorkStatus CBitmapJoinerSupplierComp::ProduceObject(ProductTyp
 
 	for (int inputBitmapIndex = 0; inputBitmapIndex < inputBitmapsCount; inputBitmapIndex++){
 			const iimg::IBitmap* bitmapPtr = m_bitmapsProviderCompPtr->GetBitmap(inputBitmapIndex);
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			SendErrorMessage(0, "Input image could not be provided");
 
 			return WS_FAILED;

@@ -26,7 +26,7 @@ public:
 	/**
 		Do teaching of the pattern.
 	*/
-	virtual bool TeachPattern(const istd::IChangeable* sourceObjectPtr = NULL) = 0;
+	virtual bool TeachPattern(const istd::IChangeable* sourceObjectPtr = nullptr) = 0;
 
 	/**
 		Clear all pattern features.

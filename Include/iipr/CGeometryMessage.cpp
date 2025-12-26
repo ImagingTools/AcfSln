@@ -44,7 +44,7 @@ istd::IChangeableUniquePtr CGeometryMessage::CloneMe(CompatibilityMode mode) con
 		return clonedPtr;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

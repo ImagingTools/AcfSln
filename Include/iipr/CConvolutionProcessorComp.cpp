@@ -82,7 +82,7 @@ bool DoConvolutionTemplate(
 		int x = 0;
 
 		const istd::CIntRanges* outputRangesPtr = resultMask.GetPixelRanges(y);
-		if (outputRangesPtr != NULL){
+		if (outputRangesPtr != nullptr){
 			Q_ASSERT(y >= halfKernelHeight);
 			Q_ASSERT(y < imageSize.GetY() - halfKernelHeight);
 
@@ -167,7 +167,7 @@ bool CConvolutionProcessorComp::DoConvolutionFilter(
 	istd::CIndex2d inputImageSize = inputImage.GetImageSize();
 	if (inputImageSize != outputImage.GetImageSize() || outputPixelFormat != outputImage.GetPixelFormat()){
 		if (!outputImage.CreateBitmap(iimg::IBitmap::PixelFormat(outputPixelFormat), inputImageSize)){
-			if (loggerPtr != NULL){
+			if (loggerPtr != nullptr){
 				loggerPtr->SendLogMessage(
 							istd::IInformationProvider::IC_ERROR,
 							0,
@@ -181,7 +181,7 @@ bool CConvolutionProcessorComp::DoConvolutionFilter(
 
 	istd::CIndex2d kernelSize = kernel.GetKernelSize();
 	if (kernelSize.IsSizeEmpty()){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -193,7 +193,7 @@ bool CConvolutionProcessorComp::DoConvolutionFilter(
 	}
 
 	if (inputImageSize.IsInside(kernelSize)){
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -349,7 +349,7 @@ bool CConvolutionProcessorComp::DoConvolutionFilter(
 		break;
 
 	default:
-		if (loggerPtr != NULL){
+		if (loggerPtr != nullptr){
 			loggerPtr->SendLogMessage(
 						istd::IInformationProvider::IC_ERROR,
 						0,
@@ -359,7 +359,7 @@ bool CConvolutionProcessorComp::DoConvolutionFilter(
 		return false;
 	}
 
-	if (loggerPtr != NULL){
+	if (loggerPtr != nullptr){
 		const iimg::CPixelFormatList& formatList = iimg::CPixelFormatList::GetInstance();
 		loggerPtr->SendLogMessage(
 					istd::IInformationProvider::IC_ERROR,

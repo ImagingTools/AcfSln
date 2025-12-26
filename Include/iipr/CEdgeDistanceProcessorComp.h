@@ -45,14 +45,14 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const iimg::IBitmap& image,
 				IFeaturesConsumer& results,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = nullptr) override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = nullptr) override;
 
 protected:
 	struct Point

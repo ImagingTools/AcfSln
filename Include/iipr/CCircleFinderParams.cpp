@@ -73,7 +73,7 @@ void CCircleFinderParams::SetMinOutlierDistance(double minOutlierDistance)
 
 const imath::IUnitInfo* CCircleFinderParams::GetDistanceUnitInfo() const
 {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -102,7 +102,7 @@ bool CCircleFinderParams::Serialize(iser::IArchive& archive)
 	static iser::CArchiveTag minOutlierDistanceTag("MinOutlierDistance", "Minimal outliers distance", iser::CArchiveTag::TT_LEAF);
 	static iser::CArchiveTag raysCountTag("RaysCount", "Number of projection rays", iser::CArchiveTag::TT_LEAF);
 
-	istd::CChangeNotifier notifier(archive.IsStoring()? NULL: this);
+	istd::CChangeNotifier notifier(archive.IsStoring()? nullptr: this);
 	Q_UNUSED(notifier);
 
 	bool retVal = true;

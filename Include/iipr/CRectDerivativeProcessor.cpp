@@ -43,7 +43,7 @@ bool CRectDerivativeProcessor::DoDerivativeProcessing(const imeas::IDataSequence
 	istd::CRange sourceProportionRange(0, 1);
 
 	const imeas::CSamplesInfo* sourceInfoPtr = dynamic_cast<const imeas::CSamplesInfo*>(source.GetSequenceInfo());
-	if (sourceInfoPtr != NULL){
+	if (sourceInfoPtr != nullptr){
 		const istd::CRange& logicalRange = sourceInfoPtr->GetLogicalSamplesRange();
 		if (logicalRange.IsValid()){
 			sourceProportionRange = logicalRange;
@@ -68,7 +68,7 @@ bool CRectDerivativeProcessor::DoDerivativeProcessing(const imeas::IDataSequence
 		const imeas::CGeneralDataSequence* inputSequencePtr = dynamic_cast<const imeas::CGeneralDataSequence*>(&source);
 		imeas::CGeneralDataSequence* resultsSequencePtr = dynamic_cast<imeas::CGeneralDataSequence*>(&results);
 
-		if ((channelsCount == 1) && (inputSequencePtr != NULL) && (resultsSequencePtr != NULL)){
+		if ((channelsCount == 1) && (inputSequencePtr != nullptr) && (resultsSequencePtr != nullptr)){
 			const double* channelData = inputSequencePtr->GetSamplesBuffer();
 			double* resultsData = resultsSequencePtr->GetSamplesBuffer();
 
@@ -105,7 +105,7 @@ iproc::IProcessor::TaskState CRectDerivativeProcessor::DoProcessing(
 	imeas::IDataSequence* outputProjectionPtr = dynamic_cast<imeas::IDataSequence*>(outputPtr);
 
 	double filterLength = 5.0;
-	if (paramsPtr != NULL){
+	if (paramsPtr != nullptr){
 		iprm::TParamsPtr<imeas::INumericValue> filterParamsPtr(paramsPtr, m_filterParamsId);
 		if (filterParamsPtr.IsValid()){
 			imath::CVarVector filterLengths = filterParamsPtr->GetValues();

@@ -79,18 +79,18 @@ bool CDirectionalOptimalPathSolver::Initialize(
 	istd::CIntRange lineRange(maskBoundingRect.GetLeft(), maskBoundingRect.GetRight());
 	for (int y = 0; y < imageSize.GetY(); ++y){
 		CostElement* costElementLinePtr = (CostElement*)m_workMap.GetLinePtr(y);
-		Q_ASSERT(costElementLinePtr != NULL);
+		Q_ASSERT(costElementLinePtr != nullptr);
 
 		int x = 0;
 
 		const istd::CIntRanges* outputRangesPtr = costBitmapMask.GetPixelRanges(y + maskBoundingRect.GetTop());
-		if (outputRangesPtr != NULL){
+		if (outputRangesPtr != nullptr){
 			const float* costOffsetBitmapLinePtr = (const float*)costOffsetBitmap.GetLinePtr(maskBoundingRect.GetTop() + y) + maskBoundingRect.GetLeft();
-			Q_ASSERT(costOffsetBitmapLinePtr != NULL);
+			Q_ASSERT(costOffsetBitmapLinePtr != nullptr);
 			const float* costXBitmapLinePtr = (const float*)costXBitmap.GetLinePtr(maskBoundingRect.GetTop() + y) + maskBoundingRect.GetLeft();
-			Q_ASSERT(costXBitmapLinePtr != NULL);
+			Q_ASSERT(costXBitmapLinePtr != nullptr);
 			const float* costYBitmapLinePtr = (const float*)costYBitmap.GetLinePtr(maskBoundingRect.GetTop() + y) + maskBoundingRect.GetLeft();
-			Q_ASSERT(costYBitmapLinePtr != NULL);
+			Q_ASSERT(costYBitmapLinePtr != nullptr);
 
 			istd::CIntRanges::RangeList rangeList;
 			outputRangesPtr->GetAsList(lineRange, rangeList);
@@ -391,7 +391,7 @@ double CDirectionalOptimalPathSolver::GetOptimalPath(const i2d::CVector2d& destP
 		const CostElement* linePtr = (const CostElement*)m_workMap.GetLinePtr(destIndex.GetY());
 		retVal = linePtr[destIndex.GetX()].costSum;
 
-		if (optimalPathPtr != NULL){
+		if (optimalPathPtr != nullptr){
 			istd::CIndex2d nodeIndex = destIndex;
 			while (nodeIndex != m_startIndex){
 				if (nodeIndex != destIndex){

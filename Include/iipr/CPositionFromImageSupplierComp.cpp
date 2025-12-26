@@ -21,7 +21,7 @@ namespace iipr
 int CPositionFromImageSupplierComp::GetFeaturesCount() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->GetFeaturesCount();
 	}
 
@@ -32,7 +32,7 @@ int CPositionFromImageSupplierComp::GetFeaturesCount() const
 const imeas::INumericValue& CPositionFromImageSupplierComp::GetFeature(int index) const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->GetFeature(index);
 	}
 
@@ -47,11 +47,11 @@ const imeas::INumericValue& CPositionFromImageSupplierComp::GetFeature(int index
 const i2d::ICalibration2d* CPositionFromImageSupplierComp::GetCalibration() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return m_outputCalibrationPtr.GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -68,7 +68,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 	if (		m_bitmapProviderCompPtr.IsValid() &&
 				m_processorCompPtr.IsValid()){
 		const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "PositionFinder"));
 
 			return WS_FAILED;
@@ -87,7 +87,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 			return WS_FAILED;
 		}
 
-		const i2d::ICalibration2d* inputCalibrationPtr = NULL;
+		const i2d::ICalibration2d* inputCalibrationPtr = nullptr;
 		if (m_calibrationProviderCompPtr.IsValid()){
 			inputCalibrationPtr = m_calibrationProviderCompPtr->GetCalibration();
 		}
@@ -97,7 +97,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 		}
 
 		const i2d::CObject2dBase* positionPtr = dynamic_cast<const i2d::CObject2dBase*>(&result.GetFeature(0));
-		if (positionPtr == NULL){
+		if (positionPtr == nullptr){
 			return WS_FAILED;
 		}
 
@@ -107,7 +107,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 		const i2d::CLine2d* linePtr = dynamic_cast<const i2d::CLine2d*>(positionPtr);
 		const i2d::CPolyline* polylinePtr = dynamic_cast<const i2d::CPolyline*>(positionPtr);
 
-		if (circlePtr != NULL){
+		if (circlePtr != nullptr){
 			i2d::CCircle transformedCircle;
 			if (!transformedCircle.CopyFrom(*circlePtr, istd::IChangeable::CM_CONVERT)){
 				return WS_FAILED;
@@ -130,7 +130,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 
 			AddMessage(messagePtr);
 		}
-		else if (linePtr != NULL){
+		else if (linePtr != nullptr){
 			i2d::CLine2d transformedLine;
 			if (!transformedLine.CopyFrom(*linePtr, istd::IChangeable::CM_CONVERT)){
 				return WS_FAILED;
@@ -152,7 +152,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 
 			AddMessage(messagePtr);
 		}
-		else if (polylinePtr != NULL){
+		else if (polylinePtr != nullptr){
 			i2d::CPolyline transformedLine;
 			if (!transformedLine.CopyFrom(*polylinePtr, istd::IChangeable::CM_CONVERT)){
 				return WS_FAILED;
@@ -196,7 +196,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 		}
 
 		i2d::CVector2d originalZeroPos(0, 0);
-		if (inputCalibrationPtr != NULL){
+		if (inputCalibrationPtr != nullptr){
 			originalZeroPos = inputCalibrationPtr->GetValueAt(i2d::CVector2d(0, 0));
 		}
 
@@ -204,7 +204,7 @@ iinsp::ISupplier::WorkStatus CPositionFromImageSupplierComp::ProduceObject(Produ
 		outputTransformPtr->Reset(resultVector - originalZeroPos);
 		m_outputCalibrationPtr.SetPtr(outputTransformPtr);
 
-		if (inputCalibrationPtr != NULL){
+		if (inputCalibrationPtr != nullptr){
 			m_outputCalibrationPtr = m_outputCalibrationPtr->CreateCombinedCalibration(*inputCalibrationPtr);
 		}
 

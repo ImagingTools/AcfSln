@@ -28,7 +28,7 @@ CColorPatternComparatorComp::CColorPatternComparatorComp()
 int CColorPatternComparatorComp::GetFeaturesCount() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return 1;
 	}
 
@@ -43,7 +43,7 @@ const imeas::INumericValue& CColorPatternComparatorComp::GetFeature(int I_IF_DEB
 	static imeas::CSimpleNumericValue emptyValue;
 
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return *productPtr;
 	}
 
@@ -159,14 +159,14 @@ iinsp::ISupplier::WorkStatus CColorPatternComparatorComp::ProduceObject(ProductT
 	}
 
 	const imeas::IDataSequence* workingHistogramPtr = m_workingPatternProviderCompPtr->GetDataSequence();
-	if (workingHistogramPtr == NULL){
+	if (workingHistogramPtr == nullptr){
 		SendErrorMessage(0, "Working histogram not available");
 
 		return WS_FAILED;
 	}
 
 	const imeas::IDataSequence* taughtHistogramPtr = m_taughtPatternProviderCompPtr->GetDataSequence();
-	if (taughtHistogramPtr == NULL){
+	if (taughtHistogramPtr == nullptr){
 		SendErrorMessage(0, "Taught histogram not available");
 
 		return WS_FAILED;
@@ -268,11 +268,11 @@ iinsp::ISupplier::WorkStatus CColorPatternComparatorComp::ProduceObject(ProductT
 	}
 	else if(channelsCount == 1){
 		const imeas::IDataStatistics* taughtStatisticsPtr = m_taughtStatisticsCached.GetChannelStatistics(0);
-		Q_ASSERT(taughtStatisticsPtr != NULL);
+		Q_ASSERT(taughtStatisticsPtr != nullptr);
 		double taughtMedian = taughtStatisticsPtr->GetMedian();
 
 		const imeas::IDataStatistics* workingStatisticsPtr = workingStatistics.GetChannelStatistics(0);
-		Q_ASSERT(taughtStatisticsPtr != NULL);
+		Q_ASSERT(taughtStatisticsPtr != nullptr);
 		double workingMedian = workingStatisticsPtr->GetMedian();
 
 		double medianDifference = fabs(workingMedian - taughtMedian);
@@ -353,9 +353,9 @@ bool CColorPatternComparatorComp::GetHsvColorValue(const imeas::IDataSequenceSta
 	const imeas::IDataStatistics* greenStatisticsPtr = statistics.GetChannelStatistics(1);
 	const imeas::IDataStatistics* blueStatisticsPtr = statistics.GetChannelStatistics(2);
 
-	Q_ASSERT(redStatisticsPtr != NULL);
-	Q_ASSERT(greenStatisticsPtr != NULL);
-	Q_ASSERT(blueStatisticsPtr != NULL);
+	Q_ASSERT(redStatisticsPtr != nullptr);
+	Q_ASSERT(greenStatisticsPtr != nullptr);
+	Q_ASSERT(blueStatisticsPtr != nullptr);
 
 	double redMedian = redStatisticsPtr->GetAverage();
 	double greenMedian = greenStatisticsPtr->GetAverage(); 

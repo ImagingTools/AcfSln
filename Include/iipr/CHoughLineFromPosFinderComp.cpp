@@ -37,7 +37,7 @@ iproc::IProcessor::TaskState CHoughLineFromPosFinderComp::DoConvertFeatures(
 		const imeas::INumericValue& feature = container.GetFeature(i);
 
 		const i2d::CPosition2d* positionPtr = dynamic_cast<const i2d::CPosition2d*>(&feature);
-		if (positionPtr != NULL){
+		if (positionPtr != nullptr){
 			positions.InsertNode(positionPtr->GetPosition());
 		}
 		else{
@@ -65,15 +65,15 @@ iproc::IProcessor::TaskState CHoughLineFromPosFinderComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const IFeaturesProvider* providerPtr = dynamic_cast<const IFeaturesProvider*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(providerPtr == NULL) ||
-				(consumerPtr == NULL)){
+	if (		(providerPtr == nullptr) ||
+				(consumerPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -95,13 +95,13 @@ int CHoughLineFromPosFinderComp::FindLines(
 	iprm::TParamsPtr<i2d::IObject2d> directionObjectPtr(paramsPtr, m_directionParamIdAttrPtr, m_defaultDirectionParamCompPtr, false);
 	if (directionObjectPtr.IsValid()){
 		const i2d::CLine2d* linePtr = dynamic_cast<const i2d::CLine2d*>(directionObjectPtr.GetPtr());
-		if (linePtr != NULL){
+		if (linePtr != nullptr){
 			m_direction = linePtr->GetDiffVector().GetNormalized();
 			m_directionAngleTolerance = I_PI * 0.1;
 		}
 		else{
 			const i2d::CPosition2d* posPtr = dynamic_cast<const i2d::CPosition2d*>(directionObjectPtr.GetPtr());
-			if (posPtr != NULL){
+			if (posPtr != nullptr){
 				m_direction = posPtr->GetPosition().GetNormalized();
 				m_directionAngleTolerance = I_PI * 0.1;
 			}

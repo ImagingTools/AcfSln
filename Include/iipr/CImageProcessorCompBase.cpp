@@ -47,14 +47,14 @@ iproc::IProcessor::TaskState CImageProcessorCompBase::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
 
-	if ((inputBitmapPtr == NULL) || (outputBitmapPtr == NULL)){
+	if ((inputBitmapPtr == nullptr) || (outputBitmapPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -65,7 +65,7 @@ iproc::IProcessor::TaskState CImageProcessorCompBase::DoProcessing(
 
 	if (*m_useInputCalibrationAttrPtr){
 		const i2d::ICalibration2d* inputCalibrationPtr = inputBitmapPtr->GetCalibration();
-		if (inputCalibrationPtr != NULL){
+		if (inputCalibrationPtr != nullptr){
 			istd::TUniqueInterfacePtr<i2d::ICalibration2d> outputCalibrationPtr;
 			outputCalibrationPtr.MoveCastedPtr(inputCalibrationPtr->CloneMe());
 

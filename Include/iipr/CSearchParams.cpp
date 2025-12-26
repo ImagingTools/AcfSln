@@ -27,7 +27,7 @@ CSearchParams::CSearchParams()
 
 const ISearchConstraints* CSearchParams::GetSearchConstraints() const
 {
-	return NULL;
+	return nullptr;
 }
 
 
@@ -138,7 +138,7 @@ bool CSearchParams::Serialize(iser::IArchive & archive)
 	static iser::CArchiveTag isScaleEnabledTag("ScaleEnabledTag", "Is scale range enabled", iser::CArchiveTag::TT_LEAF);
 	static iser::CArchiveTag nominalModelsCountTag("NominalModelsCount", "Minimum model matches count", iser::CArchiveTag::TT_LEAF);
 
-	istd::CChangeNotifier notifier(archive.IsStoring()? NULL: this);
+	istd::CChangeNotifier notifier(archive.IsStoring()? nullptr: this);
 	Q_UNUSED(notifier);
 
 	bool retVal = archive.BeginTag(angleRangeTag);

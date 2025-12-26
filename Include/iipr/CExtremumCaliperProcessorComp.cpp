@@ -25,7 +25,7 @@ bool CExtremumCaliperProcessorComp::DoCaliper(
 			const ICaliperParams* paramsPtr,
 			IFeaturesConsumer& results)
 {
-	if (paramsPtr == NULL){
+	if (paramsPtr == nullptr){
 		return false;
 	}
 
@@ -40,7 +40,7 @@ bool CExtremumCaliperProcessorComp::DoCaliper(
 	istd::CRange proportionRange(0, 1);
 
 	const imeas::CSamplesInfo* derivativeInfoPtr = dynamic_cast<const imeas::CSamplesInfo*>(derivative.GetSequenceInfo());
-	if (derivativeInfoPtr != NULL){
+	if (derivativeInfoPtr != nullptr){
 		const istd::CRange& logicalRange = derivativeInfoPtr->GetLogicalSamplesRange();
 		if (logicalRange.IsValid()){
 			proportionRange = logicalRange;
@@ -146,16 +146,16 @@ iproc::IProcessor::TaskState CExtremumCaliperProcessorComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* /*progressManagerPtr*/)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const imeas::IDataSequence* derivativePtr = dynamic_cast<const imeas::IDataSequence*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(derivativePtr == NULL) ||
-				(consumerPtr == NULL) ||
-				(paramsPtr == NULL)){
+	if (		(derivativePtr == nullptr) ||
+				(consumerPtr == nullptr) ||
+				(paramsPtr == nullptr)){
 		return TS_INVALID;
 	}
 

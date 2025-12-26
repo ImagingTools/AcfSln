@@ -28,11 +28,11 @@ CDifferenceBitmapSupplierComp::CDifferenceBitmapSupplierComp()
 const iimg::IBitmap* CDifferenceBitmapSupplierComp::GetBitmap() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->second.GetPtr();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -41,11 +41,11 @@ const iimg::IBitmap* CDifferenceBitmapSupplierComp::GetBitmap() const
 const i2d::ICalibration2d* CDifferenceBitmapSupplierComp::GetCalibration() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->first;
 	}
 	else{
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -79,17 +79,17 @@ iinsp::ISupplier::WorkStatus CDifferenceBitmapSupplierComp::ProduceObject(Produc
 	}
 	Q_ASSERT(result.second.IsValid());
 
-	result.first = NULL;
+	result.first = nullptr;
 
 	const iimg::IBitmap* firstBitmapPtr = m_firstBitmapProviderCompPtr->GetBitmap();
-	if (firstBitmapPtr == NULL){
+	if (firstBitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("First input image could not be provided"), "DifferenceBitmapSupplier"));
 
 		return WS_FAILED;
 	}
 
 	const iimg::IBitmap* secondBitmapPtr = m_secondBitmapProviderCompPtr->GetBitmap();
-	if (secondBitmapPtr == NULL){
+	if (secondBitmapPtr == nullptr){
 		AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("Second input image could not be provided"), "DifferenceBitmapSupplier"));
 
 		return WS_FAILED;

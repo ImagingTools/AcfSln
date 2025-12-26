@@ -14,7 +14,7 @@ namespace iipr
 int CEdgeDistancesSupplierComp::GetFeaturesCount() const
 {
 	const ProductType* productPtr = GetWorkProduct();
-	if (productPtr != NULL){
+	if (productPtr != nullptr){
 		return productPtr->GetFeaturesCount();
 	}
 
@@ -27,7 +27,7 @@ const imeas::INumericValue& CEdgeDistancesSupplierComp::GetFeature(int index) co
 	Q_ASSERT(index == 0);
 
 	const ProductType* productPtr = GetWorkProduct();
-	Q_ASSERT(productPtr != NULL);
+	Q_ASSERT(productPtr != nullptr);
 
 	return productPtr->GetFeature(index);
 }
@@ -44,7 +44,7 @@ iinsp::ISupplier::WorkStatus CEdgeDistancesSupplierComp::ProduceObject(ProductTy
 	if (		m_bitmapProviderCompPtr.IsValid() &&
 				m_processorCompPtr.IsValid()){
 		const iimg::IBitmap* bitmapPtr = m_bitmapProviderCompPtr->GetBitmap();
-		if (bitmapPtr == NULL){
+		if (bitmapPtr == nullptr){
 			AddMessage(new ilog::CMessage(ilog::CMessage::IC_ERROR, 0, QObject::tr("No input image"), "EdgeDistances"));
 
 			return WS_FAILED;

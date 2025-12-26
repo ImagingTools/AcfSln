@@ -17,7 +17,7 @@ const i2d::ICalibration2d* CSelectableCalibrationProviderComp::GetCalibration() 
 			// Try to select a calibration by unique ID:
 			const iprm::IOptionsList* calibrationListPtr = m_calibrationSelectionCompPtr->GetSelectionConstraints();
 			const iprm::IOptionsList* foundCalibrationListPtr = m_multiCalibrationProviderCompPtr->GetCalibrationSelectionContraints();
-			if ((calibrationListPtr != NULL) && (foundCalibrationListPtr != NULL)){
+			if ((calibrationListPtr != nullptr) && (foundCalibrationListPtr != nullptr)){
 				QByteArray referenceId = calibrationListPtr->GetOptionId(selectedIndex);
 				for (int foundCalibrationIndex = 0; foundCalibrationIndex < foundCalibrationListPtr->GetOptionsCount(); ++foundCalibrationIndex){
 					QByteArray calibrationId = foundCalibrationListPtr->GetOptionId(foundCalibrationIndex);
@@ -40,7 +40,7 @@ const i2d::ICalibration2d* CSelectableCalibrationProviderComp::GetCalibration() 
 		return m_defaultCalibrationProviderCompPtr->GetCalibration();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 

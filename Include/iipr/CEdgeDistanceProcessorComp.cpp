@@ -26,7 +26,7 @@ iproc::IProcessor::TaskState CEdgeDistanceProcessorComp::DoExtractFeatures(
 			IFeaturesConsumer& results,
 			ibase::IProgressManager* progressManagerPtr)
 {
-	if (!m_featuresMapperCompPtr.IsValid() || (paramsPtr == NULL)){
+	if (!m_featuresMapperCompPtr.IsValid() || (paramsPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -56,7 +56,7 @@ iproc::IProcessor::TaskState CEdgeDistanceProcessorComp::DoExtractFeatures(
 
 	for (int lineIndex = 0; lineIndex < foundLinesCount; lineIndex++){
 		if (progressLoggerPtr != nullptr){
-			Q_ASSERT(progressManagerPtr != NULL);
+			Q_ASSERT(progressManagerPtr != nullptr);
 
 			progressLoggerPtr->OnProgress(double(lineIndex) / foundLinesCount);
 
@@ -87,15 +87,15 @@ iproc::IProcessor::TaskState CEdgeDistanceProcessorComp::DoProcessing(
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* progressManagerPtr)
 {
-	if (outputPtr == NULL){
+	if (outputPtr == nullptr){
 		return TS_OK;
 	}
 
 	const iimg::IBitmap* imagePtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	IFeaturesConsumer* consumerPtr = dynamic_cast<IFeaturesConsumer*>(outputPtr);
 
-	if (		(imagePtr == NULL) ||
-				(consumerPtr == NULL)){
+	if (		(imagePtr == nullptr) ||
+				(consumerPtr == nullptr)){
 		return TS_INVALID;
 	}
 
@@ -114,14 +114,14 @@ bool CEdgeDistanceProcessorComp::CalculateCaliperLines(
 			i2d::CVector2d& center)
 {
 	const iprm::CParamsSet* setPtr = dynamic_cast<const iprm::CParamsSet*>(&aoiObject);
-	if (setPtr != NULL){
+	if (setPtr != nullptr){
 		int aoisCount = 0;
 
 		const iprm::CParamsSet::ParameterInfos& infos = setPtr->GetParameterInfos();
 		int paramsCount = infos.GetCount();
 		for (int i = 0; i < paramsCount; ++i){
 			const iprm::CParamsSet::ParameterInfo* infoPtr = infos.GetAt(i);
-			if ((infoPtr != NULL) && infoPtr->parameterPtr.IsValid()){
+			if ((infoPtr != nullptr) && infoPtr->parameterPtr.IsValid()){
 				if (!CalculateCaliperLines(*infoPtr->parameterPtr, params, image, caliperLines, projectionLine, center)){
 					return false;
 				}
@@ -139,7 +139,7 @@ bool CEdgeDistanceProcessorComp::CalculateCaliperLines(
 	workingCaliperParamsSet.SetSlaveSet(&params);
 
 	const i2d::CLine2d* lineAoiPtr = dynamic_cast<const i2d::CLine2d*>(&aoiObject);
-	if (lineAoiPtr != NULL){
+	if (lineAoiPtr != nullptr){
 		// Set projection line for caliper calculation:
 		projectionLine.CopyFrom(*lineAoiPtr);
 		projectionLine.SetCalibration(lineAoiPtr->GetCalibration());
@@ -162,13 +162,13 @@ bool CEdgeDistanceProcessorComp::CalculateCaliperLines(
 	}
 
 	const i2d::CAnnulus* annulusAoiPtr = dynamic_cast<const i2d::CAnnulus*>(&aoiObject);
-	if (annulusAoiPtr != NULL){
+	if (annulusAoiPtr != nullptr){
 		projectionLine.SetCalibration(annulusAoiPtr->GetCalibration());
 
 		double beginAngle = 0;
 		double endAngle = 2 * I_PI;
 		const i2d::CAnnulusSegment* segmentPtr = dynamic_cast<const i2d::CAnnulusSegment*>(annulusAoiPtr);
-		if (segmentPtr != NULL){
+		if (segmentPtr != nullptr){
 			beginAngle = segmentPtr->GetBeginAngle();
 			endAngle = segmentPtr->GetEndAngle();
 		}
@@ -247,7 +247,7 @@ void CEdgeDistanceProcessorComp::SetCaliperResults(
 
 	if (featuresCount > 0){ 
 		const CCaliperFeature* featurePtr = dynamic_cast<const CCaliperFeature*>(&container.GetFeature(0));
-		if (featurePtr != NULL){
+		if (featurePtr != nullptr){
 			Point point;
 			point.weight = featurePtr->GetWeight();
 			m_featuresMapperCompPtr->GetImagePosition(*featurePtr, &params, point.position);

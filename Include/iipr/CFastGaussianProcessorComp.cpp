@@ -109,7 +109,7 @@ bool DoGrayConvolution(
 
 	i2d::CRect regionRect(imageSize);
 	iimg::CScanlineMask bitmapRegion;
-	if (aoiPtr != NULL){
+	if (aoiPtr != nullptr){
 		i2d::CRect clipArea(imageSize);
 		if (!bitmapRegion.CreateFromGeometry(*aoiPtr, &clipArea)){
 			return false;
@@ -189,7 +189,7 @@ bool DoFloatConvolution(
 
 	i2d::CRect regionRect(imageSize);
 	iimg::CScanlineMask bitmapRegion;
-	if (aoiPtr != NULL){
+	if (aoiPtr != nullptr){
 		i2d::CRect clipArea(imageSize);
 		if (!bitmapRegion.CreateFromGeometry(*aoiPtr, &clipArea)){
 			return false;
@@ -249,7 +249,7 @@ bool CFastGaussianProcessorComp::ProcessImageRegion(
 				istd::IChangeable* outputPtr) const
 {
 	iimg::IBitmap* outputBitmapPtr = dynamic_cast<iimg::IBitmap*>(outputPtr);
-	if (outputBitmapPtr == NULL){
+	if (outputBitmapPtr == nullptr){
 		SendCriticalMessage(0, "Expected interface for the output object is not supported");
 
 		return false;
