@@ -75,22 +75,27 @@ Both Windows and Linux builds are triggered in parallel for each event.
 ## Build Information Passed to TeamCity
 
 The workflow passes the following information to TeamCity:
-- **Branch Name** (via `<branchName>` element): The branch to build
+- **Branch Name** (via `branchName` property in JSON): The branch to build
   - For pull requests: `<pr-branch-name>` (e.g., `feature-branch`)
   - For push events: `<branch-name>` (e.g., `main`)
   - This tells TeamCity which branch to check out and build
-- `env.GIT_BRANCH`: The full Git branch reference (as a build property)
-  - For pull requests: `refs/heads/<pr-branch-name>` (e.g., `refs/heads/feature-branch`)
-  - For push events: The pushed ref (e.g., `refs/heads/main`)
+- `env.GIT_BRANCH`: The branch name (as a build property)
+  - For pull requests: `<pr-branch-name>` (e.g., `feature-branch`)
+  - For push events: The branch name (e.g., `main`)
 - `env.GIT_COMMIT`: The Git commit SHA
 
 The branch name is the primary mechanism that tells TeamCity which branch to build. The `env.GIT_BRANCH` and `env.GIT_COMMIT` properties are available as environment variables in your TeamCity build configuration if needed.
 
 ## Timeout
 
-The workflow will wait up to 1 hour (3600 seconds) for the TeamCity build to complete. If the build takes longer, the workflow will timeout and fail.
+The workflow will wait up to 90 minutes for the TeamCity build to complete. If the build takes longer, the workflow will timeout and fail.
 
-You can adjust this by modifying the `MAX_WAIT` variable in the workflow file.
+The timeout consists of two phases:
+- **Queued phase**: Maximum 30 minutes (1800 seconds, controlled by `MAX_QUEUED_SECONDS`)
+- **Running phase**: Maximum 60 minutes (3600 seconds, controlled by `MAX_RUNNING_SECONDS`)
+- **Overall job timeout**: 90 minutes (controlled by `timeout-minutes: 90`)
+
+You can adjust these timeouts by modifying the respective variables in the workflow file.
 
 ## Troubleshooting
 
@@ -104,8 +109,8 @@ You can adjust this by modifying the `MAX_WAIT` variable in the workflow file.
 - Ensure the TeamCity server accepts REST API requests from GitHub Actions runners
 
 ### "Timeout waiting for TeamCity build to complete"
-- The build is taking longer than 1 hour
-- Increase the `MAX_WAIT` value in the workflow file
+- The build is taking longer than 90 minutes
+- Increase the `timeout-minutes` setting (overall job timeout) or the specific phase timeouts (`MAX_QUEUED_SECONDS` for queue time, `MAX_RUNNING_SECONDS` for build time) in the workflow file
 - Or optimize your TeamCity build to complete faster
 
 ### "TeamCity build failed"
