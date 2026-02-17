@@ -25,10 +25,10 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN
 	QApplication::setStyle("fusion");
-	qputenv("QT_QPA_PLATFORM", "windows:darkmode=0");
 #endif
 	CCompositor instance(NULL, true);
 
+	qputenv("QT_QPA_PLATFORM", "windows:darkmode=0");
 	QGuiApplication::setDesktopSettingsAware(false);
 
 	ibase::IApplication* applicationPtr = instance.GetInterface<ibase::IApplication>();
