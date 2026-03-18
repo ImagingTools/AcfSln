@@ -57,6 +57,10 @@ void CDocumentProcessingManagerComp::DoProcessingToOutput(const istd::IChangeabl
 
 	istd::CChangeNotifier changePtr(outputDocumentPtr.GetPtr());
 
+	if (m_progressManagerCompPtr.IsValid()) {
+		m_progressManagerCompPtr->ResetProgressManager();
+	}
+
 	istd::CGeneralTimeStamp timer;
 
 	int retVal = m_processorCompPtr->DoProcessing(
