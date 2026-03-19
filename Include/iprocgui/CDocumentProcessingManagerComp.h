@@ -28,11 +28,14 @@ public:
 
 protected:
 	// reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
-	void DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId);
+	void DoDocumentProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				ibase::IProgressManager* progressManagerPtr);
 
 private:
-	void DoProcessingToOutput(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId);
-	void DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr);
+	void DoProcessingToOutput(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId, ibase::IProgressManager* progressManagerPtr);
+	void DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr, ibase::IProgressManager* progressManagerPtr);
 
 private:
 	I_ATTR(bool, m_inPlaceProcessingAttrPtr);

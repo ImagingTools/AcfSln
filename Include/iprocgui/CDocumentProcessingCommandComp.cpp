@@ -17,7 +17,7 @@ namespace iprocgui
 
 // reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
 
-void CDocumentProcessingCommandComp::DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& /*documentTypeId*/)
+void CDocumentProcessingCommandComp::DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& /*documentTypeId*/, ibase::IProgressManager* progressManagerPtr)
 {
 	if (!m_outputDataCompPtr.IsValid()){
 		SendErrorMessage(0, "Processing result data model not set");
@@ -33,7 +33,7 @@ void CDocumentProcessingCommandComp::DoDocumentProcessing(const istd::IChangeabl
 				m_paramsSetCompPtr.GetPtr(),
 				inputDocumentPtr,
 				m_outputDataCompPtr.GetPtr(),
-				m_progressManagerCompPtr.GetPtr());
+				progressManagerPtr);
 	
 	if (retVal != iproc::IProcessor::TS_OK){
 		SendErrorMessage(0, "Processing was failed", "Document processing manager");
