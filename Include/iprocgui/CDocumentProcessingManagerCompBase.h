@@ -74,7 +74,10 @@ public:
 	/**
 		Process the current document.
 	*/
-	virtual void DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId) = 0;
+	virtual void DoDocumentProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				ibase::IProgressManager* progressManagerPtr) = 0;
 
 protected:
 	// reimplemented (ibase::TDesignSchemaHandlerWrap)
@@ -90,7 +93,6 @@ protected:
 	I_REF(idoc::IDocumentManager, m_documentManagerCompPtr);
 	I_REF(imod::IModel, m_documentManagerModelCompPtr);
 	I_REF(iproc::IProcessor, m_processorCompPtr);
-	I_REF(ibase::IProgressManager, m_progressManagerCompPtr);
 	I_REF(iprm::IParamsSet, m_paramsSetCompPtr);
 	I_REF(iqtgui::IGuiObject, m_paramsGuiCompPtr);
 	I_TEXTATTR(m_commandNameAttrPtr);
@@ -105,6 +107,9 @@ protected:
 	iqtgui::CHierarchicalCommand m_processingMenu;
 	iqtgui::CHierarchicalCommand m_rootCommands;
 	iqtgui::CHierarchicalCommand m_processingCommand;
+
+private:
+	I_REF(ibase::IProgressManager, m_progressManagerCompPtr);
 };
 
 

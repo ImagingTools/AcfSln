@@ -15,20 +15,26 @@ namespace iprocgui
 
 // reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
 
-void CDocumentProcessingManagerComp::DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId)
+void CDocumentProcessingManagerComp::DoDocumentProcessing(
+			const istd::IChangeable* inputDocumentPtr,
+			const QByteArray& documentTypeId,
+			ibase::IProgressManager* progressManagerPtr)
 {
 	if (m_inPlaceProcessingAttrPtr.IsValid() && *m_inPlaceProcessingAttrPtr){
-		DoInPlaceProcessing(const_cast<istd::IChangeable*>(inputDocumentPtr));
+		DoInPlaceProcessing(const_cast<istd::IChangeable*>(inputDocumentPtr), progressManagerPtr);
 	}
 	else{
-		DoProcessingToOutput(inputDocumentPtr, documentTypeId);
+		DoProcessingToOutput(inputDocumentPtr, documentTypeId, progressManagerPtr);
 	}
 }
 
 
 // private methods
 
-void CDocumentProcessingManagerComp::DoProcessingToOutput(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId)
+void CDocumentProcessingManagerComp::DoProcessingToOutput(
+			const istd::IChangeable* inputDocumentPtr,
+			const QByteArray& documentTypeId,
+			ibase::IProgressManager* progressManagerPtr)
 {
 	istd::IChangeableSharedPtr outputDocumentPtr;
 	bool ignoredFlag = false;
@@ -57,8 +63,8 @@ void CDocumentProcessingManagerComp::DoProcessingToOutput(const istd::IChangeabl
 
 	istd::CChangeNotifier changePtr(outputDocumentPtr.GetPtr());
 
-	if (m_progressManagerCompPtr.IsValid()) {
-		m_progressManagerCompPtr->ResetProgressManager();
+	if (progressManagerPtr != nullptr){
+		progressManagerPtr->ResetProgressManager();
 	}
 
 	istd::CGeneralTimeStamp timer;
@@ -67,7 +73,7 @@ void CDocumentProcessingManagerComp::DoProcessingToOutput(const istd::IChangeabl
 				m_paramsSetCompPtr.GetPtr(),
 				inputDocumentPtr,
 				outputDocumentPtr.GetPtr(),
-				m_progressManagerCompPtr.GetPtr());
+				progressManagerPtr);
 
 	double processingTime = timer.GetElapsed();
 
@@ -93,7 +99,7 @@ void CDocumentProcessingManagerComp::DoProcessingToOutput(const istd::IChangeabl
 }
 
 
-void CDocumentProcessingManagerComp::DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr)
+void CDocumentProcessingManagerComp::DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr, ibase::IProgressManager* progressManagerPtr)
 {
 	if (inputDocumentPtr == NULL){
 		SendErrorMessage(0, "No input document", "Document processing manager");
@@ -110,8 +116,8 @@ void CDocumentProcessingManagerComp::DoInPlaceProcessing(istd::IChangeable* inpu
 		return;
 	}
 
-	if (m_progressManagerCompPtr.IsValid()) {
-		m_progressManagerCompPtr->ResetProgressManager();
+	if (progressManagerPtr != nullptr){
+		progressManagerPtr->ResetProgressManager();
 	}
 
 	istd::CGeneralTimeStamp timer;
@@ -120,7 +126,7 @@ void CDocumentProcessingManagerComp::DoInPlaceProcessing(istd::IChangeable* inpu
 				m_paramsSetCompPtr.GetPtr(),
 				inputDocumentPtr,
 				outputDocumentPtr.GetPtr(),
-				m_progressManagerCompPtr.GetPtr());
+				progressManagerPtr);
 
 	double processingTime = timer.GetElapsed();
 

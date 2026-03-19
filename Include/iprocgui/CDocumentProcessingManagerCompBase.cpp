@@ -7,6 +7,7 @@
 
 // ACF includes
 #include <iqtgui/CGuiComponentDialog.h>
+#include <iqtgui/CSubtaskProgressDialog.h>
 
 
 namespace iprocgui
@@ -193,8 +194,21 @@ void CDocumentProcessingManagerCompBase::OnDoProcessing()
 	// Force model update:
 	dialogPtr.Reset();
 
+	// Setup working progress manager:
+	ibase::IProgressManager* progressPtr = m_progressManagerCompPtr.GetPtr();
+
+	// If no user-specific progress manager was set, use the standard one:
+	iqtgui::CSubtaskProgressDialog progressDialog(tr("Progress"), tr(""));
+	if (!m_progressManagerCompPtr.IsValid()){
+		progressPtr = &progressDialog;
+
+		progressDialog.exec();
+	}
+
 	// Process document:
-	DoDocumentProcessing(inputDocumentPtr, documentTypeId);
+	DoDocumentProcessing(inputDocumentPtr, documentTypeId, &progressDialog);
+
+	progressDialog.close();
 }
 
 
