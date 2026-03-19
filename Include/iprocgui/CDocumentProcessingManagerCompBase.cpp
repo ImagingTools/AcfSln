@@ -3,48 +3,14 @@
 
 
 // Qt includes
-#include <QtCore/QThread>
 #include <QtWidgets/QMessageBox>
 
 // ACF includes
 #include <iqtgui/CGuiComponentDialog.h>
 #include <iqtgui/CSubtaskProgressDialog.h>
 
-
-namespace
-{
-
-
-class CDocumentProcessingWorkerThread: public QThread
-{
-public:
-	CDocumentProcessingWorkerThread(
-		iprocgui::CDocumentProcessingManagerCompBase* managerPtr,
-		const istd::IChangeable* inputDocumentPtr,
-		const QByteArray& documentTypeId,
-		ibase::IProgressManager* progressPtr)
-		: m_managerPtr(managerPtr)
-		, m_inputDocumentPtr(inputDocumentPtr)
-		, m_documentTypeId(documentTypeId)
-		, m_progressPtr(progressPtr)
-	{
-	}
-
-protected:
-	void run() override
-	{
-		m_managerPtr->DoDocumentProcessing(m_inputDocumentPtr, m_documentTypeId, m_progressPtr);
-	}
-
-private:
-	iprocgui::CDocumentProcessingManagerCompBase* m_managerPtr;
-	const istd::IChangeable* m_inputDocumentPtr;
-	QByteArray m_documentTypeId;
-	ibase::IProgressManager* m_progressPtr;
-};
-
-
-} // anonymous namespace
+// AcfSln includes
+#include <iprocgui/CDocumentProcessingWorkerThread.h>
 
 
 namespace iprocgui
@@ -243,11 +209,13 @@ void CDocumentProcessingManagerCompBase::OnDoProcessing()
 	// Process document on a worker thread:
 	CDocumentProcessingWorkerThread workerThread(this, inputDocumentPtr, documentTypeId, progressPtr);
 
+	if (!m_progressManagerCompPtr.IsValid()){
+		connect(&workerThread, SIGNAL(finished()), &progressDialog, SLOT(close()));
+	}
+
 	workerThread.start();
 
 	if (!m_progressManagerCompPtr.IsValid()){
-		connect(&workerThread, SIGNAL(finished()), &progressDialog, SLOT(close()));
-
 		progressDialog.exec();
 	}
 
