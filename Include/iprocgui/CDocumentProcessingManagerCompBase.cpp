@@ -9,6 +9,9 @@
 #include <iqtgui/CGuiComponentDialog.h>
 #include <iqtgui/CSubtaskProgressDialog.h>
 
+// AcfSln includes
+#include <iprocgui/CDocumentProcessingWorkerThread.h>
+
 
 namespace iprocgui
 {
@@ -201,14 +204,22 @@ void CDocumentProcessingManagerCompBase::OnDoProcessing()
 	iqtgui::CSubtaskProgressDialog progressDialog(tr("Progress"), tr(""));
 	if (!m_progressManagerCompPtr.IsValid()){
 		progressPtr = &progressDialog;
+	}
 
+	// Process document on a worker thread:
+	CDocumentProcessingWorkerThread workerThread(this, inputDocumentPtr, documentTypeId, progressPtr);
+
+	if (!m_progressManagerCompPtr.IsValid()){
+		connect(&workerThread, SIGNAL(finished()), &progressDialog, SLOT(close()));
+	}
+
+	workerThread.start();
+
+	if (!m_progressManagerCompPtr.IsValid()){
 		progressDialog.exec();
 	}
 
-	// Process document:
-	DoDocumentProcessing(inputDocumentPtr, documentTypeId, &progressDialog);
-
-	progressDialog.close();
+	workerThread.wait();
 }
 
 
