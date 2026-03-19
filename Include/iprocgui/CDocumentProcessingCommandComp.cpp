@@ -4,7 +4,6 @@
 
 // ACF includes
 #include <istd/CChangeNotifier.h>
-#include <istd/CGeneralTimeStamp.h>
 
 #include <iqtgui/CGuiComponentDialog.h>
 
@@ -17,35 +16,43 @@ namespace iprocgui
 
 // reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
 
-void CDocumentProcessingCommandComp::DoDocumentProcessing(const istd::IChangeable* inputDocumentPtr, const QByteArray& /*documentTypeId*/, ibase::IProgressManager* progressManagerPtr)
+bool CDocumentProcessingCommandComp::PrepareProcessing(
+			const istd::IChangeable* /*inputDocumentPtr*/,
+			const QByteArray& /*documentTypeId*/,
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable*& outputDocumentPtr,
+			istd::IChangeable*& changeTargetPtr)
 {
 	if (!m_outputDataCompPtr.IsValid()){
 		SendErrorMessage(0, "Processing result data model not set");
 
-		return;
+		return false;
 	}
 
-	istd::CChangeNotifier changePtr(m_outputDataCompPtr.GetPtr());
+	outputDocumentPtr = m_outputDataCompPtr.GetPtr();
+	changeTargetPtr = m_outputDataCompPtr.GetPtr();
 
-	istd::CGeneralTimeStamp timer;
+	return true;
+}
 
-	int retVal = m_processorCompPtr->DoProcessing(
-				m_paramsSetCompPtr.GetPtr(),
-				inputDocumentPtr,
-				m_outputDataCompPtr.GetPtr(),
-				progressManagerPtr);
-	
-	if (retVal != iproc::IProcessor::TS_OK){
+
+void CDocumentProcessingCommandComp::FinalizeProcessing(
+			const istd::IChangeable* /*inputDocumentPtr*/,
+			const QByteArray& /*documentTypeId*/,
+			istd::IChangeable* /*outputDocumentPtr*/,
+			int resultCode,
+			double processingTime,
+			istd::CChangeNotifier& changeNotifier)
+{
+	if (resultCode != iproc::IProcessor::TS_OK){
 		SendErrorMessage(0, "Processing was failed", "Document processing manager");
 
 		return;
 	}
 
-	double processingTime = timer.GetElapsed();
-
 	SendInfoMessage(0, QObject::tr("Processing time: %1 ms").arg(processingTime * 1000, 2, 'f', 2), "Document processing manager");
 
-	changePtr.Reset();
+	changeNotifier.Reset();
 
 	// show results in the dialog:
 	istd::TDelPtr<iqtgui::CGuiComponentDialog> dialogPtr;

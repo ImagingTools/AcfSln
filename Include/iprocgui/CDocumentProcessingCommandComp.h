@@ -25,10 +25,19 @@ public:
 
 protected:
 	// reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
-	void DoDocumentProcessing(
+	bool PrepareProcessing(
 				const istd::IChangeable* inputDocumentPtr,
 				const QByteArray& documentTypeId,
-				ibase::IProgressManager* progressManagerPtr) override;
+				ibase::IProgressManager* progressManagerPtr,
+				istd::IChangeable*& outputDocumentPtr,
+				istd::IChangeable*& changeTargetPtr) override;
+	void FinalizeProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				istd::IChangeable* outputDocumentPtr,
+				int resultCode,
+				double processingTime,
+				istd::CChangeNotifier& changeNotifier) override;
 
 private:
 	I_REF(istd::IChangeable, m_outputDataCompPtr);
