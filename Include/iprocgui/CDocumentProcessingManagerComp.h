@@ -4,6 +4,7 @@
 
 
 // ACF includes
+#include <istd/IChangeable.h>
 #include <iprocgui/CDocumentProcessingManagerCompBase.h>
 
 
@@ -28,17 +29,52 @@ public:
 
 protected:
 	// reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
-	void DoDocumentProcessing(
+	bool PrepareProcessing(
 				const istd::IChangeable* inputDocumentPtr,
 				const QByteArray& documentTypeId,
-				ibase::IProgressManager* progressManagerPtr);
+				ibase::IProgressManager* progressManagerPtr,
+				istd::IChangeable*& outputDocumentPtr,
+				istd::IChangeable*& changeTargetPtr) override;
+	void FinalizeProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				istd::IChangeable* outputDocumentPtr,
+				int resultCode,
+				double processingTime,
+				istd::CChangeNotifier& changeNotifier) override;
 
 private:
-	void DoProcessingToOutput(const istd::IChangeable* inputDocumentPtr, const QByteArray& documentTypeId, ibase::IProgressManager* progressManagerPtr);
-	void DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr, ibase::IProgressManager* progressManagerPtr);
+	bool PrepareProcessingToOutput(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				ibase::IProgressManager* progressManagerPtr,
+				istd::IChangeable*& outputDocumentPtr,
+				istd::IChangeable*& changeTargetPtr);
+	bool PrepareInPlaceProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				ibase::IProgressManager* progressManagerPtr,
+				istd::IChangeable*& outputDocumentPtr,
+				istd::IChangeable*& changeTargetPtr);
+
+	void FinalizeProcessingToOutput(
+				istd::IChangeable* outputDocumentPtr,
+				int resultCode,
+				double processingTime,
+				istd::CChangeNotifier& changeNotifier);
+	void FinalizeInPlaceProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				istd::IChangeable* outputDocumentPtr,
+				int resultCode,
+				double processingTime,
+				istd::CChangeNotifier& changeNotifier);
 
 private:
 	I_ATTR(bool, m_inPlaceProcessingAttrPtr);
+
+	// State preserved between PrepareProcessing and FinalizeProcessing:
+	istd::IChangeableSharedPtr m_pendingOutputSharedPtr;
+	istd::IChangeableUniquePtr m_pendingOutputUniquePtr;
+	int m_pendingDocumentIndex;
 };
 
 

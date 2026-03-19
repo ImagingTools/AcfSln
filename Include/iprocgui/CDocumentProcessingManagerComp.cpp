@@ -4,7 +4,6 @@
 
 // ACF includes
 #include <istd/CChangeNotifier.h>
-#include <istd/CGeneralTimeStamp.h>
 
 
 namespace iprocgui
@@ -15,134 +14,174 @@ namespace iprocgui
 
 // reimplemented (iprocgui::CDocumentProcessingManagerCompBase)
 
-void CDocumentProcessingManagerComp::DoDocumentProcessing(
+bool CDocumentProcessingManagerComp::PrepareProcessing(
 			const istd::IChangeable* inputDocumentPtr,
 			const QByteArray& documentTypeId,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable*& outputDocumentPtr,
+			istd::IChangeable*& changeTargetPtr)
 {
 	if (m_inPlaceProcessingAttrPtr.IsValid() && *m_inPlaceProcessingAttrPtr){
-		DoInPlaceProcessing(const_cast<istd::IChangeable*>(inputDocumentPtr), progressManagerPtr);
+		return PrepareInPlaceProcessing(inputDocumentPtr, progressManagerPtr, outputDocumentPtr, changeTargetPtr);
 	}
 	else{
-		DoProcessingToOutput(inputDocumentPtr, documentTypeId, progressManagerPtr);
+		return PrepareProcessingToOutput(inputDocumentPtr, documentTypeId, progressManagerPtr, outputDocumentPtr, changeTargetPtr);
+	}
+}
+
+
+void CDocumentProcessingManagerComp::FinalizeProcessing(
+			const istd::IChangeable* inputDocumentPtr,
+			const QByteArray& documentTypeId,
+			istd::IChangeable* outputDocumentPtr,
+			int resultCode,
+			double processingTime,
+			istd::CChangeNotifier& changeNotifier)
+{
+	if (m_inPlaceProcessingAttrPtr.IsValid() && *m_inPlaceProcessingAttrPtr){
+		FinalizeInPlaceProcessing(inputDocumentPtr, outputDocumentPtr, resultCode, processingTime, changeNotifier);
+	}
+	else{
+		FinalizeProcessingToOutput(outputDocumentPtr, resultCode, processingTime, changeNotifier);
 	}
 }
 
 
 // private methods
 
-void CDocumentProcessingManagerComp::DoProcessingToOutput(
-			const istd::IChangeable* inputDocumentPtr,
+bool CDocumentProcessingManagerComp::PrepareProcessingToOutput(
+			const istd::IChangeable* /*inputDocumentPtr*/,
 			const QByteArray& documentTypeId,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable*& outputDocumentPtr,
+			istd::IChangeable*& changeTargetPtr)
 {
-	istd::IChangeableSharedPtr outputDocumentPtr;
 	bool ignoredFlag = false;
-	if (!m_documentManagerCompPtr->InsertNewDocument(documentTypeId, false, "", &outputDocumentPtr, true, &ignoredFlag)){
+	if (!m_documentManagerCompPtr->InsertNewDocument(documentTypeId, false, "", &m_pendingOutputSharedPtr, true, &ignoredFlag)){
 		if (!ignoredFlag){
 			SendErrorMessage(0, "Output document could not be created", "Document processing manager");
 		}
 
-		return;
+		return false;
 	}
 
-	Q_ASSERT(outputDocumentPtr.IsValid());
+	Q_ASSERT(m_pendingOutputSharedPtr.IsValid());
 
-	int documentIndex = -1;
+	m_pendingDocumentIndex = -1;
 
 	int documentCounts = m_documentManagerCompPtr->GetDocumentsCount();
 	for (int docIndex = 0; docIndex < documentCounts; docIndex++){
 		istd::IChangeable& document = m_documentManagerCompPtr->GetDocumentFromIndex(docIndex);
-		if (&document == outputDocumentPtr.GetPtr()){
-			documentIndex = docIndex;
+		if (&document == m_pendingOutputSharedPtr.GetPtr()){
+			m_pendingDocumentIndex = docIndex;
 			break;
 		}
 	}
 
-	Q_ASSERT(documentIndex >= 0);
-
-	istd::CChangeNotifier changePtr(outputDocumentPtr.GetPtr());
+	Q_ASSERT(m_pendingDocumentIndex >= 0);
 
 	if (progressManagerPtr != nullptr){
 		progressManagerPtr->ResetProgressManager();
 	}
 
-	istd::CGeneralTimeStamp timer;
+	outputDocumentPtr = m_pendingOutputSharedPtr.GetPtr();
+	changeTargetPtr = m_pendingOutputSharedPtr.GetPtr();
 
-	int retVal = m_processorCompPtr->DoProcessing(
-				m_paramsSetCompPtr.GetPtr(),
-				inputDocumentPtr,
-				outputDocumentPtr.GetPtr(),
-				progressManagerPtr);
-
-	double processingTime = timer.GetElapsed();
-
-	SendVerboseMessage(QObject::tr("Processing time: %1 ms").arg(processingTime, 2, 'f', 2), "Document processing manager");
-
-	if (retVal != iproc::IProcessor::TS_OK){
-		SendErrorMessage(0, "Processing was failed", "Document processing manager");
-
-		changePtr.Abort();
-
-		m_documentManagerCompPtr->CloseDocument(documentIndex, true);
-	}
-	else{
-		istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->AddViewToDocument(*outputDocumentPtr);
-		if (viewPtr == NULL){
-			SendErrorMessage(0, "Output view could not be created", "Document processing manager");
-
-			changePtr.Abort();
-	
-			m_documentManagerCompPtr->CloseDocument(documentIndex, true);
-		}
-	}
+	return true;
 }
 
 
-void CDocumentProcessingManagerComp::DoInPlaceProcessing(istd::IChangeable* inputDocumentPtr, ibase::IProgressManager* progressManagerPtr)
+bool CDocumentProcessingManagerComp::PrepareInPlaceProcessing(
+			const istd::IChangeable* inputDocumentPtr,
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable*& outputDocumentPtr,
+			istd::IChangeable*& changeTargetPtr)
 {
 	if (inputDocumentPtr == NULL){
 		SendErrorMessage(0, "No input document", "Document processing manager");
 
-		return;
+		return false;
 	}
 
-	istd::CChangeNotifier changePtr(inputDocumentPtr);
-
-	istd::IChangeableUniquePtr outputDocumentPtr(inputDocumentPtr->CloneMe());
-	if (!outputDocumentPtr.IsValid()){
+	m_pendingOutputUniquePtr = inputDocumentPtr->CloneMe();
+	if (!m_pendingOutputUniquePtr.IsValid()){
 		SendErrorMessage(0, "Result object could not be created", "Document processing manager");
-		
-		return;
+
+		return false;
 	}
 
 	if (progressManagerPtr != nullptr){
 		progressManagerPtr->ResetProgressManager();
 	}
 
-	istd::CGeneralTimeStamp timer;
+	outputDocumentPtr = m_pendingOutputUniquePtr.GetPtr();
+	changeTargetPtr = const_cast<istd::IChangeable*>(inputDocumentPtr);
 
-	int retVal = m_processorCompPtr->DoProcessing(
-				m_paramsSetCompPtr.GetPtr(),
-				inputDocumentPtr,
-				outputDocumentPtr.GetPtr(),
-				progressManagerPtr);
+	m_pendingOutputSharedPtr.Reset();
+	m_pendingDocumentIndex = -1;
 
-	double processingTime = timer.GetElapsed();
+	return true;
+}
 
-	SendInfoMessage(0, QObject::tr("Processing time: %1 ms").arg(processingTime * 1000, 2, 'f', 2), "Document processing manager");
 
-	if (retVal != iproc::IProcessor::TS_OK){
+void CDocumentProcessingManagerComp::FinalizeProcessingToOutput(
+			istd::IChangeable* outputDocumentPtr,
+			int resultCode,
+			double processingTime,
+			istd::CChangeNotifier& changeNotifier)
+{
+	SendVerboseMessage(QObject::tr("Processing time: %1 ms").arg(processingTime, 2, 'f', 2), "Document processing manager");
+
+	if (resultCode != iproc::IProcessor::TS_OK){
 		SendErrorMessage(0, "Processing was failed", "Document processing manager");
 
+		changeNotifier.Abort();
+
+		m_documentManagerCompPtr->CloseDocument(m_pendingDocumentIndex, true);
+	}
+	else{
+		istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->AddViewToDocument(*m_pendingOutputSharedPtr);
+		if (viewPtr == NULL){
+			SendErrorMessage(0, "Output view could not be created", "Document processing manager");
+
+			changeNotifier.Abort();
+
+			m_documentManagerCompPtr->CloseDocument(m_pendingDocumentIndex, true);
+		}
+	}
+
+	m_pendingOutputSharedPtr.Reset();
+	m_pendingDocumentIndex = -1;
+}
+
+
+void CDocumentProcessingManagerComp::FinalizeInPlaceProcessing(
+			const istd::IChangeable* inputDocumentPtr,
+			istd::IChangeable* outputDocumentPtr,
+			int resultCode,
+			double processingTime,
+			istd::CChangeNotifier& /*changeNotifier*/)
+{
+	SendInfoMessage(0, QObject::tr("Processing time: %1 ms").arg(processingTime * 1000, 2, 'f', 2), "Document processing manager");
+
+	if (resultCode != iproc::IProcessor::TS_OK){
+		SendErrorMessage(0, "Processing was failed", "Document processing manager");
+
+		m_pendingOutputUniquePtr.Reset();
+
 		return;
 	}
 
-	if (!inputDocumentPtr->CopyFrom(*outputDocumentPtr.GetPtr())){
+	istd::IChangeable* mutableInputPtr = const_cast<istd::IChangeable*>(inputDocumentPtr);
+	if (!mutableInputPtr->CopyFrom(*outputDocumentPtr)){
 		SendErrorMessage(0, "Result object is incompatible", "Document processing manager");
 
+		m_pendingOutputUniquePtr.Reset();
+
 		return;
 	}
+
+	m_pendingOutputUniquePtr.Reset();
 }
 
 

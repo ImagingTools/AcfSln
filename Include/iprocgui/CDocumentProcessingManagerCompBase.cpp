@@ -6,6 +6,7 @@
 #include <QtWidgets/QMessageBox>
 
 // ACF includes
+#include <istd/CChangeNotifier.h>
 #include <iqtgui/CGuiComponentDialog.h>
 #include <iqtgui/CSubtaskProgressDialog.h>
 
@@ -206,8 +207,24 @@ void CDocumentProcessingManagerCompBase::OnDoProcessing()
 		progressPtr = &progressDialog;
 	}
 
-	// Process document on a worker thread:
-	CDocumentProcessingWorkerThread workerThread(this, inputDocumentPtr, documentTypeId, progressPtr);
+	// Prepare processing on UI thread:
+	istd::IChangeable* outputDocumentPtr = nullptr;
+	istd::IChangeable* changeTargetPtr = nullptr;
+
+	if (!PrepareProcessing(inputDocumentPtr, documentTypeId, progressPtr, outputDocumentPtr, changeTargetPtr)){
+		return;
+	}
+
+	// Begin change notification on UI thread (before worker thread modifies the output):
+	istd::CChangeNotifier changeNotifier(changeTargetPtr);
+
+	// Run only the pure processing (DoProcessing) on a worker thread:
+	CDocumentProcessingWorkerThread workerThread(
+				m_processorCompPtr.GetPtr(),
+				m_paramsSetCompPtr.GetPtr(),
+				inputDocumentPtr,
+				outputDocumentPtr,
+				progressPtr);
 
 	if (!m_progressManagerCompPtr.IsValid()){
 		connect(&workerThread, SIGNAL(finished()), &progressDialog, SLOT(close()));
@@ -220,6 +237,17 @@ void CDocumentProcessingManagerCompBase::OnDoProcessing()
 	}
 
 	workerThread.wait();
+
+	// Finalize processing on UI thread:
+	FinalizeProcessing(
+				inputDocumentPtr,
+				documentTypeId,
+				outputDocumentPtr,
+				workerThread.GetResultCode(),
+				workerThread.GetProcessingTime(),
+				changeNotifier);
+
+	// changeNotifier destructs here (EndChanges on UI thread, if not already Reset/Aborted)
 }
 
 

@@ -16,6 +16,11 @@
 #include <iproc/IProcessor.h>
 #include <idocproc/IDocumentProcessingParamsController.h>
 
+namespace istd
+{
+class CChangeNotifier;
+}
+
 
 namespace iprocgui
 {
@@ -72,12 +77,37 @@ public:
 	// abstract methods
 
 	/**
-		Process the current document.
+		Prepare for document processing. Called on UI thread before the worker thread starts.
+		\param inputDocumentPtr input document for processing.
+		\param documentTypeId type ID of the document.
+		\param progressManagerPtr progress manager for tracking processing progress.
+		\param outputDocumentPtr [out] the output document that will receive processing results.
+		\param changeTargetPtr [out] the object that will be wrapped in CChangeNotifier for change notification.
+		\return true if processing should proceed, false to cancel.
 	*/
-	virtual void DoDocumentProcessing(
+	virtual bool PrepareProcessing(
 				const istd::IChangeable* inputDocumentPtr,
 				const QByteArray& documentTypeId,
-				ibase::IProgressManager* progressManagerPtr) = 0;
+				ibase::IProgressManager* progressManagerPtr,
+				istd::IChangeable*& outputDocumentPtr,
+				istd::IChangeable*& changeTargetPtr) = 0;
+
+	/**
+		Finalize document processing. Called on UI thread after the worker thread completes.
+		\param inputDocumentPtr input document that was processed.
+		\param documentTypeId type ID of the document.
+		\param outputDocumentPtr the output document that received processing results.
+		\param resultCode result code from DoProcessing.
+		\param processingTime elapsed processing time.
+		\param changeNotifier change notifier wrapping the processing, can be used for Reset() or Abort().
+	*/
+	virtual void FinalizeProcessing(
+				const istd::IChangeable* inputDocumentPtr,
+				const QByteArray& documentTypeId,
+				istd::IChangeable* outputDocumentPtr,
+				int resultCode,
+				double processingTime,
+				istd::CChangeNotifier& changeNotifier) = 0;
 
 protected:
 	// reimplemented (ibase::TDesignSchemaHandlerWrap)
