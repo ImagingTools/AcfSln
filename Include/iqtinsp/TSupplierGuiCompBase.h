@@ -117,12 +117,12 @@ void TSupplierGuiCompBase<UI>::AddItemsToScene(iqt2d::IViewProvider* providerPtr
 				if (calibrationPtr != NULL){
 					auto clonePtr = icalib::FactorizeFrom(calibrationPtr);
 
-					calibrationCopyPtr.MoveCastedPtr(clonePtr);
+					calibrationCopyPtr.MoveCastedPtr(std::move(clonePtr));
 				}
 
 				viewPtr->SetDisplayCalibration(calibrationCopyPtr.GetPtr());
 
-				m_providerToCalibrationMap[providerPtr].MoveCastedPtr(calibrationCopyPtr);
+				m_providerToCalibrationMap[providerPtr].MoveCastedPtr(std::move(calibrationCopyPtr));
 			}
 		}
 	}
@@ -208,7 +208,7 @@ void TSupplierGuiCompBase<UI>::BeforeSupplierGuiUpdated()
 
 				viewPtr->SetDisplayCalibration(calibrationCopyPtr.GetPtr());
 
-				viewIter.value().MoveCastedPtr(calibrationCopyPtr);
+				viewIter.value().MoveCastedPtr(std::move(calibrationCopyPtr));
 			}
 		}
 	}
