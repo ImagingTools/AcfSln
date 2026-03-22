@@ -40,6 +40,8 @@ const istd::IChangeable::ChangeSet s_changeFlagChangeSet(icomp::IRegistryElement
 const istd::IChangeable::ChangeSet s_setAttributeChangeSet(icomp::IRegistryElement::CF_ATTRIBUTE_CHANGED, QObject::tr("Set attribute value"));
 const istd::IChangeable::ChangeSet s_setExportChangeSet(icomp::IRegistry::CF_ELEMENT_EXPORTED, QObject::tr("Set export name"));
 
+const int s_maxRegistryRecursionDepth = 10;
+
 
 // public methods
 
@@ -1364,7 +1366,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 	ExportResolutionInfo result;
 
 	// Prevent infinite recursion
-	if (depth > 10){
+	if (depth > s_maxRegistryRecursionDepth){
 		return result;
 	}
 
