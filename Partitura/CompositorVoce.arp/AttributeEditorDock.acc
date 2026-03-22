@@ -34,13 +34,7 @@
                     <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
-                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
-                        <Data IsEnabled="false"/>
-                    </AttributeInfo>
                     <AttributeInfo Id="MetaInfoManager" Type="Reference" ExportId="MetaInfoManager">
-                        <Data IsEnabled="false"/>
-                    </AttributeInfo>
-                    <AttributeInfo Id="PackagesManager" Type="Reference" ExportId="PackagesManager">
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
                     <AttributeInfo Id="QuickHelpGui" Type="Reference" ExportId="QuickHelpGui">
@@ -48,9 +42,6 @@
                     </AttributeInfo>
                     <AttributeInfo Id="RegistryPropGui" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="RegistryPropEditor"/>
-                    </AttributeInfo>
-                    <AttributeInfo Id="RootRegistryPath" Type="Text" ExportId="RootRegistryPath">
-                        <Data IsEnabled="false"/>
                     </AttributeInfo>
                 </AttributeInfoMap>
             </Data>

@@ -3,10 +3,6 @@
 
 
 // Qt includes
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QXmlStreamReader>
-#include <QtCore/QDir>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QItemDelegate>
@@ -20,7 +16,6 @@
 // ACF includes
 #include <istd/TOptDelPtr.h>
 #include <istd/CChangeNotifier.h>
-#include <istd/CSystem.h>
 #include <icomp/CInterfaceManipBase.h>
 #include <icomp/TMultiAttributeMember.h>
 #include <icomp/CCompositeComponentStaticInfo.h>
@@ -1208,29 +1203,6 @@ bool CAttributeEditorComp::SetAttributeToItem(
 		attributeItemPtr->setIcon(AC_NAME, m_importIcon);
 
 		hasExport = true;
-
-		// Try to find where the delegated attribute is resolved
-		ExportResolutionInfo resolution = FindExportResolution(attributeExportValue);
-		if (resolution.resolved){
-			QString resolutionTip = tr("Resolved at: %1 / %2 = %3")
-						.arg(QFileInfo(resolution.filePath).fileName(),
-							 resolution.elementId,
-							 resolution.value);
-			importItemPtr->setToolTip(AC_NAME, resolutionTip);
-			importItemPtr->setToolTip(AC_VALUE, resolutionTip);
-			importItemPtr->setForeground(AC_VALUE, QColor(0, 100, 0));
-		}
-		else{
-			QString rootPath;
-			if (m_rootRegistryPathAttrPtr.IsValid() && !(*m_rootRegistryPathAttrPtr).isEmpty()){
-				importItemPtr->setToolTip(AC_NAME, tr("Not resolved - no matching attribute found in root registry"));
-				importItemPtr->setToolTip(AC_VALUE, tr("Not resolved - no matching attribute found in root registry"));
-			}
-			else{
-				importItemPtr->setToolTip(AC_NAME, tr("Set 'RootRegistryPath' to enable resolution tracking"));
-				importItemPtr->setToolTip(AC_VALUE, tr("Set 'RootRegistryPath' to enable resolution tracking"));
-			}
-		}
 	}
 	else{
 		importItemPtr->setData(AC_NAME, Qt::CheckStateRole, QVariant());
@@ -1313,159 +1285,6 @@ bool CAttributeEditorComp::ResetItem(QTreeWidgetItem& item)
 	item.setIcon(0, QIcon());
 
 	return true;
-}
-
-
-CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(const QByteArray& exportId) const
-{
-	ExportResolutionInfo result;
-
-	if (exportId.isEmpty()){
-		return result;
-	}
-
-	if (!m_rootRegistryPathAttrPtr.IsValid()){
-		return result;
-	}
-
-	QString rootPath = *m_rootRegistryPathAttrPtr;
-	if (rootPath.isEmpty()){
-		return result;
-	}
-
-	// Resolve environment variables in the path
-	rootPath = istd::CSystem::GetEnrolledPath(rootPath);
-
-	return SearchAccFileForResolution(rootPath, exportId, 0);
-}
-
-
-CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchAccFileForResolution(
-			const QString& filePath,
-			const QByteArray& attributeId,
-			int depth) const
-{
-	ExportResolutionInfo result;
-
-	// Prevent infinite recursion
-	if (depth > 10){
-		return result;
-	}
-
-	QFile file(filePath);
-	if (!file.open(QIODevice::ReadOnly)){
-		return result;
-	}
-
-	QXmlStreamReader xml(&file);
-
-	while (!xml.atEnd() && !xml.hasError()){
-		QXmlStreamReader::TokenType token = xml.readNext();
-		if (token != QXmlStreamReader::StartElement){
-			continue;
-		}
-
-		if (xml.name() != QLatin1String("Element")){
-			continue;
-		}
-
-		QString elementId = xml.attributes().value("Id").toString();
-		QString packageId = xml.attributes().value("PackageId").toString();
-		QString componentId = xml.attributes().value("ComponentId").toString();
-
-		// Parse the element's AttributeInfoMap
-		while (!xml.atEnd()){
-			token = xml.readNext();
-
-			if (token == QXmlStreamReader::EndElement && xml.name() == QLatin1String("Element")){
-				break;
-			}
-
-			if (token != QXmlStreamReader::StartElement){
-				continue;
-			}
-
-			if (xml.name() != QLatin1String("AttributeInfo")){
-				continue;
-			}
-
-			QString attrId = xml.attributes().value("Id").toString();
-			QString attrExportId = xml.attributes().value("ExportId").toString();
-
-			if (attrId.toLocal8Bit() == attributeId){
-				// Found a matching attribute - check if it has a value
-				while (!xml.atEnd()){
-					token = xml.readNext();
-
-					if (token == QXmlStreamReader::EndElement && xml.name() == QLatin1String("AttributeInfo")){
-						break;
-					}
-
-					if (token != QXmlStreamReader::StartElement || xml.name() != QLatin1String("Data")){
-						continue;
-					}
-
-					QString isEnabled = xml.attributes().value("IsEnabled").toString();
-					QString value = xml.attributes().value("Value").toString();
-
-					if (isEnabled == QLatin1String("true") && !value.isEmpty()){
-						// Attribute is resolved here
-						result.filePath = filePath;
-						result.elementId = elementId;
-						result.value = value;
-						result.resolved = true;
-						return result;
-					}
-
-					break;
-				}
-
-				// If this attribute has an ExportId, it's further delegated
-				// We don't resolve further delegation in this search
-				// (it would require finding the parent of this file)
-			}
-		}
-
-		// For composite components, try to search their ACC files
-		if (!packageId.isEmpty() && !componentId.isEmpty() && m_packagesManagerCompPtr.IsValid()){
-			QString packagePath = m_packagesManagerCompPtr->GetPackagePath(packageId.toLocal8Bit());
-			if (!packagePath.isEmpty()){
-				QDir packageDir(packagePath);
-				QString componentFilePath = packageDir.absoluteFilePath(componentId + ".acc");
-				if (QFileInfo(componentFilePath).exists()){
-					ExportResolutionInfo subResult = SearchAccFileForResolution(componentFilePath, attributeId, depth + 1);
-					if (subResult.resolved){
-						return subResult;
-					}
-				}
-			}
-		}
-	}
-
-	return result;
-}
-
-
-void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* item, int column)
-{
-	if (item == NULL){
-		return;
-	}
-
-	int propertyMining = item->data(AC_VALUE, AttributeMining).toInt();
-	if (propertyMining != AM_EXPORTED_ATTR){
-		return;
-	}
-
-	QByteArray exportValue = item->data(AC_VALUE, AttributeValue).toByteArray();
-	if (exportValue.isEmpty()){
-		return;
-	}
-
-	ExportResolutionInfo resolution = FindExportResolution(exportValue);
-	if (resolution.resolved && m_documentManagerCompPtr.IsValid()){
-		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
-	}
 }
 
 

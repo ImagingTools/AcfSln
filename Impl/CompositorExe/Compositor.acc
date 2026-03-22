@@ -111,12 +111,6 @@
                     <AttributeInfo Id="MetaInfoManager" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="CompositorTemplate/PackagesLoader"/>
                     </AttributeInfo>
-                    <AttributeInfo Id="PackagesManager" Type="Reference" ExportId="">
-                        <Data IsEnabled="true" Value="CompositorTemplate/PackagesLoader"/>
-                    </AttributeInfo>
-                    <AttributeInfo Id="RootRegistryPath" Type="Text" ExportId="">
-                        <Data IsEnabled="false"/>
-                    </AttributeInfo>
                     <AttributeInfo Id="TechDocuViewerFileParam" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="Application/HtmlBrowserFile"/>
                     </AttributeInfo>
