@@ -3,6 +3,7 @@
 
 
 // Qt includes
+#include <QtCore/QFileInfo>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QItemDelegate>
@@ -1203,6 +1204,29 @@ bool CAttributeEditorComp::SetAttributeToItem(
 		attributeItemPtr->setIcon(AC_NAME, m_importIcon);
 
 		hasExport = true;
+
+		// Try to find where the delegated attribute is resolved
+		ExportResolutionInfo resolution = FindExportResolution(attributeExportValue);
+		if (resolution.resolved){
+			QString resolutionTip = tr("Resolved at: %1 / %2 = %3")
+						.arg(resolution.filePath.isEmpty()? tr("<current>") : QFileInfo(resolution.filePath).fileName(),
+							 resolution.elementId,
+							 resolution.value);
+			importItemPtr->setToolTip(AC_NAME, resolutionTip);
+			importItemPtr->setToolTip(AC_VALUE, resolutionTip);
+			importItemPtr->setForeground(AC_VALUE, QColor(0, 100, 0));
+		}
+		else{
+			if (m_envManagerCompPtr.IsValid()){
+				importItemPtr->setToolTip(AC_NAME, tr("Not resolved - no matching attribute found in loaded registries"));
+				importItemPtr->setToolTip(AC_VALUE, tr("Not resolved - no matching attribute found in loaded registries"));
+			}
+			else{
+				importItemPtr->setToolTip(AC_NAME, tr("Set 'EnvironmentManager' to enable resolution tracking"));
+				importItemPtr->setToolTip(AC_VALUE, tr("Set 'EnvironmentManager' to enable resolution tracking"));
+			}
+			importItemPtr->setForeground(AC_VALUE, QColor());
+		}
 	}
 	else{
 		importItemPtr->setData(AC_NAME, Qt::CheckStateRole, QVariant());
@@ -1285,6 +1309,156 @@ bool CAttributeEditorComp::ResetItem(QTreeWidgetItem& item)
 	item.setIcon(0, QIcon());
 
 	return true;
+}
+
+
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(const QByteArray& exportId) const
+{
+	ExportResolutionInfo result;
+
+	if (exportId.isEmpty() || !m_envManagerCompPtr.IsValid()){
+		return result;
+	}
+
+	// Get all loaded component addresses from the environment manager
+	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
+
+	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
+				iter != addresses.constEnd();
+				++iter){
+		const icomp::CComponentAddress& address = *iter;
+		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
+
+		if (metaInfoPtr == NULL){
+			continue;
+		}
+
+		if (metaInfoPtr->GetComponentType() != icomp::IComponentStaticInfo::CT_COMPOSITE){
+			continue;
+		}
+
+		const icomp::CCompositeComponentStaticInfo* compositeInfoPtr =
+					dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
+		if (compositeInfoPtr == NULL){
+			continue;
+		}
+
+		const icomp::IRegistry& registry = compositeInfoPtr->GetRegistry();
+		result = SearchRegistryForResolution(registry, exportId, 0);
+		if (result.resolved){
+			// Try to get the file path for this registry
+			result.filePath = m_envManagerCompPtr->GetRegistryPath(address);
+			return result;
+		}
+	}
+
+	return result;
+}
+
+
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryForResolution(
+			const icomp::IRegistry& registry,
+			const QByteArray& attributeId,
+			int depth) const
+{
+	ExportResolutionInfo result;
+
+	// Prevent infinite recursion
+	if (depth > 10){
+		return result;
+	}
+
+	// Iterate all elements in this registry
+	icomp::IRegistry::Ids elementIds = registry.GetElementIds();
+	for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
+				elemIter != elementIds.constEnd();
+				++elemIter){
+		const QByteArray& elementId = *elemIter;
+		const icomp::IRegistry::ElementInfo* elementInfoPtr = registry.GetElementInfo(elementId);
+
+		if (elementInfoPtr == NULL){
+			continue;
+		}
+
+		// Check if this element has the attribute with a value set (not just exported further)
+		icomp::IRegistryElement* registryElementPtr = elementInfoPtr->elementPtr.Cast<icomp::IRegistryElement*>();
+		if (registryElementPtr != NULL){
+			const icomp::IRegistryElement::AttributeInfo* attrInfoPtr =
+						registryElementPtr->GetAttributeInfo(attributeId);
+
+			if (attrInfoPtr != NULL){
+				// Attribute found - check if it has a direct value (not further exported)
+				if (attrInfoPtr->attributePtr.IsValid() && attrInfoPtr->exportId.isEmpty()){
+					// Attribute is resolved here with a direct value
+					result.resolved = true;
+					result.elementId = elementId;
+
+					QString text;
+					int meaning;
+					if (DecodeAttribute(*attrInfoPtr->attributePtr, text, meaning)){
+						result.value = text;
+					}
+					else{
+						result.value = tr("<set>");
+					}
+					return result;
+				}
+			}
+		}
+
+		// Recurse into composite components
+		const icomp::CComponentAddress& address = elementInfoPtr->address;
+		const icomp::IRegistry* subRegistryPtr = NULL;
+
+		if (address.GetPackageId().isEmpty()){
+			// Embedded component
+			subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
+		}
+		else if (m_envManagerCompPtr.IsValid()){
+			// External component from package
+			const icomp::IComponentStaticInfo* metaInfoPtr =
+						m_envManagerCompPtr->GetComponentMetaInfo(address);
+			if ((metaInfoPtr != NULL) && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
+				const icomp::CCompositeComponentStaticInfo* compositeInfoPtr =
+							dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
+				if (compositeInfoPtr != NULL){
+					subRegistryPtr = &compositeInfoPtr->GetRegistry();
+				}
+			}
+		}
+
+		if (subRegistryPtr != NULL){
+			ExportResolutionInfo subResult = SearchRegistryForResolution(*subRegistryPtr, attributeId, depth + 1);
+			if (subResult.resolved){
+				return subResult;
+			}
+		}
+	}
+
+	return result;
+}
+
+
+void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* item, int /*column*/)
+{
+	if (item == NULL){
+		return;
+	}
+
+	int propertyMining = item->data(AC_VALUE, AttributeMining).toInt();
+	if (propertyMining != AM_EXPORTED_ATTR){
+		return;
+	}
+
+	QByteArray exportValue = item->data(AC_VALUE, AttributeValue).toByteArray();
+	if (exportValue.isEmpty()){
+		return;
+	}
+
+	ExportResolutionInfo resolution = FindExportResolution(exportValue);
+	if (resolution.resolved && m_documentManagerCompPtr.IsValid() && !resolution.filePath.isEmpty()){
+		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
+	}
 }
 
 

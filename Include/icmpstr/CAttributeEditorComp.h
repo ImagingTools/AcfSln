@@ -15,7 +15,9 @@
 
 // ACF includes
 #include <istd/CClassInfo.h>
+#include <icomp/IComponentEnvironmentManager.h>
 #include <idoc/IHelpViewer.h>
+#include <idoc/IDocumentManager.h>
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
 #include <iwidgets/CTreeWidgetFilter.h>
 #include <iwidgets/CItemDelegate.h>
@@ -49,6 +51,8 @@ public:
 		I_ASSIGN(m_consistInfoCompPtr, "ConsistencyInfo", "Allows to check consistency of registries and attributes", false, "ConsistencyInfo");
 		I_ASSIGN(m_registryPropGuiCompPtr, "RegistryPropGui", "Display and edit registry properties if no element is selected", false, "RegistryPropGui");
 		I_ASSIGN_TO(m_registryPropObserverCompPtr, m_registryPropGuiCompPtr, false);
+		I_ASSIGN(m_envManagerCompPtr, "EnvironmentManager", "Component environment manager for resolving exported attributes", false, "EnvironmentManager");
+		I_ASSIGN(m_documentManagerCompPtr, "DocumentManager", "Document manager for navigating to attribute resolution", false, "DocumentManager");
 	I_END_COMPONENT;
 
 	enum TabIndex
@@ -109,6 +113,7 @@ public:
 protected Q_SLOTS:
 	void on_AttributeTree_itemSelectionChanged();
 	void on_AttributeTree_itemChanged(QTreeWidgetItem* item, int column);
+	void on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* item, int column);
 	void on_InterfacesTree_itemSelectionChanged();
 	void on_InterfacesTree_itemChanged(QTreeWidgetItem* item, int column);
 	void on_AutoInstanceCB_toggled(bool checked);
@@ -125,6 +130,19 @@ Q_SIGNALS:
 	void AfterSubcomponentsChange();
 
 protected:
+	/**
+		Information about where a delegated attribute is resolved.
+	*/
+	struct ExportResolutionInfo
+	{
+		QString filePath;       ///< ACC file where the attribute is resolved
+		QString elementId;      ///< Element ID in that registry
+		QString value;          ///< The resolved attribute value
+		bool resolved;          ///< Whether the attribute was found and resolved
+
+		ExportResolutionInfo(): resolved(false) {}
+	};
+
 	struct AttrInfo
 	{
 		icomp::IRegistryElement* elementPtr;
@@ -164,6 +182,28 @@ protected:
 				const QString& text,
 				int meaning,
 				iser::ISerializable& result) const;
+
+	/**
+		Find where a delegated attribute (with given exportId) is resolved
+		by traversing registries reachable through the environment manager.
+
+		\param exportId The export name of the delegated attribute
+		\return Resolution information including file path, element ID, and value
+	*/
+	ExportResolutionInfo FindExportResolution(const QByteArray& exportId) const;
+
+	/**
+		Recursively search a registry for where an attribute with the given ID is resolved.
+
+		\param registry The registry to search
+		\param attributeId The attribute ID to search for
+		\param depth Current recursion depth (to prevent infinite recursion)
+		\return Resolution information
+	*/
+	ExportResolutionInfo SearchRegistryForResolution(
+				const icomp::IRegistry& registry,
+				const QByteArray& attributeId,
+				int depth) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
@@ -242,6 +282,8 @@ private:
 	I_REF(IRegistryConsistInfo, m_consistInfoCompPtr);
 	I_REF(iqtgui::IGuiObject, m_registryPropGuiCompPtr);
 	I_REF(imod::IObserver, m_registryPropObserverCompPtr);
+	I_REF(icomp::IComponentEnvironmentManager, m_envManagerCompPtr);
+	I_REF(idoc::IDocumentManager, m_documentManagerCompPtr);
 
 	AttributeItemDelegate m_attributeItemDelegate;
 	RegistryObserver m_registryObserver;
