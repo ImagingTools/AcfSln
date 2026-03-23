@@ -138,11 +138,9 @@ protected:
 		QString filePath;             ///< ACC file where the attribute is resolved
 		QString elementId;            ///< Element ID in that registry
 		QString value;                ///< The resolved attribute value
-		bool resolved;                ///< Whether the attribute was found and resolved
+		bool resolved = false;        ///< Whether the attribute was found and resolved
 		QByteArray embeddedRegistryId;///< Embedded registry ID if resolved inside embedded composition
-		int attributeMeaning;         ///< Meaning of the resolved value (AM_REFERENCE, AM_ATTRIBUTE, etc.)
-
-		ExportResolutionInfo(): resolved(false), attributeMeaning(AM_NONE) {}
+		int attributeMeaning = AM_NONE; ///< Meaning of the resolved value (AM_REFERENCE, AM_ATTRIBUTE, etc.)
 	};
 
 	struct AttrInfo
