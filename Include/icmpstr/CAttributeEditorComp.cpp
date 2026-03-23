@@ -1486,30 +1486,17 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
 	}
 
-	// Determine what to select based on attribute type
-	bool isReference = (resolution.attributeMeaning == AM_REFERENCE ||
-						resolution.attributeMeaning == AM_FACTORY);
-
-	QByteArray targetElementId;
-	if (isReference){
-		// For references/factories, select the referenced component
-		targetElementId = DecodeFromEdit(resolution.value).toUtf8();
-	}
-	else{
-		// For normal attributes, select the element that has the attribute
-		targetElementId = resolution.elementId.toUtf8();
-	}
+	// Always select the element where the attribute value is set
+	QByteArray targetElementId = resolution.elementId.toUtf8();
 
 	// Request element selection in the visual editor
 	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
 	if (selectionInfoPtr != NULL && !targetElementId.isEmpty()){
 		selectionInfoPtr->RequestElementSelection(targetElementId, resolution.embeddedRegistryId);
 
-		// For normal attributes (not references), also select the attribute in the tree
-		if (!isReference){
-			QByteArray attributeId = item->data(AC_VALUE, AttributeId).toByteArray();
-			m_pendingAttributeId = attributeId;
-		}
+		// Set pending attribute so it gets highlighted after the tree rebuilds
+		QByteArray attributeId = item->data(AC_VALUE, AttributeId).toByteArray();
+		m_pendingAttributeId = attributeId;
 	}
 }
 
