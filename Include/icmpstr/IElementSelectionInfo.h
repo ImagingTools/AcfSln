@@ -49,6 +49,16 @@ public:
 				This map doesn't include pointers to NULL element info.
 	*/
 	virtual Elements GetSelectedElements() const = 0;
+
+	/**
+		Request element selection in the visual editor.
+		The implementation should select the specified element in the component diagram.
+		If embeddedRegistryId is not empty, the embedded composition should be activated first.
+		\param	elementId			the element to select.
+		\param	embeddedRegistryId	optional ID of the embedded registry to switch to first.
+		\return	true if selection request was handled, false otherwise.
+	*/
+	virtual bool RequestElementSelection(const QByteArray& elementId, const QByteArray& embeddedRegistryId = QByteArray()) const { Q_UNUSED(elementId); Q_UNUSED(embeddedRegistryId); return false; }
 };
 
 

@@ -135,12 +135,14 @@ protected:
 	*/
 	struct ExportResolutionInfo
 	{
-		QString filePath;       ///< ACC file where the attribute is resolved
-		QString elementId;      ///< Element ID in that registry
-		QString value;          ///< The resolved attribute value
-		bool resolved;          ///< Whether the attribute was found and resolved
+		QString filePath;             ///< ACC file where the attribute is resolved
+		QString elementId;            ///< Element ID in that registry
+		QString value;                ///< The resolved attribute value
+		bool resolved;                ///< Whether the attribute was found and resolved
+		QByteArray embeddedRegistryId;///< Embedded registry ID if resolved inside embedded composition
+		int attributeMeaning;         ///< Meaning of the resolved value (AM_REFERENCE, AM_ATTRIBUTE, etc.)
 
-		ExportResolutionInfo(): resolved(false) {}
+		ExportResolutionInfo(): resolved(false), attributeMeaning(AM_NONE) {}
 	};
 
 	struct AttrInfo
@@ -299,6 +301,8 @@ private:
 	istd::TDelPtr<iwidgets::CTreeWidgetFilter> m_subcomponentsTreeFilter;
 
 	imod::IModel* m_lastRegistryModelPtr;
+
+	QByteArray m_pendingAttributeId;	// attribute to select after next selection change
 
 	QIcon m_invalidIcon;
 	QIcon m_warningIcon;

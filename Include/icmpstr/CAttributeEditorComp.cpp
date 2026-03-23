@@ -589,6 +589,20 @@ void CAttributeEditorComp::UpdateAttributesView()
 	else{
 		ElementInfoTab->setTabIcon(TI_ATTRIBUTES, QIcon());
 	}
+
+	// Apply pending attribute selection if set (e.g. after export resolution navigation)
+	if (!m_pendingAttributeId.isEmpty()){
+		QByteArray pendingId = m_pendingAttributeId;
+		m_pendingAttributeId.clear();
+
+		for (int i = 0; i < AttributeTree->topLevelItemCount(); ++i){
+			QTreeWidgetItem* topItem = AttributeTree->topLevelItem(i);
+			if (topItem->data(AC_VALUE, AttributeId).toByteArray() == pendingId){
+				AttributeTree->setCurrentItem(topItem);
+				break;
+			}
+		}
+	}
 }
 
 
@@ -1399,6 +1413,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 					int meaning;
 					if (DecodeAttribute(*attrInfoPtr->attributePtr, text, meaning)){
 						result.value = text;
+						result.attributeMeaning = meaning;
 					}
 					else{
 						result.value = tr("<set>");
@@ -1432,6 +1447,10 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 		if (subRegistryPtr != NULL){
 			ExportResolutionInfo subResult = SearchRegistryForResolution(*subRegistryPtr, attributeId, depth + 1);
 			if (subResult.resolved){
+				// Track the embedded registry path - overwrite to get the shallowest level
+				if (address.GetPackageId().isEmpty()){
+					subResult.embeddedRegistryId = address.GetComponentId();
+				}
 				return subResult;
 			}
 		}
@@ -1458,8 +1477,39 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 	}
 
 	ExportResolutionInfo resolution = FindExportResolution(exportValue);
-	if (resolution.resolved && m_documentManagerCompPtr.IsValid() && !resolution.filePath.isEmpty()){
+	if (!resolution.resolved){
+		return;
+	}
+
+	// Open the document if file path is available
+	if (m_documentManagerCompPtr.IsValid() && !resolution.filePath.isEmpty()){
 		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
+	}
+
+	// Determine what to select based on attribute type
+	bool isReference = (resolution.attributeMeaning == AM_REFERENCE ||
+						resolution.attributeMeaning == AM_FACTORY);
+
+	QByteArray targetElementId;
+	if (isReference){
+		// For references/factories, select the referenced component
+		targetElementId = DecodeFromEdit(resolution.value).toUtf8();
+	}
+	else{
+		// For normal attributes, select the element that has the attribute
+		targetElementId = resolution.elementId.toUtf8();
+	}
+
+	// Request element selection in the visual editor
+	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
+	if (selectionInfoPtr != NULL && !targetElementId.isEmpty()){
+		selectionInfoPtr->RequestElementSelection(targetElementId, resolution.embeddedRegistryId);
+
+		// For normal attributes (not references), also select the attribute in the tree
+		if (!isReference){
+			QByteArray attributeId = item->data(AC_VALUE, AttributeId).toByteArray();
+			m_pendingAttributeId = attributeId;
+		}
 	}
 }
 
