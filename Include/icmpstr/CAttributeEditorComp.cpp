@@ -1338,14 +1338,23 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		return result;
 	}
 
-	// Find the root registry (from XPC model) that contains the currently-edited registry,
-	// then search only within that root tree for the exported attribute
+	// Get root registry file paths (project targets) from the XPC model
+	QStringList projectTargets = m_envManagerCompPtr->GetProjectTargets();
+
+	// Find the root registries defined as project targets and search within the tree
+	// that contains the currently-edited registry
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
 				iter != addresses.constEnd();
 				++iter){
 		const icomp::CComponentAddress& address = *iter;
+
+		// Only consider root registries defined as project targets in the XPC model
+		QString registryPath = m_envManagerCompPtr->GetRegistryPath(address);
+		if (!projectTargets.contains(registryPath)){
+			continue;
+		}
 
 		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
 		if (metaInfoPtr == NULL){
@@ -1375,7 +1384,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		result = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
 		if (result.resolved){
 			if (result.filePath.isEmpty()){
-				result.filePath = m_envManagerCompPtr->GetRegistryPath(address);
+				result.filePath = registryPath;
 			}
 			return result;
 		}

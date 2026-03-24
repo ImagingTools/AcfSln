@@ -185,8 +185,8 @@ protected:
 
 	/**
 		Find where a delegated attribute (with given exportId) is resolved.
-		Determines which root registry (from the XPC model) contains the
-		currently-edited registry, and searches only within that root tree.
+		Uses GetProjectTargets() to identify root registries from the XPC model,
+		then searches only within the root tree containing the currently-edited registry.
 
 		\param exportId The export name of the delegated attribute
 		\param currentRegistryPtr The currently-edited registry, used to identify the root tree
