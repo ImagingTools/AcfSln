@@ -1,12 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Number="4005" Id="0" Description="ACF"/>
-            <Version Number="328706" Id="1023" Description="Qt Framework"/>
+            <Version Id="0" Number="6368" Description="ACF"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <ConfigFiles>
-        <FilePath>$(ACFDIR)/Config/AcfConfig.awc</FilePath> 
+        <FilePath>$(ACFDIR)/Config/AcfConfig.awc</FilePath>
     </ConfigFiles>
     <PackageDirs>
         <Dir>../Bin/$(ConfigurationDir)</Dir>
@@ -15,5 +16,7 @@
         <Dir>../Partitura</Dir>
     </PackageDirs>
     <PackageFiles/>
-    <RegistryFiles/>
+    <RegistryFiles>
+        <FilePath>../Impl/CompositorExe/Compositor.acc</FilePath>
+    </RegistryFiles>
 </Acf>

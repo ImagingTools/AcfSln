@@ -1487,6 +1487,9 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 		return;
 	}
 
+	// Set pending attribute so it gets highlighted after the tree rebuilds
+	QByteArray attributeId = item->data(AC_VALUE, AttributeId).toByteArray();
+
 	// Open the document if file path is available
 	if (m_documentManagerCompPtr.IsValid() && !resolution.filePath.isEmpty()){
 		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
@@ -1500,8 +1503,6 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 	if (selectionInfoPtr != NULL && !targetElementId.isEmpty()){
 		selectionInfoPtr->RequestElementSelection(targetElementId, resolution.embeddedRegistryId);
 
-		// Set pending attribute so it gets highlighted after the tree rebuilds
-		QByteArray attributeId = item->data(AC_VALUE, AttributeId).toByteArray();
 		m_pendingAttributeId = attributeId;
 	}
 }
