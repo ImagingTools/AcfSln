@@ -190,29 +190,34 @@ protected:
 		is further delegated.
 
 		\param exportId The export name of the delegated attribute
-		\param chainDepth Current depth in the export chain (to prevent infinite loops)
 		\return Resolution information including file path, element ID, and value
 	*/
-	ExportResolutionInfo FindExportResolution(const QByteArray& exportId, int chainDepth = 0) const;
+	ExportResolutionInfo FindExportResolution(const QByteArray& exportId) const;
+
+	/**
+		Internal implementation that tracks visited exportIds to prevent cycles
+		and exponential blowup in the mutual recursion with SearchRegistryForResolution.
+	*/
+	ExportResolutionInfo FindExportResolutionImpl(const QByteArray& exportId, QSet<QByteArray>& visitedExportIds) const;
 
 	/**
 		Search a registry and its embedded sub-registries for where an attribute
 		with the given ID is resolved. Only checks direct elements and embedded
 		compositions within the same file - does not recurse into external
 		sub-components. When a further export is found, follows the chain upward
-		via FindExportResolution.
+		via FindExportResolutionImpl.
 
 		\param registry The registry to search
 		\param attributeId The attribute ID to search for
 		\param embeddedDepth Current depth in embedded registry traversal
-		\param chainDepth Current depth in the export chain
+		\param visitedExportIds Set of exportIds already being searched (cycle detection)
 		\return Resolution information
 	*/
 	ExportResolutionInfo SearchRegistryForResolution(
 				const icomp::IRegistry& registry,
 				const QByteArray& attributeId,
 				int embeddedDepth,
-				int chainDepth) const;
+				QSet<QByteArray>& visitedExportIds) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
