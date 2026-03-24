@@ -1222,7 +1222,7 @@ bool CAttributeEditorComp::SetAttributeToItem(
 		hasExport = true;
 
 		// Try to find where the delegated attribute is resolved
-		ExportResolutionInfo resolution = FindExportResolution(attributeExportValue);
+		ExportResolutionInfo resolution = FindExportResolution(attributeExportValue, &registry);
 		if (resolution.resolved){
 			QString resolutionTip = tr("Resolved at: %1 / %2 = %3")
 						.arg(resolution.filePath.isEmpty()? tr("<current>") : QFileInfo(resolution.filePath).fileName(),
@@ -1328,16 +1328,9 @@ bool CAttributeEditorComp::ResetItem(QTreeWidgetItem& item)
 }
 
 
-CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(const QByteArray& exportId) const
-{
-	QSet<QByteArray> visitedExportIds;
-	return FindExportResolutionImpl(exportId, visitedExportIds);
-}
-
-
-CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolutionImpl(
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(
 			const QByteArray& exportId,
-			QSet<QByteArray>& visitedExportIds) const
+			const icomp::IRegistry* currentRegistryPtr) const
 {
 	ExportResolutionInfo result;
 
@@ -1345,14 +1338,8 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		return result;
 	}
 
-	// Prevent cycles: if we already searched for this exportId, stop
-	if (visitedExportIds.contains(exportId)){
-		return result;
-	}
-	visitedExportIds.insert(exportId);
-
-	// Search only root registries (from XPC model) for the exported attribute,
-	// skipping package components which only define exports but don't resolve them
+	// Find the root registry (from XPC model) that contains the currently-edited registry,
+	// then search only within that root tree for the exported attribute
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
@@ -1381,10 +1368,18 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 			continue;
 		}
 
-		const icomp::IRegistry& registry = compositeInfoPtr->GetRegistry();
-		result = SearchRegistryForResolution(registry, exportId, 0, visitedExportIds);
+		const icomp::IRegistry& rootRegistry = compositeInfoPtr->GetRegistry();
+
+		// Only search this root if it contains the currently-edited registry
+		if (currentRegistryPtr != NULL &&
+					!IsRegistryInTree(rootRegistry, currentRegistryPtr, s_maxRegistryRecursionDepth)){
+			continue;
+		}
+
+		// Search within this root tree
+		QSet<QByteArray> visitedExportIds;
+		result = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
 		if (result.resolved){
-			// Set the file path for the composite where the resolution was found
 			if (result.filePath.isEmpty()){
 				result.filePath = m_envManagerCompPtr->GetRegistryPath(address);
 			}
@@ -1396,7 +1391,30 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 }
 
 
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolutionImpl(
+			const icomp::IRegistry& rootRegistry,
+			const QByteArray& exportId,
+			QSet<QByteArray>& visitedExportIds) const
+{
+	ExportResolutionInfo result;
+
+	if (exportId.isEmpty()){
+		return result;
+	}
+
+	// Prevent cycles: if we already searched for this exportId, stop
+	if (visitedExportIds.contains(exportId)){
+		return result;
+	}
+	visitedExportIds.insert(exportId);
+
+	// Search within the root registry tree
+	return SearchRegistryForResolution(rootRegistry, rootRegistry, exportId, 0, visitedExportIds);
+}
+
+
 CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryForResolution(
+			const icomp::IRegistry& rootRegistry,
 			const icomp::IRegistry& registry,
 			const QByteArray& attributeId,
 			int embeddedDepth,
@@ -1446,8 +1464,8 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 				}
 				else if (!attrInfoPtr->exportId.isEmpty()){
 					// Attribute is further exported upward with a new name -
-					// follow the export chain by searching for the new exportId
-					return FindExportResolutionImpl(attrInfoPtr->exportId, visitedExportIds);
+					// follow the chain within the same root tree
+					return FindExportResolutionImpl(rootRegistry, attrInfoPtr->exportId, visitedExportIds);
 				}
 			}
 		}
@@ -1459,7 +1477,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 		if (address.GetPackageId().isEmpty()){
 			const icomp::IRegistry* subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
 			if (subRegistryPtr != NULL){
-				ExportResolutionInfo subResult = SearchRegistryForResolution(*subRegistryPtr, attributeId, embeddedDepth + 1, visitedExportIds);
+				ExportResolutionInfo subResult = SearchRegistryForResolution(rootRegistry, *subRegistryPtr, attributeId, embeddedDepth + 1, visitedExportIds);
 				if (subResult.resolved){
 					// Track the embedded registry path - overwrite to get the shallowest level
 					subResult.embeddedRegistryId = address.GetComponentId();
@@ -1470,6 +1488,41 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 	}
 
 	return result;
+}
+
+
+bool CAttributeEditorComp::IsRegistryInTree(
+			const icomp::IRegistry& rootRegistry,
+			const icomp::IRegistry* targetRegistryPtr,
+			int maxDepth) const
+{
+	if (&rootRegistry == targetRegistryPtr){
+		return true;
+	}
+
+	if (maxDepth <= 0){
+		return false;
+	}
+
+	icomp::IRegistry::Ids elementIds = rootRegistry.GetElementIds();
+	for (		icomp::IRegistry::Ids::ConstIterator iter = elementIds.constBegin();
+				iter != elementIds.constEnd();
+				++iter){
+		const icomp::IRegistry::ElementInfo* elementInfoPtr = rootRegistry.GetElementInfo(*iter);
+		if (elementInfoPtr != NULL){
+			const icomp::CComponentAddress& address = elementInfoPtr->address;
+			if (address.GetPackageId().isEmpty()){
+				const icomp::IRegistry* subRegistryPtr = rootRegistry.GetEmbeddedRegistry(address.GetComponentId());
+				if (subRegistryPtr != NULL){
+					if (IsRegistryInTree(*subRegistryPtr, targetRegistryPtr, maxDepth - 1)){
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 
@@ -1489,7 +1542,11 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 		return;
 	}
 
-	ExportResolutionInfo resolution = FindExportResolution(exportValue);
+	ExportResolutionInfo resolution;
+	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
+	if (selectionInfoPtr != NULL){
+		resolution = FindExportResolution(exportValue, selectionInfoPtr->GetSelectedRegistry());
+	}
 	if (!resolution.resolved){
 		return;
 	}
@@ -1506,7 +1563,6 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 	QByteArray targetElementId = resolution.elementId.toUtf8();
 
 	// Request element selection in the visual editor
-	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
 	if (selectionInfoPtr != NULL && !targetElementId.isEmpty()){
 		selectionInfoPtr->RequestElementSelection(targetElementId, resolution.embeddedRegistryId);
 
