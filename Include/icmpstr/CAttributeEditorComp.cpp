@@ -3,6 +3,7 @@
 
 
 // Qt includes
+#include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QComboBox>
@@ -1330,7 +1331,7 @@ bool CAttributeEditorComp::ResetItem(QTreeWidgetItem& item)
 
 CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(
 			const QByteArray& exportId,
-			const icomp::IRegistry* currentRegistryPtr) const
+			const icomp::IRegistry* /*currentRegistryPtr*/) const
 {
 	ExportResolutionInfo result;
 
@@ -1339,10 +1340,17 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 	}
 
 	// Get root registry file paths (project targets) from the XPC model
+	// and normalize them for reliable comparison
 	QStringList projectTargets = m_envManagerCompPtr->GetProjectTargets();
+	QSet<QString> normalizedTargets;
+	for (		QStringList::ConstIterator targetIter = projectTargets.constBegin();
+				targetIter != projectTargets.constEnd();
+				++targetIter){
+		normalizedTargets.insert(QDir::cleanPath(*targetIter));
+	}
 
-	// Find the root registries defined as project targets and search within the tree
-	// that contains the currently-edited registry
+	// Iterate all loaded component addresses and search the root registries
+	// that match the project targets
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
@@ -1350,9 +1358,9 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 				++iter){
 		const icomp::CComponentAddress& address = *iter;
 
-		// Only consider root registries defined as project targets in the XPC model
+		// Identify root registries: match registry path against project targets
 		QString registryPath = m_envManagerCompPtr->GetRegistryPath(address);
-		if (!projectTargets.contains(registryPath)){
+		if (registryPath.isEmpty() || !normalizedTargets.contains(QDir::cleanPath(registryPath))){
 			continue;
 		}
 
@@ -1373,13 +1381,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 
 		const icomp::IRegistry& rootRegistry = compositeInfoPtr->GetRegistry();
 
-		// Only search this root if it contains the currently-edited registry
-		if (currentRegistryPtr != NULL &&
-					!IsRegistryInTree(rootRegistry, currentRegistryPtr, s_maxRegistryRecursionDepth)){
-			continue;
-		}
-
-		// Search within this root tree
+		// Search within this root registry tree for the export resolution
 		QSet<QByteArray> visitedExportIds;
 		result = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
 		if (result.resolved){
@@ -1491,41 +1493,6 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 	}
 
 	return result;
-}
-
-
-bool CAttributeEditorComp::IsRegistryInTree(
-			const icomp::IRegistry& rootRegistry,
-			const icomp::IRegistry* targetRegistryPtr,
-			int maxDepth) const
-{
-	if (&rootRegistry == targetRegistryPtr){
-		return true;
-	}
-
-	if (maxDepth <= 0){
-		return false;
-	}
-
-	icomp::IRegistry::Ids elementIds = rootRegistry.GetElementIds();
-	for (		icomp::IRegistry::Ids::ConstIterator iter = elementIds.constBegin();
-				iter != elementIds.constEnd();
-				++iter){
-		const icomp::IRegistry::ElementInfo* elementInfoPtr = rootRegistry.GetElementInfo(*iter);
-		if (elementInfoPtr != NULL){
-			const icomp::CComponentAddress& address = elementInfoPtr->address;
-			if (address.GetPackageId().isEmpty()){
-				const icomp::IRegistry* subRegistryPtr = rootRegistry.GetEmbeddedRegistry(address.GetComponentId());
-				if (subRegistryPtr != NULL){
-					if (IsRegistryInTree(*subRegistryPtr, targetRegistryPtr, maxDepth - 1)){
-						return true;
-					}
-				}
-			}
-		}
-	}
-
-	return false;
 }
 
 

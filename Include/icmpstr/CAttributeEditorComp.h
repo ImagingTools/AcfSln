@@ -185,11 +185,12 @@ protected:
 
 	/**
 		Find where a delegated attribute (with given exportId) is resolved.
-		Uses GetProjectTargets() to identify root registries from the XPC model,
-		then searches only within the root tree containing the currently-edited registry.
+		Uses GetProjectTargets() to identify root registries from the XPC model
+		(with normalized path comparison), then searches each root registry tree
+		for the export resolution.
 
 		\param exportId The export name of the delegated attribute
-		\param currentRegistryPtr The currently-edited registry, used to identify the root tree
+		\param currentRegistryPtr Currently unused, kept for interface compatibility
 		\return Resolution information including file path, element ID, and value
 	*/
 	ExportResolutionInfo FindExportResolution(const QByteArray& exportId, const icomp::IRegistry* currentRegistryPtr) const;
@@ -227,15 +228,6 @@ protected:
 				const QByteArray& attributeId,
 				int embeddedDepth,
 				QSet<QByteArray>& visitedExportIds) const;
-
-	/**
-		Check if a registry tree contains a specific registry (by pointer comparison).
-		Recursively checks embedded sub-registries.
-	*/
-	bool IsRegistryInTree(
-				const icomp::IRegistry& rootRegistry,
-				const icomp::IRegistry* targetRegistryPtr,
-				int maxDepth) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
