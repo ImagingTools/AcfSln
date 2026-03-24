@@ -1351,13 +1351,20 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 	}
 	visitedExportIds.insert(exportId);
 
-	// Search all loaded composite components for elements that have the exported attribute
+	// Search only root registries (from XPC model) for the exported attribute,
+	// skipping package components which only define exports but don't resolve them
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
 				iter != addresses.constEnd();
 				++iter){
 		const icomp::CComponentAddress& address = *iter;
+
+		// Only consider root registries (empty packageId), not package components
+		if (!address.GetPackageId().isEmpty()){
+			continue;
+		}
+
 		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
 
 		if (metaInfoPtr == NULL){
