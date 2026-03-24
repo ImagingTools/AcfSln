@@ -1347,13 +1347,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 				++iter){
 		const icomp::CComponentAddress& address = *iter;
 
-		// Only consider root registries (empty packageId), not package components
-		if (!address.GetPackageId().isEmpty()){
-			continue;
-		}
-
 		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
-
 		if (metaInfoPtr == NULL){
 			continue;
 		}
