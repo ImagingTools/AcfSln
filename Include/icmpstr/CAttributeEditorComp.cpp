@@ -1328,7 +1328,7 @@ bool CAttributeEditorComp::ResetItem(QTreeWidgetItem& item)
 }
 
 
-CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(const QByteArray& exportId) const
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolution(const QByteArray& exportId, int chainDepth) const
 {
 	ExportResolutionInfo result;
 
@@ -1336,7 +1336,12 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		return result;
 	}
 
-	// Get all loaded component addresses from the environment manager
+	// Prevent infinite loops in the export chain
+	if (chainDepth > s_maxRegistryRecursionDepth){
+		return result;
+	}
+
+	// Search all loaded composite components for elements that have the exported attribute
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
@@ -1360,10 +1365,12 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		}
 
 		const icomp::IRegistry& registry = compositeInfoPtr->GetRegistry();
-		result = SearchRegistryForResolution(registry, exportId, 0);
+		result = SearchRegistryForResolution(registry, exportId, 0, chainDepth);
 		if (result.resolved){
-			// Try to get the file path for this registry
-			result.filePath = m_envManagerCompPtr->GetRegistryPath(address);
+			// Set the file path for the composite where the resolution was found
+			if (result.filePath.isEmpty()){
+				result.filePath = m_envManagerCompPtr->GetRegistryPath(address);
+			}
 			return result;
 		}
 	}
@@ -1375,12 +1382,13 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryForResolution(
 			const icomp::IRegistry& registry,
 			const QByteArray& attributeId,
-			int depth) const
+			int embeddedDepth,
+			int chainDepth) const
 {
 	ExportResolutionInfo result;
 
-	// Prevent infinite recursion
-	if (depth > s_maxRegistryRecursionDepth){
+	// Prevent infinite recursion in embedded registries
+	if (embeddedDepth > s_maxRegistryRecursionDepth){
 		return result;
 	}
 
@@ -1396,14 +1404,13 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 			continue;
 		}
 
-		// Check if this element has the attribute with a value set (not just exported further)
+		// Check if this element has the attribute
 		icomp::IRegistryElement* registryElementPtr = elementInfoPtr->elementPtr.Cast<icomp::IRegistryElement*>();
 		if (registryElementPtr != NULL){
 			const icomp::IRegistryElement::AttributeInfo* attrInfoPtr =
 						registryElementPtr->GetAttributeInfo(attributeId);
 
 			if (attrInfoPtr != NULL){
-				// Attribute found - check if it has a direct value (not further exported)
 				if (attrInfoPtr->attributePtr.IsValid() && attrInfoPtr->exportId.isEmpty()){
 					// Attribute is resolved here with a direct value
 					result.resolved = true;
@@ -1420,38 +1427,27 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 					}
 					return result;
 				}
+				else if (!attrInfoPtr->exportId.isEmpty()){
+					// Attribute is further exported upward with a new name -
+					// follow the export chain by searching for the new exportId
+					return FindExportResolution(attrInfoPtr->exportId, chainDepth + 1);
+				}
 			}
 		}
 
-		// Recurse into composite components
+		// Only recurse into embedded sub-registries (same file),
+		// not into external sub-components - their attributes are reached
+		// by following the export chain upward instead
 		const icomp::CComponentAddress& address = elementInfoPtr->address;
-		const icomp::IRegistry* subRegistryPtr = NULL;
-
 		if (address.GetPackageId().isEmpty()){
-			// Embedded component
-			subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
-		}
-		else if (m_envManagerCompPtr.IsValid()){
-			// External component from package
-			const icomp::IComponentStaticInfo* metaInfoPtr =
-						m_envManagerCompPtr->GetComponentMetaInfo(address);
-			if ((metaInfoPtr != NULL) && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
-				const icomp::CCompositeComponentStaticInfo* compositeInfoPtr =
-							dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
-				if (compositeInfoPtr != NULL){
-					subRegistryPtr = &compositeInfoPtr->GetRegistry();
-				}
-			}
-		}
-
-		if (subRegistryPtr != NULL){
-			ExportResolutionInfo subResult = SearchRegistryForResolution(*subRegistryPtr, attributeId, depth + 1);
-			if (subResult.resolved){
-				// Track the embedded registry path - overwrite to get the shallowest level
-				if (address.GetPackageId().isEmpty()){
+			const icomp::IRegistry* subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
+			if (subRegistryPtr != NULL){
+				ExportResolutionInfo subResult = SearchRegistryForResolution(*subRegistryPtr, attributeId, embeddedDepth + 1, chainDepth);
+				if (subResult.resolved){
+					// Track the embedded registry path - overwrite to get the shallowest level
 					subResult.embeddedRegistryId = address.GetComponentId();
+					return subResult;
 				}
-				return subResult;
 			}
 		}
 	}

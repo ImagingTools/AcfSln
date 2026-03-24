@@ -185,25 +185,34 @@ protected:
 
 	/**
 		Find where a delegated attribute (with given exportId) is resolved
-		by traversing registries reachable through the environment manager.
+		by searching composite registries bottom-up: checking direct elements
+		at each level and following the export chain upward when the attribute
+		is further delegated.
 
 		\param exportId The export name of the delegated attribute
+		\param chainDepth Current depth in the export chain (to prevent infinite loops)
 		\return Resolution information including file path, element ID, and value
 	*/
-	ExportResolutionInfo FindExportResolution(const QByteArray& exportId) const;
+	ExportResolutionInfo FindExportResolution(const QByteArray& exportId, int chainDepth = 0) const;
 
 	/**
-		Recursively search a registry for where an attribute with the given ID is resolved.
+		Search a registry and its embedded sub-registries for where an attribute
+		with the given ID is resolved. Only checks direct elements and embedded
+		compositions within the same file - does not recurse into external
+		sub-components. When a further export is found, follows the chain upward
+		via FindExportResolution.
 
 		\param registry The registry to search
 		\param attributeId The attribute ID to search for
-		\param depth Current recursion depth (to prevent infinite recursion)
+		\param embeddedDepth Current depth in embedded registry traversal
+		\param chainDepth Current depth in the export chain
 		\return Resolution information
 	*/
 	ExportResolutionInfo SearchRegistryForResolution(
 				const icomp::IRegistry& registry,
 				const QByteArray& attributeId,
-				int depth) const;
+				int embeddedDepth,
+				int chainDepth) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
