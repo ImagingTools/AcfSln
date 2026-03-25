@@ -1589,6 +1589,10 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 		m_documentManagerCompPtr->OpenDocument(NULL, &resolution.filePath);
 	}
 
+	// Re-acquire selection info after OpenDocument - the active document
+	// may have changed, so the original pointer could be stale
+	selectionInfoPtr = GetObservedObject();
+
 	// Always select the element where the attribute value is set
 	QByteArray targetElementId = resolution.elementId.toUtf8();
 
