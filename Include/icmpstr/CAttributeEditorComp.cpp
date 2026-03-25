@@ -3,7 +3,6 @@
 
 
 // Qt includes
-#include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QComboBox>
@@ -1407,19 +1406,10 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 		return allResolutions;
 	}
 
-	// Get root registry file paths (project targets) from the XPC model
-	// and normalize them for reliable comparison
-	QStringList projectTargets = m_envManagerCompPtr->GetProjectTargets();
-	QSet<QString> normalizedTargets;
-	for (		QStringList::ConstIterator targetIter = projectTargets.constBegin();
-				targetIter != projectTargets.constEnd();
-				++targetIter){
-		normalizedTargets.insert(QDir::cleanPath(*targetIter));
-	}
-
 	// For each root registry, build the full component tree (like
 	// CRegistryTreeViewComp::AddSubcomponents) and search for the exportId.
 	// Collect all matches across all root registries.
+	// Root registries are top-level components identified by empty package ID.
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
@@ -1427,9 +1417,9 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 				++iter){
 		const icomp::CComponentAddress& address = *iter;
 
-		// Identify root registries: match registry path against project targets
-		QString registryPath = m_envManagerCompPtr->GetRegistryPath(address);
-		if (registryPath.isEmpty() || !normalizedTargets.contains(QDir::cleanPath(registryPath))){
+		// Root registries (top-level .acc files) have empty package ID;
+		// package components have non-empty package ID and are not roots
+		if (!address.GetPackageId().isEmpty()){
 			continue;
 		}
 
@@ -1449,6 +1439,7 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 		}
 
 		const icomp::IRegistry& rootRegistry = compositeInfoPtr->GetRegistry();
+		QString registryPath = m_envManagerCompPtr->GetRegistryPath(address);
 
 		// Search the full component tree of this root registry
 		QSet<QByteArray> visitedExportIds;

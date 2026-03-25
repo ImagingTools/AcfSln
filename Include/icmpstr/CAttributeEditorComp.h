@@ -244,6 +244,7 @@ protected:
 
 	/**
 		Find all resolutions for a given exportId across all root registries.
+		Root registries are top-level .acc components identified by empty package ID.
 		Builds full component trees for each root registry and collects all matches.
 
 		\param exportId The export name to search for
