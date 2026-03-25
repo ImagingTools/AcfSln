@@ -1402,51 +1402,32 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 {
 	QList<ExportResolutionInfo> allResolutions;
 
-	if (exportId.isEmpty() || !m_envManagerCompPtr.IsValid()){
+	if (exportId.isEmpty() || !m_envManagerCompPtr.IsValid() || !m_registryLoaderCompPtr.IsValid()){
 		return allResolutions;
 	}
 
-	// For each root registry, build the full component tree (like
-	// CRegistryTreeViewComp::AddSubcomponents) and search for the exportId.
-	// Collect all matches across all root registries.
-	// Root registries are top-level components identified by empty package ID.
-	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
+	// Get root registry file paths from the XPC model (project targets).
+	// Root .acc files are top-level components that are NOT in
+	// GetComponentAddresses() - they must be loaded explicitly.
+	QStringList projectTargets = m_envManagerCompPtr->GetProjectTargets();
 
-	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
-				iter != addresses.constEnd();
-				++iter){
-		const icomp::CComponentAddress& address = *iter;
+	for (		QStringList::ConstIterator targetIter = projectTargets.constBegin();
+				targetIter != projectTargets.constEnd();
+				++targetIter){
+		const QString& targetPath = *targetIter;
 
-		// Root registries (top-level .acc files) have empty package ID;
-		// package components have non-empty package ID and are not roots
-		if (!address.GetPackageId().isEmpty()){
+		// Load the root registry from file
+		const icomp::IRegistry* rootRegistryPtr = m_registryLoaderCompPtr->GetRegistryFromFile(targetPath);
+		if (rootRegistryPtr == NULL){
 			continue;
 		}
-
-		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
-		if (metaInfoPtr == NULL){
-			continue;
-		}
-
-		if (metaInfoPtr->GetComponentType() != icomp::IComponentStaticInfo::CT_COMPOSITE){
-			continue;
-		}
-
-		const icomp::CCompositeComponentStaticInfo* compositeInfoPtr =
-					dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
-		if (compositeInfoPtr == NULL){
-			continue;
-		}
-
-		const icomp::IRegistry& rootRegistry = compositeInfoPtr->GetRegistry();
-		QString registryPath = m_envManagerCompPtr->GetRegistryPath(address);
 
 		// Search the full component tree of this root registry
 		QSet<QByteArray> visitedExportIds;
-		ExportResolutionInfo rootResult = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
+		ExportResolutionInfo rootResult = FindExportResolutionImpl(*rootRegistryPtr, exportId, visitedExportIds);
 		if (rootResult.resolved){
 			if (rootResult.filePath.isEmpty()){
-				rootResult.filePath = registryPath;
+				rootResult.filePath = targetPath;
 			}
 			allResolutions.append(rootResult);
 		}

@@ -16,6 +16,7 @@
 // ACF includes
 #include <istd/CClassInfo.h>
 #include <icomp/IComponentEnvironmentManager.h>
+#include <icomp/IRegistryLoader.h>
 #include <idoc/IHelpViewer.h>
 #include <idoc/IDocumentManager.h>
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
@@ -52,6 +53,7 @@ public:
 		I_ASSIGN(m_registryPropGuiCompPtr, "RegistryPropGui", "Display and edit registry properties if no element is selected", false, "RegistryPropGui");
 		I_ASSIGN_TO(m_registryPropObserverCompPtr, m_registryPropGuiCompPtr, false);
 		I_ASSIGN(m_envManagerCompPtr, "EnvironmentManager", "Component environment manager for resolving exported attributes", false, "EnvironmentManager");
+		I_ASSIGN_TO(m_registryLoaderCompPtr, m_envManagerCompPtr, false);
 		I_ASSIGN(m_documentManagerCompPtr, "DocumentManager", "Document manager for navigating to attribute resolution", false, "DocumentManager");
 	I_END_COMPONENT;
 
@@ -244,7 +246,8 @@ protected:
 
 	/**
 		Find all resolutions for a given exportId across all root registries.
-		Root registries are top-level .acc components identified by empty package ID.
+		Uses GetProjectTargets() to get root registry file paths from the XPC model,
+		then loads each root registry via IRegistryLoader::GetRegistryFromFile().
 		Builds full component trees for each root registry and collects all matches.
 
 		\param exportId The export name to search for
@@ -330,6 +333,7 @@ private:
 	I_REF(iqtgui::IGuiObject, m_registryPropGuiCompPtr);
 	I_REF(imod::IObserver, m_registryPropObserverCompPtr);
 	I_REF(icomp::IComponentEnvironmentManager, m_envManagerCompPtr);
+	I_REF(icomp::IRegistryLoader, m_registryLoaderCompPtr);
 	I_REF(idoc::IDocumentManager, m_documentManagerCompPtr);
 
 	AttributeItemDelegate m_attributeItemDelegate;
