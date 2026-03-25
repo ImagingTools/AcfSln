@@ -7,10 +7,12 @@
 #include <QtCore/QFileInfo>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QInputDialog>
 #include <QtWidgets/QItemDelegate>
 #include <QtWidgets/QLineEdit>
 #else
 #include <QtGui/QComboBox>
+#include <QtGui/QInputDialog>
 #include <QtGui/QItemDelegate>
 #include <QtGui/QLineEdit>
 #endif
@@ -1333,10 +1335,76 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 			const QByteArray& exportId,
 			const icomp::IRegistry* /*currentRegistryPtr*/) const
 {
-	ExportResolutionInfo result;
+	QList<ExportResolutionInfo> allResolutions = FindAllExportResolutions(exportId);
+
+	if (!allResolutions.isEmpty()){
+		return allResolutions.first();
+	}
+
+	return ExportResolutionInfo();
+}
+
+
+CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResolutionInteractive(
+			const QByteArray& exportId) const
+{
+	QList<ExportResolutionInfo> allResolutions = FindAllExportResolutions(exportId);
+
+	if (allResolutions.isEmpty()){
+		return ExportResolutionInfo();
+	}
+
+	// Single match - return directly
+	if (allResolutions.size() == 1){
+		return allResolutions.first();
+	}
+
+	// Multiple matches found across different root registries -
+	// let the user choose which one to use via a dropdown dialog
+	QStringList choices;
+	for (		QList<ExportResolutionInfo>::ConstIterator resIter = allResolutions.constBegin();
+				resIter != allResolutions.constEnd();
+				++resIter){
+		QString label = QFileInfo(resIter->filePath).fileName();
+		if (!resIter->elementId.isEmpty()){
+			label += " / " + resIter->elementId;
+		}
+		if (!resIter->value.isEmpty()){
+			label += " = " + resIter->value;
+		}
+		choices.append(label);
+	}
+
+	bool ok = false;
+	QString chosen = QInputDialog::getItem(
+				NULL,
+				tr("Multiple resolutions found"),
+				tr("The export '%1' is resolved in multiple root registries.\nPlease choose:").arg(QString(exportId)),
+				choices,
+				0,
+				false,
+				&ok);
+
+	if (!ok){
+		return ExportResolutionInfo();
+	}
+
+	int chosenIndex = choices.indexOf(chosen);
+	if (chosenIndex >= 0 && chosenIndex < allResolutions.size()){
+		return allResolutions[chosenIndex];
+	}
+
+	return allResolutions.first();
+}
+
+
+QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllExportResolutions(
+			const QByteArray& exportId) const
+{
+	QList<ExportResolutionInfo> allResolutions;
 
 	if (exportId.isEmpty() || !m_envManagerCompPtr.IsValid()){
-		return result;
+		return allResolutions;
 	}
 
 	// Get root registry file paths (project targets) from the XPC model
@@ -1349,8 +1417,9 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		normalizedTargets.insert(QDir::cleanPath(*targetIter));
 	}
 
-	// Iterate all loaded component addresses and search the root registries
-	// that match the project targets
+	// For each root registry, build the full component tree (like
+	// CRegistryTreeViewComp::AddSubcomponents) and search for the exportId.
+	// Collect all matches across all root registries.
 	icomp::IMetaInfoManager::ComponentAddresses addresses = m_envManagerCompPtr->GetComponentAddresses();
 
 	for (		icomp::IMetaInfoManager::ComponentAddresses::ConstIterator iter = addresses.constBegin();
@@ -1381,18 +1450,18 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 
 		const icomp::IRegistry& rootRegistry = compositeInfoPtr->GetRegistry();
 
-		// Search within this root registry tree for the export resolution
+		// Search the full component tree of this root registry
 		QSet<QByteArray> visitedExportIds;
-		result = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
-		if (result.resolved){
-			if (result.filePath.isEmpty()){
-				result.filePath = registryPath;
+		ExportResolutionInfo rootResult = FindExportResolutionImpl(rootRegistry, exportId, visitedExportIds);
+		if (rootResult.resolved){
+			if (rootResult.filePath.isEmpty()){
+				rootResult.filePath = registryPath;
 			}
-			return result;
+			allResolutions.append(rootResult);
 		}
 	}
 
-	return result;
+	return allResolutions;
 }
 
 
@@ -1422,13 +1491,13 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 			const icomp::IRegistry& rootRegistry,
 			const icomp::IRegistry& registry,
 			const QByteArray& attributeId,
-			int embeddedDepth,
+			int depth,
 			QSet<QByteArray>& visitedExportIds) const
 {
 	ExportResolutionInfo result;
 
-	// Prevent infinite recursion in embedded registries
-	if (embeddedDepth > s_maxRegistryRecursionDepth){
+	// Prevent infinite recursion
+	if (depth > s_maxRegistryRecursionDepth){
 		return result;
 	}
 
@@ -1475,19 +1544,37 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 			}
 		}
 
-		// Only recurse into embedded sub-registries (same file),
-		// not into external sub-components - their attributes are reached
-		// by following the export chain upward instead
+		// Recurse into sub-component trees (like CRegistryTreeViewComp::AddSubcomponents):
+		// both embedded sub-registries and external package components
 		const icomp::CComponentAddress& address = elementInfoPtr->address;
-		if (address.GetPackageId().isEmpty()){
-			const icomp::IRegistry* subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
-			if (subRegistryPtr != NULL){
-				ExportResolutionInfo subResult = SearchRegistryForResolution(rootRegistry, *subRegistryPtr, attributeId, embeddedDepth + 1, visitedExportIds);
-				if (subResult.resolved){
-					// Track the embedded registry path - overwrite to get the shallowest level
-					subResult.embeddedRegistryId = address.GetComponentId();
-					return subResult;
+		const icomp::IRegistry* subRegistryPtr = NULL;
+
+		if (!address.GetPackageId().isEmpty()){
+			// External package component: get its registry via meta info
+			if (m_envManagerCompPtr.IsValid()){
+				const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
+				if (metaInfoPtr != NULL && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
+					const icomp::CCompositeComponentStaticInfo* compositeMetaInfoPtr =
+								dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
+					if (compositeMetaInfoPtr != NULL){
+						subRegistryPtr = &compositeMetaInfoPtr->GetRegistry();
+					}
 				}
+			}
+		}
+		else{
+			// Embedded sub-registry (same file)
+			subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
+		}
+
+		if (subRegistryPtr != NULL){
+			ExportResolutionInfo subResult = SearchRegistryForResolution(rootRegistry, *subRegistryPtr, attributeId, depth + 1, visitedExportIds);
+			if (subResult.resolved){
+				// Track the embedded registry path - overwrite to get the shallowest level
+				if (address.GetPackageId().isEmpty()){
+					subResult.embeddedRegistryId = address.GetComponentId();
+				}
+				return subResult;
 			}
 		}
 	}
@@ -1515,7 +1602,8 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 	ExportResolutionInfo resolution;
 	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
 	if (selectionInfoPtr != NULL){
-		resolution = FindExportResolution(exportValue, selectionInfoPtr->GetSelectedRegistry());
+		// Use interactive version that lets user choose when multiple matches exist
+		resolution = FindExportResolutionInteractive(exportValue);
 	}
 	if (!resolution.resolved){
 		return;

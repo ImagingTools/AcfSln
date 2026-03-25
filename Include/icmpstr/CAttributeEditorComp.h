@@ -185,15 +185,27 @@ protected:
 
 	/**
 		Find where a delegated attribute (with given exportId) is resolved.
-		Uses GetProjectTargets() to identify root registries from the XPC model
-		(with normalized path comparison), then searches each root registry tree
-		for the export resolution.
+		For each root registry (from GetProjectTargets()), builds a full component
+		tree (recursing into embedded sub-registries and external package components,
+		like CRegistryTreeViewComp::AddSubcomponents) and searches for the exportId.
+		Returns the first match found. For user-interactive disambiguation when
+		multiple matches exist, use FindExportResolutionInteractive().
 
 		\param exportId The export name of the delegated attribute
 		\param currentRegistryPtr Currently unused, kept for interface compatibility
 		\return Resolution information including file path, element ID, and value
 	*/
 	ExportResolutionInfo FindExportResolution(const QByteArray& exportId, const icomp::IRegistry* currentRegistryPtr) const;
+
+	/**
+		Find export resolution with interactive disambiguation.
+		Like FindExportResolution, but when multiple matches are found across
+		different root registries, the user is asked to choose via a dropdown dialog.
+
+		\param exportId The export name of the delegated attribute
+		\return Resolution information for the user-chosen match
+	*/
+	ExportResolutionInfo FindExportResolutionInteractive(const QByteArray& exportId) const;
 
 	/**
 		Internal implementation that searches within a specific root registry tree
@@ -210,15 +222,16 @@ protected:
 				QSet<QByteArray>& visitedExportIds) const;
 
 	/**
-		Search a registry and its embedded sub-registries for where an attribute
-		with the given ID is resolved. Only checks direct elements and embedded
-		compositions within the same file. When a further export is found,
-		follows the chain within the same root tree via FindExportResolutionImpl.
+		Search a registry and its sub-component trees for where an attribute
+		with the given ID is resolved. Recurses into both embedded sub-registries
+		and external package components (like CRegistryTreeViewComp::AddSubcomponents).
+		When a further export is found, follows the chain within the same root tree
+		via FindExportResolutionImpl.
 
 		\param rootRegistry The root registry for re-export chain searches
 		\param registry The registry to search
 		\param attributeId The attribute ID to search for
-		\param embeddedDepth Current depth in embedded registry traversal
+		\param depth Current depth in registry traversal (prevents infinite recursion)
 		\param visitedExportIds Set of exportIds already being searched (cycle detection)
 		\return Resolution information
 	*/
@@ -226,8 +239,17 @@ protected:
 				const icomp::IRegistry& rootRegistry,
 				const icomp::IRegistry& registry,
 				const QByteArray& attributeId,
-				int embeddedDepth,
+				int depth,
 				QSet<QByteArray>& visitedExportIds) const;
+
+	/**
+		Find all resolutions for a given exportId across all root registries.
+		Builds full component trees for each root registry and collects all matches.
+
+		\param exportId The export name to search for
+		\return List of all found resolutions
+	*/
+	QList<ExportResolutionInfo> FindAllExportResolutions(const QByteArray& exportId) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
