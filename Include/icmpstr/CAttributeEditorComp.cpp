@@ -1542,10 +1542,20 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 		if (subRegistryPtr != NULL){
 			ExportResolutionInfo subResult = SearchRegistryForResolution(rootRegistry, *subRegistryPtr, attributeId, depth + 1, visitedExportIds);
 			if (subResult.resolved){
-				// Track the embedded registry path - overwrite to get the shallowest level
-				if (address.GetPackageId().isEmpty()){
-					subResult.embeddedRegistryId = address.GetComponentId();
+				if (subResult.filePath.isEmpty()){
+					if (address.GetPackageId().isEmpty()){
+						// Embedded sub-registry within the same file -
+						// track the shallowest embedded registry ID
+						subResult.embeddedRegistryId = address.GetComponentId();
+					}
+					else if (m_envManagerCompPtr.IsValid()){
+						// Resolution is inside an external package component -
+						// set the file path to that package's .acc file
+						subResult.filePath = m_envManagerCompPtr->GetRegistryPath(address);
+					}
 				}
+				// If filePath is already set, we've crossed a file boundary -
+				// don't update embeddedRegistryId for the outer file
 				return subResult;
 			}
 		}

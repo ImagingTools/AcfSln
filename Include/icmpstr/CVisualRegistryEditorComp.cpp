@@ -1504,8 +1504,8 @@ bool CVisualRegistryEditorComp::SelectionInfoImpl::RequestElementSelection(const
 {
 	Q_ASSERT(m_parentPtr != NULL);
 
-	if (!embeddedRegistryId.isEmpty() && embeddedRegistryId != m_parentPtr->m_embeddedRegistryId){
-		// Need to switch to the embedded registry - pre-set selection for UpdateScene
+	if (embeddedRegistryId != m_parentPtr->m_embeddedRegistryId){
+		// Need to switch registry view (to embedded or back to root) - pre-set selection for UpdateScene
 		m_parentPtr->m_selectedElementIds.clear();
 		if (!elementId.isEmpty()){
 			m_parentPtr->m_selectedElementIds.insert(elementId);
