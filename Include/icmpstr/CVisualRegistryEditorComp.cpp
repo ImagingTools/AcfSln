@@ -1500,6 +1500,39 @@ IElementSelectionInfo::Elements CVisualRegistryEditorComp::SelectionInfoImpl::Ge
 }
 
 
+bool CVisualRegistryEditorComp::SelectionInfoImpl::RequestElementSelection(const QByteArray& elementId, const QByteArray& embeddedRegistryId) const
+{
+	Q_ASSERT(m_parentPtr != NULL);
+
+	if (embeddedRegistryId != m_parentPtr->m_embeddedRegistryId){
+		// Need to switch registry view (to embedded or back to root) - pre-set selection for UpdateScene
+		m_parentPtr->m_selectedElementIds.clear();
+		if (!elementId.isEmpty()){
+			m_parentPtr->m_selectedElementIds.insert(elementId);
+		}
+		m_parentPtr->UpdateEmbeddedRegistryView(embeddedRegistryId);
+	}
+	else if (m_parentPtr->m_scenePtr != NULL){
+		// Select element in the current scene by setting selection on matching shapes
+		QList<QGraphicsItem*> items = m_parentPtr->m_scenePtr->items();
+		for (		QList<QGraphicsItem*>::const_iterator iter = items.constBegin();
+					iter != items.constEnd();
+					++iter){
+			CRegistryElementShape* shapePtr = dynamic_cast<CRegistryElementShape*>(*iter);
+			if (shapePtr != NULL){
+				CVisualRegistryElement* elemPtr = shapePtr->GetObservedObject();
+				if (elemPtr != NULL){
+					shapePtr->setSelected(elemPtr->GetName() == elementId);
+				}
+			}
+		}
+		// scene's selectionChanged() signal will trigger OnSelectionChanged()
+	}
+
+	return true;
+}
+
+
 } // namespace icmpstr
 
 

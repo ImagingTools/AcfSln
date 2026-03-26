@@ -259,6 +259,7 @@ private:
 		// reimplemented (icmpstr::IElementSelectionInfo)
 		virtual icomp::IRegistry* GetSelectedRegistry() const override;
 		virtual Elements GetSelectedElements() const override;
+		virtual bool RequestElementSelection(const QByteArray& elementId, const QByteArray& embeddedRegistryId = QByteArray()) const override;
 
 	private:
 		CVisualRegistryEditorComp* m_parentPtr;

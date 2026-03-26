@@ -34,6 +34,12 @@
                     <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
                     <AttributeInfo Id="MetaInfoManager" Type="Reference" ExportId="MetaInfoManager">
                         <Data IsEnabled="false"/>
                     </AttributeInfo>

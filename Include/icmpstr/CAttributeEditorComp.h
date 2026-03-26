@@ -15,7 +15,10 @@
 
 // ACF includes
 #include <istd/CClassInfo.h>
+#include <icomp/IComponentEnvironmentManager.h>
+#include <icomp/IRegistryLoader.h>
 #include <idoc/IHelpViewer.h>
+#include <idoc/IDocumentManager.h>
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
 #include <iwidgets/CTreeWidgetFilter.h>
 #include <iwidgets/CItemDelegate.h>
@@ -49,6 +52,9 @@ public:
 		I_ASSIGN(m_consistInfoCompPtr, "ConsistencyInfo", "Allows to check consistency of registries and attributes", false, "ConsistencyInfo");
 		I_ASSIGN(m_registryPropGuiCompPtr, "RegistryPropGui", "Display and edit registry properties if no element is selected", false, "RegistryPropGui");
 		I_ASSIGN_TO(m_registryPropObserverCompPtr, m_registryPropGuiCompPtr, false);
+		I_ASSIGN(m_envManagerCompPtr, "EnvironmentManager", "Component environment manager for resolving exported attributes", false, "EnvironmentManager");
+		I_ASSIGN_TO(m_registryLoaderCompPtr, m_envManagerCompPtr, false);
+		I_ASSIGN(m_documentManagerCompPtr, "DocumentManager", "Document manager for navigating to attribute resolution", false, "DocumentManager");
 	I_END_COMPONENT;
 
 	enum TabIndex
@@ -109,6 +115,7 @@ public:
 protected Q_SLOTS:
 	void on_AttributeTree_itemSelectionChanged();
 	void on_AttributeTree_itemChanged(QTreeWidgetItem* item, int column);
+	void on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* item, int column);
 	void on_InterfacesTree_itemSelectionChanged();
 	void on_InterfacesTree_itemChanged(QTreeWidgetItem* item, int column);
 	void on_AutoInstanceCB_toggled(bool checked);
@@ -125,6 +132,20 @@ Q_SIGNALS:
 	void AfterSubcomponentsChange();
 
 protected:
+	/**
+		Information about where a delegated attribute is resolved.
+	*/
+	struct ExportResolutionInfo
+	{
+		QString filePath;             ///< ACC file where the attribute is resolved
+		QString elementId;            ///< Element ID in that registry
+		QByteArray attributeId;       ///< Attribute ID as known by the resolved element
+		QString value;                ///< The resolved attribute value
+		bool resolved = false;        ///< Whether the attribute was found and resolved
+		QByteArray embeddedRegistryId;///< Embedded registry ID if resolved inside embedded composition
+		int attributeMeaning = AM_NONE; ///< Meaning of the resolved value (AM_REFERENCE, AM_ATTRIBUTE, etc.)
+	};
+
 	struct AttrInfo
 	{
 		icomp::IRegistryElement* elementPtr;
@@ -164,6 +185,76 @@ protected:
 				const QString& text,
 				int meaning,
 				iser::ISerializable& result) const;
+
+	/**
+		Find where a delegated attribute (with given exportId) is resolved.
+		For each root registry (from GetProjectTargets()), builds a full component
+		tree (recursing into embedded sub-registries and external package components,
+		like CRegistryTreeViewComp::AddSubcomponents) and searches for the exportId.
+		Returns the first match found. For user-interactive disambiguation when
+		multiple matches exist, use FindExportResolutionInteractive().
+
+		\param exportId The export name of the delegated attribute
+		\param currentRegistryPtr Currently unused, kept for interface compatibility
+		\return Resolution information including file path, element ID, and value
+	*/
+	ExportResolutionInfo FindExportResolution(const QByteArray& exportId, const icomp::IRegistry* currentRegistryPtr) const;
+
+	/**
+		Find export resolution with interactive disambiguation.
+		Like FindExportResolution, but when multiple matches are found across
+		different root registries, the user is asked to choose via a dropdown dialog.
+
+		\param exportId The export name of the delegated attribute
+		\return Resolution information for the user-chosen match
+	*/
+	ExportResolutionInfo FindExportResolutionInteractive(const QByteArray& exportId) const;
+
+	/**
+		Internal implementation that searches within a specific root registry tree
+		for the given exportId. Tracks visited exportIds to prevent cycles.
+
+		\param rootRegistry The root registry to search within
+		\param exportId The export name to search for
+		\param visitedExportIds Set of exportIds already being searched (cycle detection)
+		\return Resolution information
+	*/
+	ExportResolutionInfo FindExportResolutionImpl(
+				const icomp::IRegistry& rootRegistry,
+				const QByteArray& exportId,
+				QSet<QByteArray>& visitedExportIds) const;
+
+	/**
+		Search a registry and its sub-component trees for where an attribute
+		with the given ID is resolved. Recurses into both embedded sub-registries
+		and external package components (like CRegistryTreeViewComp::AddSubcomponents).
+		When a further export is found, follows the chain within the same root tree
+		via FindExportResolutionImpl.
+
+		\param rootRegistry The root registry for re-export chain searches
+		\param registry The registry to search
+		\param attributeId The attribute ID to search for
+		\param depth Current depth in registry traversal (prevents infinite recursion)
+		\param visitedExportIds Set of exportIds already being searched (cycle detection)
+		\return Resolution information
+	*/
+	ExportResolutionInfo SearchRegistryForResolution(
+				const icomp::IRegistry& rootRegistry,
+				const icomp::IRegistry& registry,
+				const QByteArray& attributeId,
+				int depth,
+				QSet<QByteArray>& visitedExportIds) const;
+
+	/**
+		Find all resolutions for a given exportId across all root registries.
+		Uses GetProjectTargets() to get root registry file paths from the XPC model,
+		then loads each root registry via IRegistryLoader::GetRegistryFromFile().
+		Builds full component trees for each root registry and collects all matches.
+
+		\param exportId The export name to search for
+		\return List of all found resolutions
+	*/
+	QList<ExportResolutionInfo> FindAllExportResolutions(const QByteArray& exportId) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
@@ -242,6 +333,9 @@ private:
 	I_REF(IRegistryConsistInfo, m_consistInfoCompPtr);
 	I_REF(iqtgui::IGuiObject, m_registryPropGuiCompPtr);
 	I_REF(imod::IObserver, m_registryPropObserverCompPtr);
+	I_REF(icomp::IComponentEnvironmentManager, m_envManagerCompPtr);
+	I_REF(icomp::IRegistryLoader, m_registryLoaderCompPtr);
+	I_REF(idoc::IDocumentManager, m_documentManagerCompPtr);
 
 	AttributeItemDelegate m_attributeItemDelegate;
 	RegistryObserver m_registryObserver;
@@ -257,6 +351,8 @@ private:
 	istd::TDelPtr<iwidgets::CTreeWidgetFilter> m_subcomponentsTreeFilter;
 
 	imod::IModel* m_lastRegistryModelPtr;
+
+	QByteArray m_pendingAttributeId;	// attribute to select after next selection change
 
 	QIcon m_invalidIcon;
 	QIcon m_warningIcon;
