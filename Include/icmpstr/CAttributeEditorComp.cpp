@@ -1606,9 +1606,26 @@ void CAttributeEditorComp::on_AttributeTree_itemDoubleClicked(QTreeWidgetItem* i
 
 	// Request element selection in the visual editor
 	if (selectionInfoPtr != NULL && !targetElementId.isEmpty()){
+		// Set pending attribute BEFORE RequestElementSelection, because it triggers
+		// synchronous UpdateGui/UpdateAttributesView via the observer notification chain
+		m_pendingAttributeId = resolution.attributeId;
+
 		selectionInfoPtr->RequestElementSelection(targetElementId, resolution.embeddedRegistryId);
 
-		m_pendingAttributeId = resolution.attributeId;
+		// If RequestElementSelection didn't trigger UpdateAttributesView (e.g. element
+		// was already selected), m_pendingAttributeId is still set - apply it now directly
+		if (!m_pendingAttributeId.isEmpty()){
+			QByteArray pendingId = m_pendingAttributeId;
+			m_pendingAttributeId.clear();
+
+			for (int i = 0; i < AttributeTree->topLevelItemCount(); ++i){
+				QTreeWidgetItem* topItem = AttributeTree->topLevelItem(i);
+				if (topItem->data(AC_VALUE, AttributeId).toByteArray() == pendingId){
+					AttributeTree->setCurrentItem(topItem);
+					break;
+				}
+			}
+		}
 	}
 }
 
