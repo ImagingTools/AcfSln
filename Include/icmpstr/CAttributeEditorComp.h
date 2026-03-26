@@ -139,6 +139,7 @@ protected:
 	{
 		QString filePath;             ///< ACC file where the attribute is resolved
 		QString elementId;            ///< Element ID in that registry
+		QByteArray attributeId;       ///< Attribute ID as known by the resolved element
 		QString value;                ///< The resolved attribute value
 		bool resolved = false;        ///< Whether the attribute was found and resolved
 		QByteArray embeddedRegistryId;///< Embedded registry ID if resolved inside embedded composition
