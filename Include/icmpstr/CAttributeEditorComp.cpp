@@ -1473,8 +1473,12 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 		return result;
 	}
 
-	// Iterate all elements in this registry
 	icomp::IRegistry::Ids elementIds = registry.GetElementIds();
+
+	// First pass: check all elements at this registry level for direct attribute
+	// values or re-exports. This ensures that resolutions at the current composite
+	// level are found before recursing into sub-component trees, which prevents
+	// false matches from internal attribute bindings at deeper levels.
 	for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
 				elemIter != elementIds.constEnd();
 				++elemIter){
@@ -1516,9 +1520,20 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::SearchRegistryF
 				}
 			}
 		}
+	}
 
-		// Recurse into sub-component trees (like CRegistryTreeViewComp::AddSubcomponents):
-		// both embedded sub-registries and external package components
+	// Second pass: recurse into sub-component trees (like CRegistryTreeViewComp::AddSubcomponents).
+	// Only reached if no element at this level resolved or re-exported the attribute.
+	for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
+				elemIter != elementIds.constEnd();
+				++elemIter){
+		const QByteArray& elementId = *elemIter;
+		const icomp::IRegistry::ElementInfo* elementInfoPtr = registry.GetElementInfo(elementId);
+
+		if (elementInfoPtr == NULL){
+			continue;
+		}
+
 		const icomp::CComponentAddress& address = elementInfoPtr->address;
 		const icomp::IRegistry* subRegistryPtr = NULL;
 
