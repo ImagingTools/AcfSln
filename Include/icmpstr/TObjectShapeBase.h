@@ -54,8 +54,6 @@ protected:
 	virtual void UpdateGraphicsItem(const ObjectClass& object) = 0;
 
 private:
-	QPointF m_lastPosition;
-
 	bool m_isShapeUpdateBlocked;
 
 	istd::TDelPtr<istd::CChangeGroup> m_dragNotifierPtr;
@@ -113,11 +111,7 @@ void TObjectShapeBase<GraphicsItemClass, ObjectClass>::OnPositionChanged(const Q
 {
 	i2d::IObject2d* objectPtr = BaseClass2::GetObservedObject();
 	if (objectPtr != NULL){
-		QPointF offset = position - m_lastPosition;
-
-		objectPtr->MoveCenterTo(i2d::CVector2d(offset) + objectPtr->GetCenter());
-
-		m_lastPosition = position;
+		objectPtr->MoveCenterTo(i2d::CVector2d(position));
 	}
 
 	BaseClass::OnPositionChanged(position);
@@ -141,8 +135,6 @@ void TObjectShapeBase<GraphicsItemClass, ObjectClass>::mousePressEvent(QGraphics
 	BaseClass::mousePressEvent(eventPtr);
 
 	if (BaseClass::IsEditable() && (eventPtr->button() == Qt::LeftButton)){
-		m_lastPosition = BaseClass::pos();
-
 		m_dragNotifierPtr.SetPtr(new istd::CChangeGroup(BaseClass2::GetObservedObject(), &s_moveObjectChangeSet));
 	}
 }
