@@ -426,21 +426,24 @@ void CComponentTreeComp::on_FilterEdit_textChanged(const QString& /*filterText*/
 
 void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* itemPtr, int /*column*/)
 {
+	if (!m_envManagerCompPtr.IsValid() || !m_documentManagerCompPtr.IsValid()){
+		return;
+	}
+
 	icomp::CComponentAddress componentAddress;
 
 	componentAddress.SetComponentId(itemPtr->data(0, DR_ELEMENT_ID).toByteArray());
 	componentAddress.SetPackageId(itemPtr->data(0, DR_ELEMENT_PACKAGE_ID).toByteArray());
 
-	if (m_envManagerCompPtr.IsValid() && m_documentManagerCompPtr.IsValid()){
+	// Check if clicked item itself is a composite package component
+	if (!componentAddress.GetPackageId().isEmpty()){
 		const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(componentAddress);
 
 		if (metaInfoPtr != NULL && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
 			QDir packageDir(m_envManagerCompPtr->GetPackagePath(componentAddress.GetPackageId()));
 
-			QByteArray componentId = componentAddress.GetComponentId();
-
 			QString filePath = packageDir.absoluteFilePath(componentAddress.GetComponentId() + ".acc");
-			QString filePathOld = packageDir.absoluteFilePath(componentId + ".arx");
+			QString filePathOld = packageDir.absoluteFilePath(componentAddress.GetComponentId() + ".arx");
 			if (!QFileInfo(filePath).exists()){
 				if (QFileInfo(filePathOld).exists()){
 					filePath = filePathOld;
@@ -448,7 +451,45 @@ void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* ite
 			}
 
 			m_documentManagerCompPtr->OpenDocument(NULL, &filePath);
+			return;
 		}
+	}
+
+	// For non-composite or embedded components, walk up the tree
+	// to find the nearest non-embedded composite parent
+	QTreeWidgetItem* parentPtr = itemPtr->parent();
+	while (parentPtr != NULL){
+		QByteArray parentPackageId = parentPtr->data(0, DR_ELEMENT_PACKAGE_ID).toByteArray();
+
+		if (!parentPackageId.isEmpty()){
+			// Found a package component parent - open it as document
+			icomp::CComponentAddress parentAddress;
+			parentAddress.SetComponentId(parentPtr->data(0, DR_ELEMENT_ID).toByteArray());
+			parentAddress.SetPackageId(parentPackageId);
+
+			QDir packageDir(m_envManagerCompPtr->GetPackagePath(parentPackageId));
+
+			QString filePath = packageDir.absoluteFilePath(parentAddress.GetComponentId() + ".acc");
+			QString filePathOld = packageDir.absoluteFilePath(parentAddress.GetComponentId() + ".arx");
+			if (!QFileInfo(filePath).exists()){
+				if (QFileInfo(filePathOld).exists()){
+					filePath = filePathOld;
+				}
+			}
+
+			m_documentManagerCompPtr->OpenDocument(NULL, &filePath);
+			return;
+		}
+
+		// Parent is embedded, keep walking up
+		parentPtr = parentPtr->parent();
+	}
+
+	// Reached root without finding a package component parent - open the root registry file
+	int currentIndex = RootComboBox->currentIndex();
+	if (currentIndex >= 0){
+		QString rootPath = RootComboBox->itemData(currentIndex).toString();
+		m_documentManagerCompPtr->OpenDocument(NULL, &rootPath);
 	}
 }
 
