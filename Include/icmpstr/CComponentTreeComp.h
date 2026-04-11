@@ -99,6 +99,11 @@ protected:
 
 	void CollectMatchingItems(const QByteArray& elementName, QTreeWidgetItem* parentPtr, QList<QTreeWidgetItem*>& results) const;
 
+	/**
+		Update visibility state of the tree items according to the filter text.
+	*/
+	void UpdateTreeItemsVisibility();
+
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;
 	virtual void OnGuiModelAttached() override;
@@ -113,6 +118,7 @@ protected:
 
 protected Q_SLOTS:
 	void on_RootComboBox_currentIndexChanged(int index);
+	void on_FilterEdit_textChanged(const QString& filterText);
 	void on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* itemPtr, int column);
 	void on_ComponentTree_itemSelectionChanged();
 

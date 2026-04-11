@@ -217,6 +217,8 @@ void CComponentTreeComp::SyncSelectionFromModel()
 		return;
 	}
 
+	icomp::IRegistry* selectedRegistryPtr = selectionInfoPtr->GetSelectedRegistry();
+
 	m_isSyncingSelection = true;
 
 	ComponentTree->clearSelection();
@@ -226,7 +228,7 @@ void CComponentTreeComp::SyncSelectionFromModel()
 				++iter){
 		const QByteArray& elementName = iter.key();
 
-		QTreeWidgetItem* foundItem = FindTreeItem(elementName);
+		QTreeWidgetItem* foundItem = FindTreeItem(elementName, selectedRegistryPtr);
 		if (foundItem != NULL){
 			foundItem->setSelected(true);
 
@@ -245,35 +247,106 @@ void CComponentTreeComp::SyncSelectionFromModel()
 }
 
 
-QTreeWidgetItem* CComponentTreeComp::FindTreeItem(
+void CComponentTreeComp::CollectMatchingItems(
 			const QByteArray& elementName,
-			QTreeWidgetItem* parentPtr) const
+			QTreeWidgetItem* parentPtr,
+			QList<QTreeWidgetItem*>& results) const
 {
 	if (parentPtr == NULL){
-		// Search all top-level items
 		for (int i = 0; i < ComponentTree->topLevelItemCount(); ++i){
-			QTreeWidgetItem* result = FindTreeItem(elementName, ComponentTree->topLevelItem(i));
-			if (result != NULL){
-				return result;
-			}
+			CollectMatchingItems(elementName, ComponentTree->topLevelItem(i), results);
 		}
+		return;
+	}
+
+	if (parentPtr->data(0, DR_ELEMENT_NAME).toByteArray() == elementName){
+		results.append(parentPtr);
+	}
+
+	for (int i = 0; i < parentPtr->childCount(); ++i){
+		CollectMatchingItems(elementName, parentPtr->child(i), results);
+	}
+}
+
+
+QTreeWidgetItem* CComponentTreeComp::FindTreeItem(
+			const QByteArray& elementName,
+			const icomp::IRegistry* registryPtr) const
+{
+	QList<QTreeWidgetItem*> candidates;
+	CollectMatchingItems(elementName, NULL, candidates);
+
+	if (candidates.isEmpty()){
 		return NULL;
 	}
 
-	// Check current item
-	if (parentPtr->data(0, DR_ELEMENT_NAME).toByteArray() == elementName){
-		return parentPtr;
+	if (candidates.size() == 1 || registryPtr == NULL){
+		return candidates.first();
 	}
 
-	// Search children
-	for (int i = 0; i < parentPtr->childCount(); ++i){
-		QTreeWidgetItem* result = FindTreeItem(elementName, parentPtr->child(i));
-		if (result != NULL){
-			return result;
+	// Disambiguate using registry context:
+	// Compare the sibling element names of each candidate against the registry's element IDs
+	icomp::IRegistry::Ids registryElementIds = registryPtr->GetElementIds();
+	QSet<QByteArray> registryElementSet;
+	for (		icomp::IRegistry::Ids::const_iterator iter = registryElementIds.constBegin();
+				iter != registryElementIds.constEnd();
+				++iter){
+		registryElementSet.insert(*iter);
+	}
+
+	for (		QList<QTreeWidgetItem*>::const_iterator iter = candidates.constBegin();
+				iter != candidates.constEnd();
+				++iter){
+		QTreeWidgetItem* candidate = *iter;
+		QTreeWidgetItem* container = candidate->parent();
+		if (container == NULL){
+			continue;
+		}
+
+		QSet<QByteArray> siblingSet;
+		for (int i = 0; i < container->childCount(); ++i){
+			siblingSet.insert(container->child(i)->data(0, DR_ELEMENT_NAME).toByteArray());
+		}
+
+		if (siblingSet == registryElementSet){
+			return candidate;
 		}
 	}
 
-	return NULL;
+	return candidates.first();
+}
+
+
+void CComponentTreeComp::UpdateTreeItemsVisibility()
+{
+	QString filterText = FilterEdit->text();
+
+	QTreeWidgetItemIterator treeIter(ComponentTree);
+
+	while (*treeIter != NULL){
+		QTreeWidgetItem* itemPtr = *treeIter;
+
+		QString itemName = itemPtr->text(0);
+
+		bool showItem = filterText.isEmpty() ||
+					itemName.contains(filterText, Qt::CaseInsensitive);
+
+		itemPtr->setHidden(!showItem);
+
+		if (showItem){
+			QTreeWidgetItem* parentItemPtr = itemPtr->parent();
+
+			while (parentItemPtr != NULL){
+				if (parentItemPtr->isHidden()){
+					parentItemPtr->setHidden(false);
+				}
+
+				parentItemPtr = parentItemPtr->parent();
+			}
+		}
+
+		treeIter++;
+	}
 }
 
 
@@ -340,6 +413,12 @@ void CComponentTreeComp::OnComponentDestroyed()
 void CComponentTreeComp::on_RootComboBox_currentIndexChanged(int /*index*/)
 {
 	RebuildTree();
+}
+
+
+void CComponentTreeComp::on_FilterEdit_textChanged(const QString& /*filterText*/)
+{
+	UpdateTreeItemsVisibility();
 }
 
 

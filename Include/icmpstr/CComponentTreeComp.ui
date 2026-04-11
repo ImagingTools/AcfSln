@@ -34,6 +34,16 @@
     <widget class="QComboBox" name="RootComboBox"/>
    </item>
    <item>
+    <widget class="QLineEdit" name="FilterEdit">
+     <property name="placeholderText">
+      <string>Filter...</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QTreeWidget" name="ComponentTree">
      <property name="expandsOnDoubleClick">
       <bool>false</bool>
