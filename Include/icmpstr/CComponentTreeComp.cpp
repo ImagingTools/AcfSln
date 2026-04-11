@@ -430,6 +430,8 @@ void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* ite
 		return;
 	}
 
+	QByteArray elementName = itemPtr->data(0, DR_ELEMENT_NAME).toByteArray();
+
 	icomp::CComponentAddress componentAddress;
 
 	componentAddress.SetComponentId(itemPtr->data(0, DR_ELEMENT_ID).toByteArray());
@@ -451,6 +453,9 @@ void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* ite
 			}
 
 			m_documentManagerCompPtr->OpenDocument(NULL, &filePath);
+
+			// Ensure the double-clicked element stays selected and syncs to diagram
+			SelectTreeItem(itemPtr, elementName);
 			return;
 		}
 	}
@@ -478,6 +483,9 @@ void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* ite
 			}
 
 			m_documentManagerCompPtr->OpenDocument(NULL, &filePath);
+
+			// Ensure the double-clicked element stays selected and syncs to diagram
+			SelectTreeItem(itemPtr, elementName);
 			return;
 		}
 
@@ -490,6 +498,27 @@ void CComponentTreeComp::on_ComponentTree_itemDoubleClicked(QTreeWidgetItem* ite
 	if (currentIndex >= 0){
 		QString rootPath = RootComboBox->itemData(currentIndex).toString();
 		m_documentManagerCompPtr->OpenDocument(NULL, &rootPath);
+
+		// Ensure the double-clicked element stays selected and syncs to diagram
+		SelectTreeItem(itemPtr, elementName);
+	}
+}
+
+
+void CComponentTreeComp::SelectTreeItem(QTreeWidgetItem* itemPtr, const QByteArray& elementName)
+{
+	if (elementName.isEmpty()){
+		return;
+	}
+
+	m_isSyncingSelection = true;
+	ComponentTree->clearSelection();
+	itemPtr->setSelected(true);
+	m_isSyncingSelection = false;
+
+	const IElementSelectionInfo* selectionInfoPtr = GetObservedObject();
+	if (selectionInfoPtr != NULL){
+		selectionInfoPtr->RequestElementSelection(elementName);
 	}
 }
 
