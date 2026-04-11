@@ -2,9 +2,9 @@
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Id="0" Number="4054" Description="ACF"/>
-            <Version Id="1" Number="1505" Description="ACF-Solutions"/>
-            <Version Id="1023" Number="328706" Description="Qt Framework"/>
+            <Version Id="0" Number="6387" Description="ACF"/>
+            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <Description>Main UI components of the Compositor</Description>
@@ -34,6 +34,11 @@
                 </AttributeInfoMap>
             </Data>
         </Element>
+        <Element Id="ComponentNoteEditorDock" PackageId="CompositorVoce" ComponentId="ComponentNoteEditorDock">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap/>
+            </Data>
+        </Element>
         <Element Id="ComponentTreeDock" PackageId="CompositorVoce" ComponentId="ComponentTreeDock">
             <Data IsEnabled="true" Flags="0">
                 <AttributeInfoMap>
@@ -47,11 +52,6 @@
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
                 </AttributeInfoMap>
-            </Data>
-        </Element>
-        <Element Id="ComponentNoteEditorDock" PackageId="CompositorVoce" ComponentId="ComponentNoteEditorDock">
-            <Data IsEnabled="true" Flags="0">
-                <AttributeInfoMap/>
             </Data>
         </Element>
         <Element Id="LogDock" PackageId="AcfGuiVoce" ComponentId="LogDock">

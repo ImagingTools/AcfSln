@@ -2,9 +2,9 @@
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Id="0" Number="4333" Description="ACF"/>
-            <Version Id="1" Number="1778" Description="ACF-Solutions"/>
-            <Version Id="1023" Number="329472" Description="Qt Framework"/>
+            <Version Id="0" Number="6387" Description="ACF"/>
+            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <Description>Dock widget showing the full component tree for a selected root registry</Description>
@@ -29,7 +29,7 @@
             <Data IsEnabled="true" Flags="0">
                 <AttributeInfoMap>
                     <AttributeInfo Id="DockArea" Type="Integer" ExportId="">
-                        <Data IsEnabled="true" Value="1"/>
+                        <Data IsEnabled="true" Value="0"/>
                     </AttributeInfo>
                     <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
                         <Data IsEnabled="true" Value="Component Tree"/>

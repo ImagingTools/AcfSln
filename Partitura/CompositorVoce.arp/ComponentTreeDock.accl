@@ -2,14 +2,14 @@
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Id="0" Number="4333" Description="ACF"/>
-            <Version Id="1" Number="1778" Description="ACF-Solutions"/>
-            <Version Id="1023" Number="329472" Description="Qt Framework"/>
+            <Version Id="0" Number="6387" Description="ACF"/>
+            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <PositionMap>
-        <Element ComponentName="ComponentTreeDock" X="475" Y="200" Note=""/>
-        <Element ComponentName="ComponentTree" X="475" Y="350" Note=""/>
+        <Element ComponentName="ComponentTree" X="600" Y="400" Note=""/>
+        <Element ComponentName="ComponentTreeDock" X="600" Y="200" Note=""/>
     </PositionMap>
     <EmbeddedRegistries/>
 </Acf>
