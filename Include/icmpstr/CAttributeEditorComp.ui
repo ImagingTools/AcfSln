@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>229</width>
+    <width>329</width>
     <height>512</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>329</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Property Editor</string>
