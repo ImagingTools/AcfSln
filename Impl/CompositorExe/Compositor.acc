@@ -38,8 +38,7 @@
                                 <Value>MainWindowComponents/AttributeEditorDock</Value>
                                 <Value>MainWindowComponents/QuickHelpDock</Value>
                                 <Value>MainWindowComponents/ComponentNoteEditorDock</Value>
-                                <Value>MainWindowComponents/PackageOverviewDock</Value>
-                                <Value>MainWindowComponents/ComponentTreeDock</Value>
+                                <Value>MainWindowComponents/PackagesAndTreeDock</Value>
                                 <Value>MainWindowComponents/LogDock</Value>
                                 <Value>MainWindowComponents/WindowsListCommands</Value>
                                 <Value>Application/ConfigSelectorToolbar</Value>

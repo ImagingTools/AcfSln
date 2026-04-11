@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Acf>
+    <AcfHeader>
+        <VersionInfos>
+            <Version Id="0" Number="6387" Description="ACF"/>
+            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
+        </VersionInfos>
+    </AcfHeader>
+    <PositionMap>
+        <Element ComponentName="PackageOverview" X="200" Y="350" Note=""/>
+        <Element ComponentName="ComponentTree" X="600" Y="350" Note=""/>
+        <Element ComponentName="TabGui" X="400" Y="200" Note=""/>
+        <Element ComponentName="PackagesAndTreeDock" X="400" Y="50" Note=""/>
+    </PositionMap>
+    <EmbeddedRegistries/>
+</Acf>

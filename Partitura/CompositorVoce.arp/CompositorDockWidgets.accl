@@ -10,9 +10,8 @@
     <PositionMap>
         <Element ComponentName="AttributeEditorDock" X="1000" Y="125" Note=""/>
         <Element ComponentName="ComponentNoteEditorDock" X="618" Y="550" Note=""/>
-        <Element ComponentName="ComponentTreeDock" X="175" Y="75" Note=""/>
         <Element ComponentName="LogDock" X="600" Y="675" Note=""/>
-        <Element ComponentName="PackageOverviewDock" X="200" Y="400" Note=""/>
+        <Element ComponentName="PackagesAndTreeDock" X="200" Y="200" Note=""/>
         <Element ComponentName="QuickHelpDock" X="1000" Y="400" Note=""/>
         <Element ComponentName="WindowsListCommands" X="900" Y="675" Note=""/>
     </PositionMap>

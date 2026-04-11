@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Acf>
+    <AcfHeader>
+        <VersionInfos>
+            <Version Id="0" Number="6387" Description="ACF"/>
+            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="395266" Description="Qt Framework"/>
+        </VersionInfos>
+    </AcfHeader>
+    <Description>Combined dock widget showing Packages and Component Tree in a tab widget</Description>
+    <Keywords>Package Component Tree Dock Tab Tag='GUI'</Keywords>
+    <ElementsList>
+        <Element Id="PackageOverview" PackageId="CompositorPck" ComponentId="PackageOverview">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="ConfigFilePath" Type="Reference" ExportId="ConfigFilePath">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="QuickHelpGui" Type="Reference" ExportId="QuickHelpGui">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+        <Element Id="ComponentTree" PackageId="CompositorPck" ComponentId="ComponentTree">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+        <Element Id="TabGui" PackageId="QtGuiPck" ComponentId="ComposedGui">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="DesignType" Type="Integer" ExportId="">
+                        <Data IsEnabled="true" Value="2"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="Guis" Type="Reference[]" ExportId="">
+                        <Data IsEnabled="true">
+                            <Values>
+                                <Value>PackageOverview</Value>
+                                <Value>ComponentTree</Value>
+                            </Values>
+                        </Data>
+                    </AttributeInfo>
+                    <AttributeInfo Id="Names" Type="Text[]" ExportId="">
+                        <Data IsEnabled="true">
+                            <Values>
+                                <Value>Packages</Value>
+                                <Value>Component Tree</Value>
+                            </Values>
+                        </Data>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+        <Element Id="PackagesAndTreeDock" PackageId="QtGuiPck" ComponentId="DockWidgetGui">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="DockArea" Type="Integer" ExportId="">
+                        <Data IsEnabled="true" Value="0"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
+                        <Data IsEnabled="true" Value="Packages"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="SlaveGui" Type="Reference" ExportId="">
+                        <Data IsEnabled="true" Value="TabGui"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+    </ElementsList>
+    <EmbeddedRegistriesList/>
+    <ExportedInterfaces>
+        <Interface InterfaceId="ibase::ICommandsProvider" ComponentId="PackageOverview"/>
+        <Interface InterfaceId="icmpstr::IAttributeSelectionObserver" ComponentId="PackageOverview"/>
+        <Interface InterfaceId="imod::IModelEditor" ComponentId="PackageOverview"/>
+        <Interface InterfaceId="imod::IObserver" ComponentId="PackageOverview"/>
+        <Interface InterfaceId="iqtgui::IGuiObject" ComponentId="TabGui"/>
+        <Interface InterfaceId="iqtgui::IMainWindowComponent" ComponentId="PackagesAndTreeDock"/>
+    </ExportedInterfaces>
+    <ExportedComponents>
+        <Component ExportedId="ComponentTree" ComponentId="ComponentTree"/>
+        <Component ExportedId="LocalMetaInfoManager" ComponentId="PackageOverview/LocalMetaInfoManager"/>
+        <Component ExportedId="PackageOverview" ComponentId="PackageOverview"/>
+    </ExportedComponents>
+</Acf>
