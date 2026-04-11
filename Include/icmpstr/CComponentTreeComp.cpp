@@ -213,15 +213,17 @@ void CComponentTreeComp::SyncSelectionFromModel()
 	}
 
 	IElementSelectionInfo::Elements selectedElements = selectionInfoPtr->GetSelectedElements();
-	if (selectedElements.isEmpty()){
-		return;
-	}
-
-	icomp::IRegistry* selectedRegistryPtr = selectionInfoPtr->GetSelectedRegistry();
 
 	m_isSyncingSelection = true;
 
 	ComponentTree->clearSelection();
+
+	if (selectedElements.isEmpty()){
+		m_isSyncingSelection = false;
+		return;
+	}
+
+	icomp::IRegistry* selectedRegistryPtr = selectionInfoPtr->GetSelectedRegistry();
 
 	for (		IElementSelectionInfo::Elements::const_iterator iter = selectedElements.constBegin();
 				iter != selectedElements.constEnd();
