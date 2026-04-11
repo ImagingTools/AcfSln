@@ -89,6 +89,11 @@ I_EXPORT_COMPONENT(
 			IM_TAG("Registry View Tree Overview GUI"));
 
 I_EXPORT_COMPONENT(
+			ComponentTree,
+			"Component tree dock showing the full component hierarchy for a selected root registry",
+			IM_TAG("Registry Component Tree Dock GUI"));
+
+I_EXPORT_COMPONENT(
 			SceneProvider,
 			"Obsolete scene provider used in compositor only",
 			"Scene Provider Extender Display Console" IM_TAG("Deprecated"));

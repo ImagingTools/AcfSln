@@ -34,6 +34,21 @@
                 </AttributeInfoMap>
             </Data>
         </Element>
+        <Element Id="ComponentTreeDock" PackageId="CompositorVoce" ComponentId="ComponentTreeDock">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
         <Element Id="ComponentNoteEditorDock" PackageId="CompositorVoce" ComponentId="ComponentNoteEditorDock">
             <Data IsEnabled="true" Flags="0">
                 <AttributeInfoMap/>
@@ -114,6 +129,7 @@
     <ExportedComponents>
         <Component ExportedId="AttributeEditorDock" ComponentId="AttributeEditorDock"/>
         <Component ExportedId="ComponentNoteEditorDock" ComponentId="ComponentNoteEditorDock"/>
+        <Component ExportedId="ComponentTreeDock" ComponentId="ComponentTreeDock"/>
         <Component ExportedId="LocalMetaInfoManager" ComponentId="PackageOverviewDock/LocalMetaInfoManager"/>
         <Component ExportedId="LogDock" ComponentId="LogDock"/>
         <Component ExportedId="PackageOverviewDock" ComponentId="PackageOverviewDock"/>

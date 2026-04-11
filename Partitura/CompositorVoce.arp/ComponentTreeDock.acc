@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Acf>
+    <AcfHeader>
+        <VersionInfos>
+            <Version Id="0" Number="4333" Description="ACF"/>
+            <Version Id="1" Number="1778" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="329472" Description="Qt Framework"/>
+        </VersionInfos>
+    </AcfHeader>
+    <Description>Dock widget showing the full component tree for a selected root registry</Description>
+    <Keywords>Component Tree Dock Tag='GUI'</Keywords>
+    <ElementsList>
+        <Element Id="ComponentTree" PackageId="CompositorPck" ComponentId="ComponentTree">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+        <Element Id="ComponentTreeDock" PackageId="QtGuiPck" ComponentId="DockWidgetGui">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="DockArea" Type="Integer" ExportId="">
+                        <Data IsEnabled="true" Value="1"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
+                        <Data IsEnabled="true" Value="Component Tree"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="SlaveGui" Type="Reference" ExportId="">
+                        <Data IsEnabled="true" Value="ComponentTree"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
+    </ElementsList>
+    <EmbeddedRegistriesList/>
+    <ExportedInterfaces>
+        <Interface InterfaceId="imod::IModelEditor" ComponentId="ComponentTree"/>
+        <Interface InterfaceId="imod::IObserver" ComponentId="ComponentTree"/>
+        <Interface InterfaceId="iqtgui::IMainWindowComponent" ComponentId="ComponentTreeDock"/>
+    </ExportedInterfaces>
+    <ExportedComponents/>
+</Acf>

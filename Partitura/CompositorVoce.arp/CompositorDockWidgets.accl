@@ -14,6 +14,7 @@
         <Element ComponentName="AttributeEditorDock" X="1000" Y="125" Note=""/>
         <Element ComponentName="LogDock" X="600" Y="675" Note=""/>
         <Element ComponentName="ComponentNoteEditorDock" X="618" Y="550" Note=""/>
+        <Element ComponentName="ComponentTreeDock" X="200" Y="125" Note=""/>
     </PositionMap>
     <EmbeddedRegistries/>
 </Acf>
