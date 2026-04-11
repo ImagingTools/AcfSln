@@ -100,6 +100,12 @@ protected:
 	void CollectMatchingItems(const QByteArray& elementName, QTreeWidgetItem* parentPtr, QList<QTreeWidgetItem*>& results) const;
 
 	/**
+		Explicitly select a tree item and request element selection in the diagram.
+		Used after opening a document to ensure the double-clicked element stays selected.
+	*/
+	void SelectTreeItem(QTreeWidgetItem* itemPtr, const QByteArray& elementName);
+
+	/**
 		Update visibility state of the tree items according to the filter text.
 	*/
 	void UpdateTreeItemsVisibility();
