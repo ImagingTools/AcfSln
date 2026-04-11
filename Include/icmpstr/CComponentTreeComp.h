@@ -90,7 +90,14 @@ protected:
 
 	void SyncSelectionFromModel();
 
-	QTreeWidgetItem* FindTreeItem(const QByteArray& elementName, QTreeWidgetItem* parentPtr = NULL) const;
+	/**
+		Find tree item matching the element name, disambiguating by registry context.
+		When registryPtr is provided and multiple tree items share the same element name,
+		the sibling set is compared against the registry's element IDs to find the correct match.
+	*/
+	QTreeWidgetItem* FindTreeItem(const QByteArray& elementName, const icomp::IRegistry* registryPtr = NULL) const;
+
+	void CollectMatchingItems(const QByteArray& elementName, QTreeWidgetItem* parentPtr, QList<QTreeWidgetItem*>& results) const;
 
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;
