@@ -78,7 +78,7 @@
                         <Data IsEnabled="true" Value="0"/>
                     </AttributeInfo>
                     <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
-                        <Data IsEnabled="true" Value="Packages"/>
+                        <Data IsEnabled="true" Value="Packages &amp; Tree"/>
                     </AttributeInfo>
                     <AttributeInfo Id="SlaveGui" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="TabGui"/>
