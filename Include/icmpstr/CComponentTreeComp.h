@@ -110,6 +110,13 @@ protected:
 	*/
 	void UpdateTreeItemsVisibility();
 
+	/**
+		Update the tree from the in-memory registry obtained through the active document.
+		Used when structural changes (rename, add, remove) happen in the currently open document,
+		since the file-based reload would not reflect unsaved changes.
+	*/
+	void UpdateTreeFromModel();
+
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;
 	virtual void OnGuiModelAttached() override;
@@ -138,6 +145,11 @@ private:
 	EnvironmentObserver m_environmentObserver;
 
 	bool m_isSyncingSelection;
+
+	// Temporary state used during tree rebuild to substitute in-memory registry
+	// for the active document's file path (avoids stale file-based data)
+	QString m_activeDocFilePath;
+	const icomp::IRegistry* m_activeDocRegistryPtr;
 };
 
 

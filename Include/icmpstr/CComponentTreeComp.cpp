@@ -18,7 +18,8 @@ namespace icmpstr
 
 CComponentTreeComp::CComponentTreeComp()
 	:m_environmentObserver(this),
-	 m_isSyncingSelection(false)
+	 m_isSyncingSelection(false),
+	 m_activeDocRegistryPtr(NULL)
 {
 }
 
@@ -124,12 +125,24 @@ void CComponentTreeComp::AddSubcomponents(
 		const icomp::IRegistry* componentRegistryPtr = NULL;
 
 		if (!address.GetPackageId().isEmpty()){
-			const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
+			// Check if this package component is the active document -
+			// if so, use the in-memory registry to reflect unsaved changes
+			if (m_activeDocRegistryPtr != NULL){
+				// GetRegistryPath returns canonical file path
+				QString componentPath = m_envManagerCompPtr->GetRegistryPath(address);
+				if (!componentPath.isEmpty() && componentPath == m_activeDocFilePath){
+					componentRegistryPtr = m_activeDocRegistryPtr;
+				}
+			}
 
-			if (metaInfoPtr != NULL && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
-				const icomp::CCompositeComponentStaticInfo* compositeMetaInfoPtr = dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
-				if (compositeMetaInfoPtr != NULL){
-					componentRegistryPtr = &compositeMetaInfoPtr->GetRegistry();
+			if (componentRegistryPtr == NULL){
+				const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
+
+				if (metaInfoPtr != NULL && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
+					const icomp::CCompositeComponentStaticInfo* compositeMetaInfoPtr = dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
+					if (compositeMetaInfoPtr != NULL){
+						componentRegistryPtr = &compositeMetaInfoPtr->GetRegistry();
+					}
 				}
 			}
 		}
@@ -354,11 +367,95 @@ void CComponentTreeComp::UpdateTreeItemsVisibility()
 }
 
 
+void CComponentTreeComp::UpdateTreeFromModel()
+{
+	if (!IsGuiCreated()){
+		return;
+	}
+
+	int currentIndex = RootComboBox->currentIndex();
+	if (currentIndex < 0){
+		return;
+	}
+
+	// Get active document's in-memory registry and file path
+	m_activeDocFilePath.clear();
+	m_activeDocRegistryPtr = NULL;
+
+	if (m_documentManagerCompPtr.IsValid()){
+		const istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->GetActiveView();
+		if (viewPtr != NULL){
+			idoc::IDocumentManager::DocumentInfo info;
+			m_documentManagerCompPtr->GetDocumentFromView(*viewPtr, &info);
+
+			istd::IChangeable* documentPtr = m_documentManagerCompPtr->GetDocumentFromView(*viewPtr);
+			if (documentPtr != NULL){
+				const icomp::IRegistry* registryPtr = dynamic_cast<const icomp::IRegistry*>(documentPtr);
+				if (registryPtr != NULL){
+					// Use canonicalFilePath for reliable path comparison -
+					// GetRegistryPath() and GetRegistryFromFile() use canonical paths internally
+					m_activeDocFilePath = QFileInfo(info.filePath).canonicalFilePath();
+					m_activeDocRegistryPtr = registryPtr;
+				}
+			}
+		}
+	}
+
+	// Rebuild entire tree - at root level check if root matches active doc,
+	// at sub-component levels AddSubcomponents checks via m_activeDocFilePath
+	ComponentTree->clear();
+
+	QString rootPath = RootComboBox->itemData(currentIndex).toString();
+
+	const icomp::IRegistry* rootRegistryPtr = NULL;
+
+	if (!m_activeDocFilePath.isEmpty() &&
+		m_activeDocFilePath == QFileInfo(rootPath).canonicalFilePath()){
+		rootRegistryPtr = m_activeDocRegistryPtr;
+	}
+	else if (m_registryLoaderCompPtr.IsValid()){
+		rootRegistryPtr = m_registryLoaderCompPtr->GetRegistryFromFile(rootPath);
+	}
+
+	if (rootRegistryPtr != NULL){
+		QTreeWidgetItem* rootItem = new QTreeWidgetItem();
+		rootItem->setText(0, RootComboBox->currentText());
+
+		static QIcon okIcon(":/Icons/Ok");
+		rootItem->setIcon(0, okIcon);
+
+		ComponentTree->addTopLevelItem(rootItem);
+
+		CreateRegistryTree(*rootRegistryPtr, rootItem);
+
+		rootItem->setExpanded(true);
+	}
+
+	// Clear temporary state
+	m_activeDocFilePath.clear();
+	m_activeDocRegistryPtr = NULL;
+
+	SyncSelectionFromModel();
+}
+
+
 // reimplemented (iqtgui::TGuiObserverWrap)
 
-void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& /*changeSet*/)
+void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet)
 {
-	SyncSelectionFromModel();
+	if (changeSet.Contains(istd::IChangeable::CF_ALL_DATA)){
+		RebuildTree();
+	}
+	else if (
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_RENAMED) ||
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED) ||
+		changeSet.Contains(istd::IChangeable::CF_DELEGATED)){
+		UpdateTreeFromModel();
+	}
+	else{
+		SyncSelectionFromModel();
+	}
 }
 
 
