@@ -112,6 +112,9 @@
                     <AttributeInfo Id="MetaInfoManager" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="CompositorTemplate/PackagesLoader"/>
                     </AttributeInfo>
+                    <AttributeInfo Id="SettingsProvider" Type="Reference" ExportId="">
+                        <Data IsEnabled="true" Value="Application/SettingsProvider"/>
+                    </AttributeInfo>
                     <AttributeInfo Id="TechDocuViewerFileParam" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="Application/HtmlBrowserFile"/>
                     </AttributeInfo>

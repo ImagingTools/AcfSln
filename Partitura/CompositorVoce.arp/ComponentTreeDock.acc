@@ -22,6 +22,9 @@
                     <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
+                    <AttributeInfo Id="SettingsProvider" Type="Reference" ExportId="SettingsProvider">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
                 </AttributeInfoMap>
             </Data>
         </Element>

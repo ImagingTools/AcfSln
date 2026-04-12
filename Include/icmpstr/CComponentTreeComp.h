@@ -15,6 +15,7 @@
 #include <idoc/IDocumentManager.h>
 
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
+#include <iqtgui/TRestorableGuiWrap.h>
 
 #include <icmpstr/IRegistryConsistInfo.h>
 #include <icmpstr/IElementSelectionInfo.h>
@@ -27,14 +28,16 @@ namespace icmpstr
 
 
 class CComponentTreeComp:
-			public iqtgui::TDesignerGuiObserverCompBase<
-						Ui::CComponentTreeComp, IElementSelectionInfo>
+			public iqtgui::TRestorableGuiWrap<
+						iqtgui::TDesignerGuiObserverCompBase<
+							Ui::CComponentTreeComp, IElementSelectionInfo> >
 {
 	Q_OBJECT
 
 public:
-	typedef iqtgui::TDesignerGuiObserverCompBase<
-				Ui::CComponentTreeComp, IElementSelectionInfo> BaseClass;
+	typedef iqtgui::TRestorableGuiWrap<
+				iqtgui::TDesignerGuiObserverCompBase<
+					Ui::CComponentTreeComp, IElementSelectionInfo> > BaseClass;
 
 	enum DataRole
 	{
@@ -116,6 +119,10 @@ protected:
 		since the file-based reload would not reflect unsaved changes.
 	*/
 	void UpdateTreeFromModel();
+
+	// reimplemented (iqtgui::TRestorableGuiWrap)
+	virtual void OnRestoreSettings(const QSettings& settings) override;
+	virtual void OnSaveSettings(QSettings& settings) const override;
 
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;

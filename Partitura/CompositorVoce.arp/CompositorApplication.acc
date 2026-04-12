@@ -143,5 +143,6 @@
         <Component ExportedId="HtmlBrowserFile" ComponentId="Settings/HtmlBrowserFile"/>
         <Component ExportedId="HtmlEditorFile" ComponentId="Settings/HtmlEditorFile"/>
         <Component ExportedId="PreviewCommandFile" ComponentId="Settings/PreviewCommandFile"/>
+        <Component ExportedId="SettingsProvider" ComponentId="Application/SettingsProvider"/>
     </ExportedComponents>
 </Acf>

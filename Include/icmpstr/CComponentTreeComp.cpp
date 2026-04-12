@@ -5,6 +5,7 @@
 // Qt includes
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
 
 // ACF includes
 #include <icomp/CCompositeComponentStaticInfo.h>
@@ -436,6 +437,28 @@ void CComponentTreeComp::UpdateTreeFromModel()
 	m_activeDocRegistryPtr = NULL;
 
 	SyncSelectionFromModel();
+}
+
+
+// reimplemented (iqtgui::TRestorableGuiWrap)
+
+void CComponentTreeComp::OnRestoreSettings(const QSettings& settings)
+{
+	QString savedRoot = settings.value("ComponentTree/SelectedRoot").toString();
+	if (!savedRoot.isEmpty()){
+		int index = RootComboBox->findText(savedRoot);
+		if (index >= 0){
+			RootComboBox->setCurrentIndex(index);
+		}
+	}
+}
+
+
+void CComponentTreeComp::OnSaveSettings(QSettings& settings) const
+{
+	if (RootComboBox->currentIndex() >= 0){
+		settings.setValue("ComponentTree/SelectedRoot", RootComboBox->currentText());
+	}
 }
 
 

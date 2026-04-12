@@ -57,6 +57,9 @@
                     <AttributeInfo Id="QuickHelpGui" Type="Reference" ExportId="">
                         <Data IsEnabled="true" Value="QuickHelpDock"/>
                     </AttributeInfo>
+                    <AttributeInfo Id="SettingsProvider" Type="Reference" ExportId="SettingsProvider">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
                 </AttributeInfoMap>
             </Data>
         </Element>
