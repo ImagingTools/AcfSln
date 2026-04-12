@@ -1080,7 +1080,10 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	registryPtr->RenameElement(oldName, newName);
+	if (registryPtr->RenameElement(oldName, newName)){
+		m_selectedElementIds.erase(oldName);
+		m_selectedElementIds.insert(newName);
+	}
 }
 
 
