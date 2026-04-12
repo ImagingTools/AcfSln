@@ -96,6 +96,7 @@ void CComponentTreeComp::RebuildTree()
 	rootItem->setExpanded(true);
 
 	SyncSelectionFromModel();
+	UpdateActiveDocHighlight();
 }
 
 
@@ -436,6 +437,73 @@ void CComponentTreeComp::UpdateTreeFromModel()
 	m_activeDocRegistryPtr = NULL;
 
 	SyncSelectionFromModel();
+	UpdateActiveDocHighlight();
+}
+
+
+void CComponentTreeComp::UpdateActiveDocHighlight()
+{
+	if (!IsGuiCreated() || !m_envManagerCompPtr.IsValid()){
+		return;
+	}
+
+	// Determine the active document's canonical file path
+	QString activeDocPath;
+
+	if (m_documentManagerCompPtr.IsValid()){
+		const istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->GetActiveView();
+		if (viewPtr != NULL){
+			idoc::IDocumentManager::DocumentInfo info;
+			m_documentManagerCompPtr->GetDocumentFromView(*viewPtr, &info);
+			if (!info.filePath.isEmpty()){
+				activeDocPath = QFileInfo(info.filePath).canonicalFilePath();
+			}
+		}
+	}
+
+	// Determine the root file path for root item comparison
+	QString rootCanonicalPath;
+	int currentIndex = RootComboBox->currentIndex();
+	if (currentIndex >= 0){
+		QString rootPath = RootComboBox->itemData(currentIndex).toString();
+		rootCanonicalPath = QFileInfo(rootPath).canonicalFilePath();
+	}
+
+	QTreeWidgetItemIterator treeIter(ComponentTree);
+	while (*treeIter != NULL){
+		QTreeWidgetItem* itemPtr = *treeIter;
+
+		bool isBold = false;
+
+		if (!activeDocPath.isEmpty()){
+			QByteArray packageId = itemPtr->data(0, DR_ELEMENT_PACKAGE_ID).toByteArray();
+			if (!packageId.isEmpty()){
+				// Package component - check registry path
+				icomp::CComponentAddress address;
+				address.SetComponentId(itemPtr->data(0, DR_ELEMENT_ID).toByteArray());
+				address.SetPackageId(packageId);
+
+				QString componentPath = m_envManagerCompPtr->GetRegistryPath(address);
+				if (!componentPath.isEmpty() && componentPath == activeDocPath){
+					isBold = true;
+				}
+			}
+			else if (itemPtr->parent() == NULL){
+				// Root item - check if root file matches active doc
+				if (!rootCanonicalPath.isEmpty() && rootCanonicalPath == activeDocPath){
+					isBold = true;
+				}
+			}
+		}
+
+		QFont font = itemPtr->font(0);
+		if (font.bold() != isBold){
+			font.setBold(isBold);
+			itemPtr->setFont(0, font);
+		}
+
+		treeIter++;
+	}
 }
 
 
@@ -455,6 +523,7 @@ void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet
 	}
 	else{
 		SyncSelectionFromModel();
+		UpdateActiveDocHighlight();
 	}
 }
 
@@ -464,6 +533,7 @@ void CComponentTreeComp::OnGuiModelAttached()
 	BaseClass::OnGuiModelAttached();
 
 	SyncSelectionFromModel();
+	UpdateActiveDocHighlight();
 }
 
 
