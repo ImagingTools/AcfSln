@@ -5,6 +5,7 @@
 // Qt includes
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
 
 // ACF includes
 #include <icomp/CCompositeComponentStaticInfo.h>
@@ -55,6 +56,15 @@ void CComponentTreeComp::RebuildRootComboBox()
 			if (RootComboBox->itemText(previousIndex) == previousText){
 				RootComboBox->setCurrentIndex(previousIndex);
 			}
+		}
+
+		// Apply deferred selection from QSettings (first call after OnRestoreSettings)
+		if (!m_pendingRootSelection.isEmpty()){
+			int index = RootComboBox->findText(m_pendingRootSelection);
+			if (index >= 0){
+				RootComboBox->setCurrentIndex(index);
+			}
+			m_pendingRootSelection.clear();
 		}
 	}
 
@@ -503,6 +513,24 @@ void CComponentTreeComp::UpdateActiveDocHighlight()
 		}
 
 		treeIter++;
+	}
+}
+
+
+// reimplemented (iqtgui::TRestorableGuiWrap)
+
+void CComponentTreeComp::OnRestoreSettings(const QSettings& settings)
+{
+	// Only remember the value here - the RootComboBox is not yet populated.
+	// RebuildRootComboBox will apply it after filling the combo box.
+	m_pendingRootSelection = settings.value("ComponentTree/SelectedRoot").toString();
+}
+
+
+void CComponentTreeComp::OnSaveSettings(QSettings& settings) const
+{
+	if (RootComboBox->currentIndex() >= 0){
+		settings.setValue("ComponentTree/SelectedRoot", RootComboBox->currentText());
 	}
 }
 

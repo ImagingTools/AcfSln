@@ -15,6 +15,7 @@
 #include <idoc/IDocumentManager.h>
 
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
+#include <iqtgui/TRestorableGuiWrap.h>
 
 #include <icmpstr/IRegistryConsistInfo.h>
 #include <icmpstr/IElementSelectionInfo.h>
@@ -27,14 +28,16 @@ namespace icmpstr
 
 
 class CComponentTreeComp:
-			public iqtgui::TDesignerGuiObserverCompBase<
-						Ui::CComponentTreeComp, IElementSelectionInfo>
+			public iqtgui::TRestorableGuiWrap<
+						iqtgui::TDesignerGuiObserverCompBase<
+							Ui::CComponentTreeComp, IElementSelectionInfo> >
 {
 	Q_OBJECT
 
 public:
-	typedef iqtgui::TDesignerGuiObserverCompBase<
-				Ui::CComponentTreeComp, IElementSelectionInfo> BaseClass;
+	typedef iqtgui::TRestorableGuiWrap<
+				iqtgui::TDesignerGuiObserverCompBase<
+					Ui::CComponentTreeComp, IElementSelectionInfo> > BaseClass;
 
 	enum DataRole
 	{
@@ -117,6 +120,9 @@ protected:
 	*/
 	void UpdateTreeFromModel();
 
+	// reimplemented (iqtgui::TRestorableGuiWrap)
+	virtual void OnRestoreSettings(const QSettings& settings) override;
+	virtual void OnSaveSettings(QSettings& settings) const override;
 	/**
 		Update bold font highlighting on tree items to indicate which element
 		corresponds to the currently active (open) document in the Compositor.
@@ -151,6 +157,11 @@ private:
 	EnvironmentObserver m_environmentObserver;
 
 	bool m_isSyncingSelection;
+
+	// Deferred root selection: OnRestoreSettings stores the saved value here
+	// because the RootComboBox is not yet populated at that point.
+	// RebuildRootComboBox applies and clears it after filling the combo box.
+	QString m_pendingRootSelection;
 
 	// Temporary state used during tree rebuild to substitute in-memory registry
 	// for the active document's file path (avoids stale file-based data)
