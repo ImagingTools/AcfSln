@@ -1066,7 +1066,7 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	const QByteArray& oldName = *firstIter;
+	const QByteArray oldName = *firstIter;
 
 	bool isOk = false;
 	QByteArray newName = QInputDialog::getText(
@@ -1080,9 +1080,15 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	if (registryPtr->RenameElement(oldName, newName)){
-		m_selectedElementIds.remove(oldName);
-		m_selectedElementIds.insert(newName);
+	// update selection IDs before rename so that scene rebuild triggered
+	// by CChangeNotifier inside RenameElement uses the new name
+	m_selectedElementIds.remove(oldName);
+	m_selectedElementIds.insert(newName);
+
+	if (!registryPtr->RenameElement(oldName, newName)){
+		// revert selection if rename fails
+		m_selectedElementIds.remove(newName);
+		m_selectedElementIds.insert(oldName);
 	}
 }
 
