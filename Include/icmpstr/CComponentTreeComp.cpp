@@ -354,9 +354,17 @@ void CComponentTreeComp::UpdateTreeItemsVisibility()
 
 // reimplemented (iqtgui::TGuiObserverWrap)
 
-void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& /*changeSet*/)
+void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet)
 {
-	SyncSelectionFromModel();
+	if (changeSet.Contains(CF_ALL_DATA) ||
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_RENAMED) ||
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED)){
+		RebuildTree();
+	}
+	else{
+		SyncSelectionFromModel();
+	}
 }
 
 
