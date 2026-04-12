@@ -174,7 +174,7 @@ bool TSimpleSpaceResultConsumer<Dimensions, Element>::OnMaximumFound(
 
 			// remove elements weeker than new calculated minValue
 			while (!positions.isEmpty()){
-				typename PosMap::Iterator lastIter = positions.end() - 1;
+				typename PosMap::Iterator lastIter = std::prev(positions.end());
 
 				if (-lastIter.key() < minValue){
 					positions.erase(lastIter);
@@ -188,7 +188,7 @@ bool TSimpleSpaceResultConsumer<Dimensions, Element>::OnMaximumFound(
 
 	// try remove the last one if we have too many points
 	if (positions.count() > m_maxConsideredPoints){
-		typename PosMap::Iterator lastIter = positions.end() - 1;
+		typename PosMap::Iterator lastIter = std::prev(positions.end());
 		double lastValue = -lastIter.key();
 		positions.erase(lastIter);
 
