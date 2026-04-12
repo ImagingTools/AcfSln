@@ -23,6 +23,7 @@
 #endif
 
 // ACF includes
+#include <istd/CChangeGroup.h>
 #include <istd/CChangeNotifier.h>
 #include <istd/CIdManipBase.h>
 #include <iser/CArchiveTag.h>
@@ -1079,6 +1080,11 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 	if (!isOk || newName.isEmpty() || (oldName == newName)){
 		return;
 	}
+
+	// block change notification during rename so that selection IDs
+	// are updated before the scene rebuild is triggered
+	istd::CChangeGroup changeGroup(registryPtr);
+	Q_UNUSED(changeGroup);
 
 	if (registryPtr->RenameElement(oldName, newName)){
 		m_selectedElementIds.remove(oldName);
