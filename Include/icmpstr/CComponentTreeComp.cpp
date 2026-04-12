@@ -447,7 +447,8 @@ void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet
 	else if (
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_RENAMED) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
-		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED)){
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED) ||
+		changeSet.Contains(istd::IChangeable::CF_DELEGATED)){
 		UpdateTreeFromModel();
 	}
 	else{

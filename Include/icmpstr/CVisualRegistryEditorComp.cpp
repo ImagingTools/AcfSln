@@ -727,7 +727,8 @@ void CVisualRegistryEditorComp::UpdateGui(const istd::IChangeable::ChangeSet& ch
 	if (changeSet.Contains(CF_ALL_DATA) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_RENAMED) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
-		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED)){
+		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED) ||
+		changeSet.Contains(CF_DELEGATED)){
 		istd::CChangeNotifier selectionNotifier(&m_selectionInfo, &changeSet);
 		Q_UNUSED(selectionNotifier);
 	}
