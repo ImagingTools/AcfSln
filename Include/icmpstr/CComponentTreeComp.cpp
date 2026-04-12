@@ -167,7 +167,6 @@ QTreeWidgetItem* CComponentTreeComp::AddRegistryElementItem(
 
 		if (parentItemPtr != NULL){
 			parentItemPtr->addChild(elementItemPtr);
-			parentItemPtr->setExpanded(true);
 		}
 
 		bool isConsistent = true;
@@ -240,6 +239,9 @@ void CComponentTreeComp::SyncSelectionFromModel()
 				parentPtr->setExpanded(true);
 				parentPtr = parentPtr->parent();
 			}
+
+			// Expand one level below the navigated-to element
+			foundItem->setExpanded(true);
 
 			ComponentTree->scrollToItem(foundItem);
 		}
