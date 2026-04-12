@@ -57,6 +57,15 @@ void CComponentTreeComp::RebuildRootComboBox()
 				RootComboBox->setCurrentIndex(previousIndex);
 			}
 		}
+
+		// Apply deferred selection from QSettings (first call after OnRestoreSettings)
+		if (!m_pendingRootSelection.isEmpty()){
+			int index = RootComboBox->findText(m_pendingRootSelection);
+			if (index >= 0){
+				RootComboBox->setCurrentIndex(index);
+			}
+			m_pendingRootSelection.clear();
+		}
 	}
 
 	RootComboBox->blockSignals(false);
@@ -512,13 +521,9 @@ void CComponentTreeComp::UpdateActiveDocHighlight()
 
 void CComponentTreeComp::OnRestoreSettings(const QSettings& settings)
 {
-	QString savedRoot = settings.value("ComponentTree/SelectedRoot").toString();
-	if (!savedRoot.isEmpty()){
-		int index = RootComboBox->findText(savedRoot);
-		if (index >= 0){
-			RootComboBox->setCurrentIndex(index);
-		}
-	}
+	// Only remember the value here - the RootComboBox is not yet populated.
+	// RebuildRootComboBox will apply it after filling the combo box.
+	m_pendingRootSelection = settings.value("ComponentTree/SelectedRoot").toString();
 }
 
 

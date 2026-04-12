@@ -158,6 +158,11 @@ private:
 
 	bool m_isSyncingSelection;
 
+	// Deferred root selection: OnRestoreSettings stores the saved value here
+	// because the RootComboBox is not yet populated at that point.
+	// RebuildRootComboBox applies and clears it after filling the combo box.
+	QString m_pendingRootSelection;
+
 	// Temporary state used during tree rebuild to substitute in-memory registry
 	// for the active document's file path (avoids stale file-based data)
 	QString m_activeDocFilePath;
