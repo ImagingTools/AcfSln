@@ -1374,13 +1374,78 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 		choices.append(label);
 	}
 
+	// Determine best default index by matching the active document's file path
+	// against the root file path of each resolution. This pre-selects the root
+	// that corresponds to the currently selected root in the Component Tree.
+	int defaultIndex = 0;
+	if (m_documentManagerCompPtr.IsValid()){
+		const istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->GetActiveView();
+		if (viewPtr != NULL){
+			idoc::IDocumentManager::DocumentInfo docInfo;
+			m_documentManagerCompPtr->GetDocumentFromView(*viewPtr, &docInfo);
+
+			if (!docInfo.filePath.isEmpty()){
+				QString activeDocPath = QFileInfo(docInfo.filePath).canonicalFilePath();
+
+				bool matchFound = false;
+				for (int i = 0; i < allResolutions.size(); ++i){
+					QString rootPath = QFileInfo(allResolutions[i].rootFilePath).canonicalFilePath();
+					if (rootPath == activeDocPath){
+						defaultIndex = i;
+						matchFound = true;
+						break;
+					}
+				}
+
+				// If the active document is not a root itself, check if it appears
+				// as a sub-component within any of the resolution root trees
+				if (!matchFound && !activeDocPath.isEmpty() &&
+					m_envManagerCompPtr.IsValid() && m_registryLoaderCompPtr.IsValid()){
+					for (int i = 0; i < allResolutions.size(); ++i){
+						const icomp::IRegistry* rootRegPtr = m_registryLoaderCompPtr->GetRegistryFromFile(allResolutions[i].rootFilePath);
+						if (rootRegPtr == NULL){
+							continue;
+						}
+
+						icomp::IRegistry::Ids elementIds = rootRegPtr->GetElementIds();
+						bool found = false;
+						for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
+									elemIter != elementIds.constEnd();
+									++elemIter){
+							const icomp::IRegistry::ElementInfo* elemInfoPtr = rootRegPtr->GetElementInfo(*elemIter);
+							if (elemInfoPtr == NULL){
+								continue;
+							}
+
+							const icomp::CComponentAddress& address = elemInfoPtr->address;
+							if (address.GetPackageId().isEmpty()){
+								continue;
+							}
+
+							QString componentPath = m_envManagerCompPtr->GetRegistryPath(address);
+							if (!componentPath.isEmpty() && componentPath == activeDocPath){
+								defaultIndex = i;
+								found = true;
+								break;
+							}
+						}
+
+						if (found){
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	bool ok = false;
 	QString chosen = QInputDialog::getItem(
 				NULL,
 				tr("Multiple resolutions found"),
 				tr("The export '%1' is resolved in multiple root registries.\nPlease choose:").arg(QString(exportId)),
 				choices,
-				0,
+				defaultIndex,
 				false,
 				&ok);
 
@@ -1429,6 +1494,7 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 			if (rootResult.filePath.isEmpty()){
 				rootResult.filePath = targetPath;
 			}
+			rootResult.rootFilePath = targetPath;
 			allResolutions.append(rootResult);
 		}
 	}

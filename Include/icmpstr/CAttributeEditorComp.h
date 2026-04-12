@@ -138,6 +138,7 @@ protected:
 	struct ExportResolutionInfo
 	{
 		QString filePath;             ///< ACC file where the attribute is resolved
+		QString rootFilePath;         ///< Root registry (project target) file path this resolution came from
 		QString elementId;            ///< Element ID in that registry
 		QByteArray attributeId;       ///< Attribute ID as known by the resolved element
 		QString value;                ///< The resolved attribute value
