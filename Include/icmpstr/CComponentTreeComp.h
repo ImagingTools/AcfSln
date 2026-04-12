@@ -123,6 +123,11 @@ protected:
 	// reimplemented (iqtgui::TRestorableGuiWrap)
 	virtual void OnRestoreSettings(const QSettings& settings) override;
 	virtual void OnSaveSettings(QSettings& settings) const override;
+	/**
+		Update bold font highlighting on tree items to indicate which element
+		corresponds to the currently active (open) document in the Compositor.
+	*/
+	void UpdateActiveDocHighlight();
 
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;
