@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>400</width>
     <height>512</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>329</width>
+    <width>0</width>
     <height>0</height>
    </size>
   </property>
@@ -505,10 +505,10 @@
        <item>
         <widget class="QCheckBox" name="IsDetachedCB">
          <property name="toolTip">
-          <string>Indicate that this element is detached from container and can be used as factory prototype</string>
+          <string>Indicate that this element can be used as factory prototype</string>
          </property>
          <property name="text">
-          <string>Is detached from container</string>
+          <string>Use for factorization</string>
          </property>
         </widget>
        </item>

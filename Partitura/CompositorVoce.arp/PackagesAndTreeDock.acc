@@ -3,13 +3,28 @@
     <AcfHeader>
         <VersionInfos>
             <Version Id="0" Number="6387" Description="ACF"/>
-            <Version Id="1" Number="2350" Description="ACF-Solutions"/>
+            <Version Id="1" Number="2355" Description="ACF-Solutions"/>
             <Version Id="1023" Number="395266" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <Description>Combined dock widget showing Packages and Component Tree in a tab widget</Description>
     <Keywords>Package Component Tree Dock Tab Tag='GUI'</Keywords>
     <ElementsList>
+        <Element Id="ComponentTree" PackageId="CompositorPck" ComponentId="ComponentTree">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap>
+                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
+                        <Data IsEnabled="false"/>
+                    </AttributeInfo>
+                </AttributeInfoMap>
+            </Data>
+        </Element>
         <Element Id="PackageOverview" PackageId="CompositorPck" ComponentId="PackageOverview">
             <Data IsEnabled="true" Flags="0">
                 <AttributeInfoMap>
@@ -31,17 +46,17 @@
                 </AttributeInfoMap>
             </Data>
         </Element>
-        <Element Id="ComponentTree" PackageId="CompositorPck" ComponentId="ComponentTree">
+        <Element Id="PackagesAndTreeDock" PackageId="QtGuiPck" ComponentId="DockWidgetGui">
             <Data IsEnabled="true" Flags="0">
                 <AttributeInfoMap>
-                    <AttributeInfo Id="ConsistencyInfo" Type="Reference" ExportId="ConsistencyInfo">
-                        <Data IsEnabled="false"/>
+                    <AttributeInfo Id="DockArea" Type="Integer" ExportId="">
+                        <Data IsEnabled="true" Value="0"/>
                     </AttributeInfo>
-                    <AttributeInfo Id="DocumentManager" Type="Reference" ExportId="DocumentManager">
-                        <Data IsEnabled="false"/>
+                    <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
+                        <Data IsEnabled="true" Value="Project"/>
                     </AttributeInfo>
-                    <AttributeInfo Id="EnvironmentManager" Type="Reference" ExportId="EnvironmentManager">
-                        <Data IsEnabled="false"/>
+                    <AttributeInfo Id="SlaveGui" Type="Reference" ExportId="">
+                        <Data IsEnabled="true" Value="TabGui"/>
                     </AttributeInfo>
                 </AttributeInfoMap>
             </Data>
@@ -55,33 +70,21 @@
                     <AttributeInfo Id="Guis" Type="Reference[]" ExportId="">
                         <Data IsEnabled="true">
                             <Values>
-                                <Value>PackageOverview</Value>
                                 <Value>ComponentTree</Value>
+                                <Value>PackageOverview</Value>
                             </Values>
                         </Data>
                     </AttributeInfo>
                     <AttributeInfo Id="Names" Type="Text[]" ExportId="">
                         <Data IsEnabled="true">
                             <Values>
+                                <Value>Components</Value>
                                 <Value>Packages</Value>
-                                <Value>Component Tree</Value>
                             </Values>
                         </Data>
                     </AttributeInfo>
-                </AttributeInfoMap>
-            </Data>
-        </Element>
-        <Element Id="PackagesAndTreeDock" PackageId="QtGuiPck" ComponentId="DockWidgetGui">
-            <Data IsEnabled="true" Flags="0">
-                <AttributeInfoMap>
-                    <AttributeInfo Id="DockArea" Type="Integer" ExportId="">
-                        <Data IsEnabled="true" Value="0"/>
-                    </AttributeInfo>
-                    <AttributeInfo Id="DockTitle" Type="Text" ExportId="">
-                        <Data IsEnabled="true" Value="Packages &amp; Tree"/>
-                    </AttributeInfo>
-                    <AttributeInfo Id="SlaveGui" Type="Reference" ExportId="">
-                        <Data IsEnabled="true" Value="TabGui"/>
+                    <AttributeInfo Id="TabBarOrientation" Type="Integer" ExportId="">
+                        <Data IsEnabled="true" Value="1"/>
                     </AttributeInfo>
                 </AttributeInfoMap>
             </Data>
