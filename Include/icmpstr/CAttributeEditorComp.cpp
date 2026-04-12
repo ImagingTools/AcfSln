@@ -1398,7 +1398,7 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 				}
 
 				// If the active document is not a root itself, check if it appears
-				// as a sub-component within any of the resolution root trees
+				// as a sub-component anywhere in any of the resolution root trees
 				if (!matchFound && !activeDocPath.isEmpty() &&
 					m_envManagerCompPtr.IsValid() && m_registryLoaderCompPtr.IsValid()){
 					for (int i = 0; i < allResolutions.size(); ++i){
@@ -1407,30 +1407,8 @@ CAttributeEditorComp::ExportResolutionInfo CAttributeEditorComp::FindExportResol
 							continue;
 						}
 
-						icomp::IRegistry::Ids elementIds = rootRegPtr->GetElementIds();
-						bool found = false;
-						for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
-									elemIter != elementIds.constEnd();
-									++elemIter){
-							const icomp::IRegistry::ElementInfo* elemInfoPtr = rootRegPtr->GetElementInfo(*elemIter);
-							if (elemInfoPtr == NULL){
-								continue;
-							}
-
-							const icomp::CComponentAddress& address = elemInfoPtr->address;
-							if (address.GetPackageId().isEmpty()){
-								continue;
-							}
-
-							QString componentPath = m_envManagerCompPtr->GetRegistryPath(address);
-							if (!componentPath.isEmpty() && componentPath == activeDocPath){
-								defaultIndex = i;
-								found = true;
-								break;
-							}
-						}
-
-						if (found){
+						if (IsFileInRegistryTree(*rootRegPtr, activeDocPath, 0)){
+							defaultIndex = i;
 							break;
 						}
 					}
@@ -1500,6 +1478,65 @@ QList<CAttributeEditorComp::ExportResolutionInfo> CAttributeEditorComp::FindAllE
 	}
 
 	return allResolutions;
+}
+
+
+bool CAttributeEditorComp::IsFileInRegistryTree(
+			const icomp::IRegistry& registry,
+			const QString& filePath,
+			int depth) const
+{
+	if (depth > s_maxRegistryRecursionDepth){
+		return false;
+	}
+
+	if (!m_envManagerCompPtr.IsValid()){
+		return false;
+	}
+
+	icomp::IRegistry::Ids elementIds = registry.GetElementIds();
+
+	for (		icomp::IRegistry::Ids::ConstIterator elemIter = elementIds.constBegin();
+				elemIter != elementIds.constEnd();
+				++elemIter){
+		const icomp::IRegistry::ElementInfo* elemInfoPtr = registry.GetElementInfo(*elemIter);
+		if (elemInfoPtr == NULL){
+			continue;
+		}
+
+		const icomp::CComponentAddress& address = elemInfoPtr->address;
+		const icomp::IRegistry* subRegistryPtr = NULL;
+
+		if (!address.GetPackageId().isEmpty()){
+			// External package component: check if its file path matches
+			QString componentPath = m_envManagerCompPtr->GetRegistryPath(address);
+			if (!componentPath.isEmpty() && componentPath == filePath){
+				return true;
+			}
+
+			// Get its sub-registry for further traversal
+			const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(address);
+			if (metaInfoPtr != NULL && (metaInfoPtr->GetComponentType() == icomp::IComponentStaticInfo::CT_COMPOSITE)){
+				const icomp::CCompositeComponentStaticInfo* compositeMetaInfoPtr =
+							dynamic_cast<const icomp::CCompositeComponentStaticInfo*>(metaInfoPtr);
+				if (compositeMetaInfoPtr != NULL){
+					subRegistryPtr = &compositeMetaInfoPtr->GetRegistry();
+				}
+			}
+		}
+		else{
+			// Embedded sub-registry (same file)
+			subRegistryPtr = registry.GetEmbeddedRegistry(address.GetComponentId());
+		}
+
+		if (subRegistryPtr != NULL){
+			if (IsFileInRegistryTree(*subRegistryPtr, filePath, depth + 1)){
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 

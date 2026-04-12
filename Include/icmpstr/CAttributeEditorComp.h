@@ -257,6 +257,16 @@ protected:
 	*/
 	QList<ExportResolutionInfo> FindAllExportResolutions(const QByteArray& exportId) const;
 
+	/**
+		Recursively check whether a file path appears as a package component
+		anywhere in the registry's component tree.
+		\param registry The registry to search
+		\param filePath Canonical file path to look for
+		\param depth Current recursion depth (to prevent infinite recursion)
+		\return true if the file path is found in the component tree
+	*/
+	bool IsFileInRegistryTree(const icomp::IRegistry& registry, const QString& filePath, int depth) const;
+
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
 				const icomp::IElementStaticInfo* infoPtr,
