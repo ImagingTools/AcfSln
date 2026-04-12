@@ -412,7 +412,7 @@ void CComponentTreeComp::UpdateTreeFromModel()
 
 void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet)
 {
-	if (changeSet.Contains(CF_ALL_DATA)){
+	if (changeSet.Contains(istd::IChangeable::CF_ALL_DATA)){
 		RebuildTree();
 	}
 	else if (
