@@ -138,6 +138,7 @@ protected:
 	struct ExportResolutionInfo
 	{
 		QString filePath;             ///< ACC file where the attribute is resolved
+		QString rootFilePath;         ///< Root registry (project target) file path this resolution came from
 		QString elementId;            ///< Element ID in that registry
 		QByteArray attributeId;       ///< Attribute ID as known by the resolved element
 		QString value;                ///< The resolved attribute value
@@ -255,6 +256,16 @@ protected:
 		\return List of all found resolutions
 	*/
 	QList<ExportResolutionInfo> FindAllExportResolutions(const QByteArray& exportId) const;
+
+	/**
+		Recursively check whether a file path appears as a package component
+		anywhere in the registry's component tree.
+		\param registry The registry to search
+		\param filePath Canonical file path to look for
+		\param depth Current recursion depth (to prevent infinite recursion)
+		\return true if the file path is found in the component tree
+	*/
+	bool IsFileInRegistryTree(const icomp::IRegistry& registry, const QString& filePath, int depth) const;
 
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
