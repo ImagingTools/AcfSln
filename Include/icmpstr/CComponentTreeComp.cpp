@@ -352,15 +352,74 @@ void CComponentTreeComp::UpdateTreeItemsVisibility()
 }
 
 
+void CComponentTreeComp::UpdateTreeFromModel()
+{
+	if (!IsGuiCreated()){
+		return;
+	}
+
+	int currentIndex = RootComboBox->currentIndex();
+	if (currentIndex < 0){
+		return;
+	}
+
+	QString rootPath = RootComboBox->itemData(currentIndex).toString();
+
+	// Try to get the in-memory registry from the active document
+	const icomp::IRegistry* inMemoryRegistryPtr = NULL;
+
+	if (m_documentManagerCompPtr.IsValid()){
+		const istd::IPolymorphic* viewPtr = m_documentManagerCompPtr->GetActiveView();
+		if (viewPtr != NULL){
+			idoc::IDocumentManager::DocumentInfo info;
+			m_documentManagerCompPtr->GetDocumentFromView(*viewPtr, &info);
+
+			if (QDir::cleanPath(info.filePath) == QDir::cleanPath(rootPath)){
+				istd::IChangeable* documentPtr = m_documentManagerCompPtr->GetDocumentFromView(*viewPtr);
+				if (documentPtr != NULL){
+					inMemoryRegistryPtr = dynamic_cast<const icomp::IRegistry*>(documentPtr);
+				}
+			}
+		}
+	}
+
+	if (inMemoryRegistryPtr != NULL){
+		// Rebuild tree from in-memory registry (reflects unsaved changes)
+		ComponentTree->clear();
+
+		QTreeWidgetItem* rootItem = new QTreeWidgetItem();
+		rootItem->setText(0, RootComboBox->currentText());
+
+		static QIcon okIcon(":/Icons/Ok");
+		rootItem->setIcon(0, okIcon);
+
+		ComponentTree->addTopLevelItem(rootItem);
+
+		CreateRegistryTree(*inMemoryRegistryPtr, rootItem);
+
+		rootItem->setExpanded(true);
+
+		SyncSelectionFromModel();
+	}
+	else{
+		// Active document does not match displayed root - just sync selection
+		SyncSelectionFromModel();
+	}
+}
+
+
 // reimplemented (iqtgui::TGuiObserverWrap)
 
 void CComponentTreeComp::UpdateGui(const istd::IChangeable::ChangeSet& changeSet)
 {
-	if (changeSet.Contains(CF_ALL_DATA) ||
+	if (changeSet.Contains(CF_ALL_DATA)){
+		RebuildTree();
+	}
+	else if (
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_RENAMED) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED)){
-		RebuildTree();
+		UpdateTreeFromModel();
 	}
 	else{
 		SyncSelectionFromModel();

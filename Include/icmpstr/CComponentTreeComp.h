@@ -110,6 +110,13 @@ protected:
 	*/
 	void UpdateTreeItemsVisibility();
 
+	/**
+		Update the tree from the in-memory registry obtained through the active document.
+		Used when structural changes (rename, add, remove) happen in the currently open document,
+		since the file-based reload would not reflect unsaved changes.
+	*/
+	void UpdateTreeFromModel();
+
 	// reimplemented (iqtgui::TGuiObserverWrap)
 	virtual void UpdateGui(const istd::IChangeable::ChangeSet& changeSet) override;
 	virtual void OnGuiModelAttached() override;
