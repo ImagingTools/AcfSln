@@ -23,6 +23,7 @@
 #endif
 
 // ACF includes
+#include <istd/CChangeGroup.h>
 #include <istd/CChangeNotifier.h>
 #include <istd/CIdManipBase.h>
 #include <iser/CArchiveTag.h>
@@ -1066,7 +1067,7 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	const QByteArray oldName = *firstIter;
+	const QByteArray& oldName = *firstIter;
 
 	bool isOk = false;
 	QByteArray newName = QInputDialog::getText(
@@ -1080,15 +1081,14 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	// update selection IDs before rename so that scene rebuild triggered
-	// by CChangeNotifier inside RenameElement uses the new name
-	m_selectedElementIds.remove(oldName);
-	m_selectedElementIds.insert(newName);
+	// block change notification during rename so that selection IDs
+	// are updated before the scene rebuild is triggered
+	istd::CChangeGroup changeGroup(registryPtr);
+	Q_UNUSED(changeGroup);
 
-	if (!registryPtr->RenameElement(oldName, newName)){
-		// revert selection if rename fails
-		m_selectedElementIds.remove(newName);
-		m_selectedElementIds.insert(oldName);
+	if (registryPtr->RenameElement(oldName, newName)){
+		m_selectedElementIds.remove(oldName);
+		m_selectedElementIds.insert(newName);
 	}
 }
 
