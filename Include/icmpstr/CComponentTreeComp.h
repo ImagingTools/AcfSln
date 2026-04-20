@@ -44,7 +44,8 @@ public:
 		DR_ELEMENT_NAME = Qt::UserRole + 1,
 		DR_ELEMENT_ID = Qt::UserRole + 2,
 		DR_ELEMENT_PACKAGE_ID = Qt::UserRole + 3,
-		DR_REGISTRY = Qt::UserRole + 4
+		DR_REGISTRY = Qt::UserRole + 4,
+		DR_FILTER_TEXT = Qt::UserRole + 5
 	};
 
 	I_BEGIN_COMPONENT(CComponentTreeComp);
