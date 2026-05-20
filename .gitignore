@@ -16,6 +16,7 @@ CTestTestfile.cmake
 Testing/
 _deps/
 Build/*/*.dir/
+Build/CMake/out
 
 # Visual Studio artifacts
 # Note: We keep 3rdParty Visual Studio files tracked
@@ -101,6 +102,7 @@ graph_info.json
 *conanbuildenv*.sh
 *conanrunenv*.sh
 CMakeUserPresets.json
+CMakePresets.json
 
 # Python artifacts (build scripts)
 __pycache__/
