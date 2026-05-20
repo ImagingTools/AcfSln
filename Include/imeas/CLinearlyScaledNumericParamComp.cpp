@@ -1,7 +1,7 @@
 #include "CLinearlyScaledNumericParamComp.h"
 
 
-namespace gmg::meas2
+namespace imeas
 {
 
 
@@ -212,4 +212,4 @@ double CLinearlyScaledNumericParamComp::OwnToSource(double ownValue, int index) 
 }
 
 
-} // namespace gmg::meas2
+} // namespace imeas

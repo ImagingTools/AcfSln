@@ -11,7 +11,7 @@
 #include <imeas/INumericValue.h>
 
 
-namespace gmg::meas2
+namespace imeas
 {
 
 
@@ -71,4 +71,4 @@ private:
 };
 
 
-} // namespace gmg::meas2
+} // namespace imeas

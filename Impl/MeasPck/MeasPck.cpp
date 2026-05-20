@@ -89,6 +89,11 @@ I_EXPORT_COMPONENT(
 			"Selector of unit info for relative values",
 			"Correlation Processor Comparison" IM_AUTHOR("\"Kirill Lepskiy\""));
 
+I_EXPORT_COMPONENT(
+			LinearlyScaledNumericParam,
+			"Numeric parameter with linear scaling from a source value",
+			"Numeric Values Parameter Scale Linear" IM_AUTHOR("\"Witold Gantzke\""));
+
 
 } // namespace MeasPck
 
