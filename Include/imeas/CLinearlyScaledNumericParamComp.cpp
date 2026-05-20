@@ -154,17 +154,7 @@ double CLinearlyScaledNumericParamComp::SourceToOwn(double sourceValue, int inde
 		return sourceValue;
 	}
 
-	double srcSpan = srcRange.GetMaxValue() - srcRange.GetMinValue();
-	if (qFuzzyIsNull(srcSpan)) {
-		return ownRange.GetMinValue();
-	}
-
-	double ownSpan = ownRange.GetMaxValue() - ownRange.GetMinValue();
-	double normalized = (sourceValue - srcRange.GetMinValue()) / srcSpan;
-
-	auto retVal = ownRange.GetMinValue() + normalized * ownSpan;
-
-	return retVal;
+	return srcRange.GetMappedTo(sourceValue, ownRange);
 }
 
 
@@ -198,17 +188,7 @@ double CLinearlyScaledNumericParamComp::OwnToSource(double ownValue, int index) 
 		return ownValue;
 	}
 
-	double ownSpan = ownRange.GetMaxValue() - ownRange.GetMinValue();
-	if (qFuzzyIsNull(ownSpan)) {
-		return srcRange.GetMinValue();
-	}
-
-	double srcSpan = srcRange.GetMaxValue() - srcRange.GetMinValue();
-	double normalized = (ownValue - ownRange.GetMinValue()) / ownSpan;
-
-	auto retVal = srcRange.GetMinValue() + normalized * srcSpan;
-
-	return retVal;
+	return ownRange.GetMappedTo(ownValue, srcRange);
 }
 
 
