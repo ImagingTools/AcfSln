@@ -8,7 +8,7 @@ namespace imeas
 // public methods
 
 CLinearlyScaledNumericParamComp::CLinearlyScaledNumericParamComp()
-	: m_updateBridge(this, imod::CModelUpdateBridge::UF_Source)
+	: m_updateBridge(this, imod::CModelUpdateBridge::UF_SOURCE)
 {
 }
 
