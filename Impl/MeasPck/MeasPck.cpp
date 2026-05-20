@@ -92,7 +92,7 @@ I_EXPORT_COMPONENT(
 I_EXPORT_COMPONENT(
 			LinearlyScaledNumericParam,
 			"Numeric parameter with linear scaling from a source value",
-			"Numeric Values Parameter Scale Linear" IM_AUTHOR("\"Witold Gantzke\""));
+			"Numeric Values Parameter Scale Linear" IM_AUTHOR("\"Vladimir Cherepanov\""));
 
 
 } // namespace MeasPck
