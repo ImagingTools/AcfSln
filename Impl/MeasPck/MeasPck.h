@@ -21,6 +21,7 @@
 #include <imeas/CLinearAdjustParamsComp.h>
 #include <imeas/CCrossCorrelationProcessorComp.h>
 #include <imeas/CRelativeUnitSelectorComp.h>
+#include <imeas/CLinearlyScaledNumericParamComp.h>
 
 
 /**
@@ -76,6 +77,7 @@ typedef icomp::TModelCompWrap<imeas::CNumericParamsProxyComp> NumericParamsProxy
 typedef icomp::TModelCompWrap<imeas::CLinearAdjustParamsComp> LinearAdjustParams;
 typedef imeas::CCrossCorrelationProcessorComp CrossCorrelationProcessor;
 typedef icomp::TModelCompWrap<imeas::CRelativeUnitSelectorComp> RelativeUnitSelector;
+typedef icomp::TModelCompWrap<imeas::CLinearlyScaledNumericParamComp> LinearlyScaledNumericParam;
 
 
 } // namespace MeasPck
