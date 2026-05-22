@@ -13,24 +13,6 @@ endif()
 
 set(ACFSLNDIR "${CMAKE_CURRENT_LIST_DIR}/../../../AcfSln")
 
-# Generate VersionInfo.acc from template if it does not exist
-set(ACFSLN_VERSION_INFO_TEMPLATE "${ACFSLNDIR}/Partitura/AcfSlnVoce.arp/VersionInfo.acc.xtrsvn")
-set(ACFSLN_VERSION_INFO_OUTPUT "${ACFSLNDIR}/Partitura/AcfSlnVoce.arp/VersionInfo.acc")
-if(WIN32)
-	set(ACFSLN_UPDATE_VERSION_SCRIPT "${ACFSLNDIR}/Build/Git/UpdateVersion.bat")
-else()
-	set(ACFSLN_UPDATE_VERSION_SCRIPT "${ACFSLNDIR}/Build/Git/UpdateVersion.sh")
-endif()
-
-add_custom_command(
-	OUTPUT "${ACFSLN_VERSION_INFO_OUTPUT}"
-	COMMAND "${ACFSLN_UPDATE_VERSION_SCRIPT}"
-	WORKING_DIRECTORY "${ACFSLNDIR}/Build/Git"
-	DEPENDS "${ACFSLN_VERSION_INFO_TEMPLATE}"
-	COMMENT "Generating VersionInfo.acc from template"
-)
-add_custom_target(AcfSlnVersionInfo DEPENDS "${ACFSLN_VERSION_INFO_OUTPUT}")
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core)
 find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Core Gui Xml Network Svg Concurrent REQUIRED)
 
@@ -132,9 +114,9 @@ add_subdirectory("${IMPL_DIR}/CompositorPck/CMake" "${AUX_INCLUDE_DIR}/Composito
 add_subdirectory("${IMPL_DIR}/DocumentProcessingPck/CMake" "${AUX_INCLUDE_DIR}/DocumentProcessingPck")
 add_subdirectory("${IMPL_DIR}/ProductionPck/CMake" "${AUX_INCLUDE_DIR}/ProductionPck")
 add_subdirectory("${IMPL_DIR}/XpcEditorExe/CMake" "${AUX_INCLUDE_DIR}/XpcEditor")
-add_dependencies(XpcEditor FileProcessingPck AcfSlnVersionInfo)
+add_dependencies(XpcEditor FileProcessingPck)
 add_subdirectory("${IMPL_DIR}/CompositorExe/CMake" "${AUX_INCLUDE_DIR}/Compositor")
-add_dependencies(Compositor FileProcessingPck AcfSlnVersionInfo)
+add_dependencies(Compositor FileProcessingPck)
 endif()
 
 

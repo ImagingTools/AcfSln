@@ -12,7 +12,7 @@ if(WIN32)
 	set(ACF_CONVERT_CONFIG "${PROJECT_SOURCE_DIR}/../../../Config/BaseOnly.awc")
 endif()
 
-set(DEPS_CUSTOM_BUILD FileProcessingPck AcfSlnVersionInfo)
+set(DEPS_CUSTOM_BUILD FileProcessingPck)
 if (TARGET BasePck)
 	list(APPEND DEPS_CUSTOM_BUILD BasePck)
 endif()

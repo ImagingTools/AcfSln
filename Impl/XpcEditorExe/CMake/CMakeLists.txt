@@ -13,7 +13,7 @@ endif()
 
 set(BUILD_ARGS "dupbuild=warn")
 
-set(DEPS_CUSTOM_BUILD FileProcessingPck AcfSlnVersionInfo)
+set(DEPS_CUSTOM_BUILD FileProcessingPck)
 if (TARGET BasePck)
 	list(APPEND DEPS_CUSTOM_BUILD BasePck)
 endif()
