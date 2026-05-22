@@ -15,8 +15,10 @@
 
 // ACF includes
 #include <istd/CClassInfo.h>
+#include <istd/TDelPtr.h>
 #include <icomp/IComponentEnvironmentManager.h>
 #include <icomp/IRegistryLoader.h>
+#include <icomp/CCompositeComponentStaticInfo.h>
 #include <idoc/IHelpViewer.h>
 #include <idoc/IDocumentManager.h>
 #include <iqtgui/TDesignerGuiObserverCompBase.h>
@@ -267,6 +269,20 @@ protected:
 	*/
 	bool IsFileInRegistryTree(const icomp::IRegistry& registry, const QString& filePath, int depth) const;
 
+	/**
+		Get the static meta info for an element, handling embedded registry components.
+		Tries GetComponentMetaInfo first, and falls back to creating a CCompositeComponentStaticInfo
+		for embedded registry elements (where packageId is empty).
+		Created CCompositeComponentStaticInfo objects are cached in m_embeddedComponentInfoCache.
+
+		\param address Component address from the element info
+		\param registry The registry containing the element
+		\return Component static info or NULL if not available
+	*/
+	const icomp::IComponentStaticInfo* GetComponentMetaInfoWithEmbedded(
+				const icomp::CComponentAddress& address,
+				const icomp::IRegistry& registry);
+
 	void CreateInterfacesTree(
 				const QByteArray& elementId,
 				const icomp::IElementStaticInfo* infoPtr,
@@ -356,6 +372,9 @@ private:
 	AttributeTypesMap m_attributeTypesMap;
 
 	AttrInfosMap m_attrInfosMap;	// all current displayed attributes
+
+	typedef QMap<QByteArray, istd::TDelPtr<icomp::CCompositeComponentStaticInfo> > EmbeddedComponentInfoCache;
+	EmbeddedComponentInfoCache m_embeddedComponentInfoCache;	// cached meta info for embedded registry components
 
 	istd::TDelPtr<iwidgets::CTreeWidgetFilter> m_attributesTreeFilter;
 	istd::TDelPtr<iwidgets::CTreeWidgetFilter> m_interfacesTreeFilter;

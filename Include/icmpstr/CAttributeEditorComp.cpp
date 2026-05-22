@@ -113,7 +113,11 @@ void CAttributeEditorComp::on_AttributeTree_itemSelectionChanged()
 					const icomp::IRegistry::ElementInfo* firstElementInfo = selectedElements.begin().value();
 					Q_ASSERT(firstElementInfo != NULL);
 
-					const icomp::IComponentStaticInfo* componentInfoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(firstElementInfo->address);
+					const icomp::IRegistry* registryPtr = selectionInfoPtr->GetSelectedRegistry();
+					const icomp::IComponentStaticInfo* componentInfoPtr = NULL;
+					if (registryPtr != NULL){
+						componentInfoPtr = GetComponentMetaInfoWithEmbedded(firstElementInfo->address, *registryPtr);
+					}
 					if (componentInfoPtr != NULL){
 						attributeStaticInfoPtr = componentInfoPtr->GetAttributeInfo(attributeId);
 					}
@@ -464,6 +468,37 @@ void CAttributeEditorComp::UpdateGeneralView()
 }
 
 
+const icomp::IComponentStaticInfo* CAttributeEditorComp::GetComponentMetaInfoWithEmbedded(
+			const icomp::CComponentAddress& address,
+			const icomp::IRegistry& registry)
+{
+	// Try standard meta info lookup first
+	if (m_metaInfoManagerCompPtr.IsValid()){
+		const icomp::IComponentStaticInfo* infoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(address);
+		if (infoPtr != NULL){
+			return infoPtr;
+		}
+	}
+
+	// For embedded registry components (empty package ID), build meta info from the embedded registry
+	if (address.GetPackageId().isEmpty() && m_envManagerCompPtr.IsValid()){
+		const QByteArray& componentId = address.GetComponentId();
+		const icomp::IRegistry* embeddedRegistryPtr = registry.GetEmbeddedRegistry(componentId);
+		if (embeddedRegistryPtr != NULL){
+			EmbeddedComponentInfoCache::Iterator cacheIter = m_embeddedComponentInfoCache.find(componentId);
+			if (cacheIter == m_embeddedComponentInfoCache.end()){
+				cacheIter = m_embeddedComponentInfoCache.insert(componentId, istd::TDelPtr<icomp::CCompositeComponentStaticInfo>());
+				cacheIter.value().SetPtr(new icomp::CCompositeComponentStaticInfo(*embeddedRegistryPtr, *m_envManagerCompPtr));
+			}
+
+			return cacheIter.value().GetPtr();
+		}
+	}
+
+	return NULL;
+}
+
+
 void CAttributeEditorComp::UpdateAttributesView()
 {
 	if (!IsGuiCreated()){
@@ -473,6 +508,7 @@ void CAttributeEditorComp::UpdateAttributesView()
 	iqt::CSignalBlocker signalBlocker(AttributeTree);
 
 	m_attrInfosMap.clear();
+	m_embeddedComponentInfoCache.clear();
 
 	bool hasError = false;
 	bool hasWarning = false;
@@ -526,8 +562,8 @@ void CAttributeEditorComp::UpdateAttributesView()
 				}
 
 				// creating map of attributes based on static meta info
-				if (m_metaInfoManagerCompPtr.IsValid()){
-					const icomp::IComponentStaticInfo* infoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(selectedInfoPtr->address);
+				{
+					const icomp::IComponentStaticInfo* infoPtr = GetComponentMetaInfoWithEmbedded(selectedInfoPtr->address, *registryPtr);
 					if (infoPtr != NULL){
 						iattr::IAttributesProvider::AttributeIds attributeIds = infoPtr->GetAttributeMetaIds();
 						for (		iattr::IAttributesProvider::AttributeIds::ConstIterator attrIter = attributeIds.constBegin();
@@ -653,8 +689,8 @@ void CAttributeEditorComp::UpdateInterfacesView()
 					itemPtr->setText(0, elementId);
 				}
 
-				if (m_metaInfoManagerCompPtr.IsValid()){
-					const icomp::IComponentStaticInfo* staticInfoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(selectedInfoPtr->address);
+				{
+					const icomp::IComponentStaticInfo* staticInfoPtr = GetComponentMetaInfoWithEmbedded(selectedInfoPtr->address, *registryPtr);
 					bool readOnly = ((selectedInfoPtr->elementPtr->GetElementFlags() & icomp::IRegistryElement::EF_IS_DETACHED) != 0);
 
 					bool warningFlag = false;
@@ -821,8 +857,8 @@ void CAttributeEditorComp::UpdateSubcomponentsView()
 					}
 					Q_ASSERT(componentRootPtr != NULL);
 
-					if (m_metaInfoManagerCompPtr.IsValid()){
-						const icomp::IComponentStaticInfo* infoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(selectedInfoPtr->address);
+					{
+						const icomp::IComponentStaticInfo* infoPtr = GetComponentMetaInfoWithEmbedded(selectedInfoPtr->address, *registryPtr);
 
 						bool readOnly = ((selectedInfoPtr->elementPtr->GetElementFlags() & icomp::IRegistryElement::EF_IS_DETACHED) != 0);
 
