@@ -118,9 +118,6 @@ void CAttributeEditorComp::on_AttributeTree_itemSelectionChanged()
 					if (registryPtr != NULL){
 						componentInfoPtr = GetComponentMetaInfoWithEmbedded(firstElementInfo->address, *registryPtr);
 					}
-					else if (m_metaInfoManagerCompPtr.IsValid()){
-						componentInfoPtr = m_metaInfoManagerCompPtr->GetComponentMetaInfo(firstElementInfo->address);
-					}
 					if (componentInfoPtr != NULL){
 						attributeStaticInfoPtr = componentInfoPtr->GetAttributeInfo(attributeId);
 					}
