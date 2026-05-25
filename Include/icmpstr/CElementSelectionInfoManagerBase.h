@@ -35,7 +35,7 @@ public:
 	icomp::IRegistry* GetRegistry() const;
 	QStringList GetExportAliases(const QByteArray& attributeName) const;
 	const iser::IObject* GetAttributeObject(const QByteArray& attributeId, const icomp::IRegistry::ElementInfo& elementInfo) const;
-	const icomp::IAttributeStaticInfo* GetAttributeStaticInfo(const QByteArray& attributeId, const icomp::IRegistry::ElementInfo& elementInfo) const;
+	virtual const icomp::IAttributeStaticInfo* GetAttributeStaticInfo(const QByteArray& attributeId, const icomp::IRegistry::ElementInfo& elementInfo) const;
 
 	// abstract methods
 	virtual const icomp::IMetaInfoManager* GetMetaInfoManagerPtr() const = 0;

@@ -113,6 +113,7 @@ public:
 	// reimplemented (CElementSelectionInfoManagerBase)
 	virtual const icomp::IMetaInfoManager* GetMetaInfoManagerPtr() const;
 	virtual const icmpstr::IRegistryConsistInfo* GetConsistencyInfoPtr() const;
+	virtual const icomp::IAttributeStaticInfo* GetAttributeStaticInfo(const QByteArray& attributeId, const icomp::IRegistry::ElementInfo& elementInfo) const;
 
 protected Q_SLOTS:
 	void on_AttributeTree_itemSelectionChanged();

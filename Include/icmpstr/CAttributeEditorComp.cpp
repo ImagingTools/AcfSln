@@ -90,6 +90,22 @@ const icmpstr::IRegistryConsistInfo* CAttributeEditorComp::GetConsistencyInfoPtr
 }
 
 
+const icomp::IAttributeStaticInfo* CAttributeEditorComp::GetAttributeStaticInfo(
+			const QByteArray& attributeId,
+			const icomp::IRegistry::ElementInfo& elementInfo) const
+{
+	const icomp::IRegistry* registryPtr = GetRegistry();
+	if (registryPtr != NULL){
+		const icomp::IComponentStaticInfo* componentInfoPtr = const_cast<CAttributeEditorComp*>(this)->GetComponentMetaInfoWithEmbedded(elementInfo.address, *registryPtr);
+		if (componentInfoPtr != NULL){
+			return componentInfoPtr->GetAttributeInfo(attributeId);
+		}
+	}
+
+	return CElementSelectionInfoManagerBase::GetAttributeStaticInfo(attributeId, elementInfo);
+}
+
+
 // protected slots
 
 void CAttributeEditorComp::on_AttributeTree_itemSelectionChanged()
