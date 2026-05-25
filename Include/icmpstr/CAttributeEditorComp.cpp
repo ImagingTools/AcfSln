@@ -2678,7 +2678,13 @@ bool CAttributeEditorComp::AttributeItemDelegate::SetAttributeValueEditor(
 			}
 
 			const icomp::IRegistry* registryPtr = m_parent.GetRegistry();
-			const icomp::IAttributeStaticInfo* staticInfoPtr = m_parent.GetAttributeStaticInfo(id, *elementInfoPtr);
+			const icomp::IAttributeStaticInfo* staticInfoPtr = NULL;
+			if (registryPtr != NULL){
+				const icomp::IComponentStaticInfo* componentInfoPtr = m_parent.GetComponentMetaInfoWithEmbedded(elementInfoPtr->address, *registryPtr);
+				if (componentInfoPtr != NULL){
+					staticInfoPtr = componentInfoPtr->GetAttributeInfo(id);
+				}
+			}
 			if ((registryPtr != NULL) && (staticInfoPtr != NULL) && m_parent.m_consistInfoCompPtr.IsValid()){
 				// prepare queryFlags
 				int queryFlags = IRegistryConsistInfo::QF_NONE;
