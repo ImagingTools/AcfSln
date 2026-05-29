@@ -949,7 +949,11 @@ bool CAttributeEditorComp::SetAttributeToItem(
 			attributePtr = attrInfo.infoPtr->attributePtr.GetPtr();
 		}
 		else if (attrInfo.staticInfoPtr != NULL){
-			attributePtr = attrInfo.staticInfoPtr->GetAttributeDefaultValue();
+			int defaultAttrFlags = attrInfo.staticInfoPtr->GetAttributeFlags();
+			if (((defaultAttrFlags & icomp::IAttributeStaticInfo::AF_REFERENCE) == 0) &&
+				((defaultAttrFlags & icomp::IAttributeStaticInfo::AF_FACTORY) == 0)){
+				attributePtr = attrInfo.staticInfoPtr->GetAttributeDefaultValue();
+			}
 		}
 		QString text;
 
@@ -2651,11 +2655,12 @@ bool CAttributeEditorComp::AttributeItemDelegate::SetAttributeValueEditor(
 		}
 
 		const iser::IObject* attributePtr = m_parent.GetAttributeObject(id, *elementInfoPtr);
-		if (attributePtr == NULL){
-			continue;
-		}
 
 		if ((propertyMining == AM_MULTI_REFERENCE) || (propertyMining == AM_MULTI_FACTORY)){
+			if (attributePtr == NULL){
+				continue;
+			}
+
 			CMultiAttributeDelegateWidget* multiEditorPtr = dynamic_cast<CMultiAttributeDelegateWidget*>(&editor);
 			if (multiEditorPtr == NULL){
 				return false;
@@ -2678,7 +2683,13 @@ bool CAttributeEditorComp::AttributeItemDelegate::SetAttributeValueEditor(
 			}
 
 			const icomp::IRegistry* registryPtr = m_parent.GetRegistry();
-			const icomp::IAttributeStaticInfo* staticInfoPtr = m_parent.GetAttributeStaticInfo(id, *elementInfoPtr);
+			const icomp::IAttributeStaticInfo* staticInfoPtr = NULL;
+			if (registryPtr != NULL){
+				const icomp::IComponentStaticInfo* componentInfoPtr = m_parent.GetComponentMetaInfoWithEmbedded(elementInfoPtr->address, *registryPtr);
+				if (componentInfoPtr != NULL){
+					staticInfoPtr = componentInfoPtr->GetAttributeInfo(id);
+				}
+			}
 			if ((registryPtr != NULL) && (staticInfoPtr != NULL) && m_parent.m_consistInfoCompPtr.IsValid()){
 				// prepare queryFlags
 				int queryFlags = IRegistryConsistInfo::QF_NONE;
@@ -2719,19 +2730,26 @@ bool CAttributeEditorComp::AttributeItemDelegate::SetAttributeValueEditor(
 				}
 			}
 
-			const icomp::CReferenceAttribute* referenceAttributePtr = dynamic_cast<const icomp::CReferenceAttribute*>(attributePtr);
-			if (referenceAttributePtr != NULL){
-				comboEditor->lineEdit()->setText(referenceAttributePtr->GetValue());
+			if (attributePtr != NULL){
+				const icomp::CReferenceAttribute* referenceAttributePtr = dynamic_cast<const icomp::CReferenceAttribute*>(attributePtr);
+				if (referenceAttributePtr != NULL){
+					comboEditor->lineEdit()->setText(referenceAttributePtr->GetValue());
 
-				return true;
+					return true;
+				}
+
+				const icomp::CFactoryAttribute* factoryAttributePtr = dynamic_cast<const icomp::CFactoryAttribute*>(attributePtr);
+				if (factoryAttributePtr != NULL){
+					comboEditor->lineEdit()->setText(factoryAttributePtr->GetValue());
+
+					return true;
+				}
 			}
 
-			const icomp::CFactoryAttribute* factoryAttributePtr = dynamic_cast<const icomp::CFactoryAttribute*>(attributePtr);
-			if (factoryAttributePtr != NULL){
-				comboEditor->lineEdit()->setText(factoryAttributePtr->GetValue());
-
-				return true;
-			}
+			return true;
+		}
+		else if (attributePtr == NULL){
+			continue;
 		}
 		else if (propertyMining == AM_ATTRIBUTE){
 			const iattr::CIntegerAttribute* intAttributePtr = dynamic_cast<const iattr::CIntegerAttribute*>(attributePtr);
