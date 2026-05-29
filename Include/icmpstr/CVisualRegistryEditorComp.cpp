@@ -505,14 +505,30 @@ void CVisualRegistryEditorComp::ConnectReferences(const QByteArray& componentRol
 				if (newAttributeInfoPtr != NULL){
 					newAttributeInfoPtr->attributePtr.SetPtr(registryElementPtr->CreateAttribute(attrType));
 
-					icomp::CMultiReferenceAttribute* newMultiRefPtr = dynamic_cast<icomp::CMultiReferenceAttribute*>(newAttributeInfoPtr->attributePtr.GetPtr());
-					if (newMultiRefPtr != NULL){
-						newMultiRefPtr->InsertValue(componentRole);
-					}
-					else{
-						icomp::CReferenceAttribute* newRefPtr = dynamic_cast<icomp::CReferenceAttribute*>(newAttributeInfoPtr->attributePtr.GetPtr());
-						if (newRefPtr != NULL){
-							newRefPtr->SetValue(componentRole);
+					// Set the value of the newly created attribute to the component role
+					iser::IObject* newAttributePtr = newAttributeInfoPtr->attributePtr.GetPtr();
+					if (newAttributePtr != NULL){
+						icomp::CReferenceAttribute* newRefAttrPtr = dynamic_cast<icomp::CReferenceAttribute*>(newAttributePtr);
+						if (newRefAttrPtr != NULL){
+							newRefAttrPtr->SetValue(componentRole);
+						}
+						else{
+							icomp::CFactoryAttribute* newFactoryAttrPtr = dynamic_cast<icomp::CFactoryAttribute*>(newAttributePtr);
+							if (newFactoryAttrPtr != NULL){
+								newFactoryAttrPtr->SetValue(componentRole);
+							}
+							else{
+								icomp::CMultiReferenceAttribute* newMultiRefAttrPtr = dynamic_cast<icomp::CMultiReferenceAttribute*>(newAttributePtr);
+								if (newMultiRefAttrPtr != NULL){
+									newMultiRefAttrPtr->InsertValue(componentRole);
+								}
+								else{
+									icomp::CMultiFactoryAttribute* newMultiFactoryAttrPtr = dynamic_cast<icomp::CMultiFactoryAttribute*>(newAttributePtr);
+									if (newMultiFactoryAttrPtr != NULL){
+										newMultiFactoryAttrPtr->InsertValue(componentRole);
+									}
+								}
+							}
 						}
 					}
 				}
