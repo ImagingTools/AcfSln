@@ -949,7 +949,11 @@ bool CAttributeEditorComp::SetAttributeToItem(
 			attributePtr = attrInfo.infoPtr->attributePtr.GetPtr();
 		}
 		else if (attrInfo.staticInfoPtr != NULL){
-			attributePtr = attrInfo.staticInfoPtr->GetAttributeDefaultValue();
+			int defaultAttrFlags = attrInfo.staticInfoPtr->GetAttributeFlags();
+			if (((defaultAttrFlags & icomp::IAttributeStaticInfo::AF_REFERENCE) == 0) &&
+				((defaultAttrFlags & icomp::IAttributeStaticInfo::AF_FACTORY) == 0)){
+				attributePtr = attrInfo.staticInfoPtr->GetAttributeDefaultValue();
+			}
 		}
 		QString text;
 
