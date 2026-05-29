@@ -504,6 +504,17 @@ void CVisualRegistryEditorComp::ConnectReferences(const QByteArray& componentRol
 				icomp::IRegistryElement::AttributeInfo* newAttributeInfoPtr = registryElementPtr->InsertAttributeInfo(attributeId, attrType);
 				if (newAttributeInfoPtr != NULL){
 					newAttributeInfoPtr->attributePtr.SetPtr(registryElementPtr->CreateAttribute(attrType));
+
+					icomp::CMultiReferenceAttribute* newMultiRefPtr = dynamic_cast<icomp::CMultiReferenceAttribute*>(newAttributeInfoPtr->attributePtr.GetPtr());
+					if (newMultiRefPtr != NULL){
+						newMultiRefPtr->InsertValue(componentRole);
+					}
+					else{
+						icomp::CReferenceAttribute* newRefPtr = dynamic_cast<icomp::CReferenceAttribute*>(newAttributeInfoPtr->attributePtr.GetPtr());
+						if (newRefPtr != NULL){
+							newRefPtr->SetValue(componentRole);
+						}
+					}
 				}
 			}
 		}
