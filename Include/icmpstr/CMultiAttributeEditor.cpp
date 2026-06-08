@@ -368,7 +368,7 @@ void CMultiAttributeEditor::ValueItemDelegate::setEditorData(QWidget* editor, co
 					queryFlags = queryFlags | IRegistryConsistInfo::QF_ANY_INTERFACE;	// for optional interfaces only we are looking for any of them
 				}
 
-				int attributeFlags = staticInfoPtr->GetAttributeFlags();
+				int attributeFlags = m_parent.m_attributeFlags;
 				if ((attributeFlags & icomp::IAttributeStaticInfo::AF_REFERENCE) != 0){
 					queryFlags = queryFlags | IRegistryConsistInfo::QF_INCLUDE_SUBELEMENTS;
 				}
