@@ -309,9 +309,6 @@ protected:
 	virtual void OnGuiCreated() override;
 	virtual void OnGuiDestroyed() override;
 
-protected Q_SLOTS:
-	void OnCurrentTabChanged(int index);
-
 	// static methods
 	static QString DecodeFromEdit(const QString& text);
 	static QString EncodeToEdit(const QString& text);
@@ -386,12 +383,6 @@ private:
 	imod::IModel* m_lastRegistryModelPtr;
 
 	QByteArray m_pendingAttributeId;	// attribute to select after next selection change
-
-	bool m_isGeneralViewStale;
-	bool m_isAttributesViewStale;
-	bool m_isInterfacesViewStale;
-	bool m_isFlagsViewStale;
-	bool m_isSubcomponentsViewStale;
 
 	QIcon m_invalidIcon;
 	QIcon m_warningIcon;
