@@ -50,7 +50,12 @@ const int s_maxRegistryRecursionDepth = 10;
 CAttributeEditorComp::CAttributeEditorComp()
 :	m_attributeItemDelegate(this),
 	m_registryObserver(this),
-	m_lastRegistryModelPtr(NULL)
+	m_lastRegistryModelPtr(NULL),
+	m_isGeneralViewStale(false),
+	m_isAttributesViewStale(false),
+	m_isInterfacesViewStale(false),
+	m_isFlagsViewStale(false),
+	m_isSubcomponentsViewStale(false)
 {
 	m_attributeTypesMap[iattr::CIntegerAttribute::GetTypeName()] = TypeDescr(tr("Integer number"), AGT_ATTRIBUTE);
 	m_attributeTypesMap[iattr::CRealAttribute::GetTypeName()] = TypeDescr(tr("Real number"), AGT_ATTRIBUTE);
@@ -2406,11 +2411,53 @@ void CAttributeEditorComp::UpdateGui(const istd::IChangeable::ChangeSet& changeS
 		}
 	}
 
-	UpdateGeneralView();
-	UpdateAttributesView();
-	UpdateInterfacesView();
-	UpdateFlagsView();
-	UpdateSubcomponentsView();
+	// Mark all tabs as stale, then update only the visible tab
+	m_isGeneralViewStale = true;
+	m_isAttributesViewStale = true;
+	m_isInterfacesViewStale = true;
+	m_isFlagsViewStale = true;
+	m_isSubcomponentsViewStale = true;
+
+	OnCurrentTabChanged(ElementInfoTab->currentIndex());
+}
+
+
+void CAttributeEditorComp::OnCurrentTabChanged(int index)
+{
+	switch (index){
+		case TI_GENERAL:
+			if (m_isGeneralViewStale){
+				UpdateGeneralView();
+				m_isGeneralViewStale = false;
+			}
+			break;
+		case TI_ATTRIBUTES:
+			if (m_isAttributesViewStale){
+				UpdateAttributesView();
+				m_isAttributesViewStale = false;
+			}
+			break;
+		case TI_INTERFACES:
+			if (m_isInterfacesViewStale){
+				UpdateInterfacesView();
+				m_isInterfacesViewStale = false;
+			}
+			break;
+		case TI_FLAGS:
+			if (m_isFlagsViewStale){
+				UpdateFlagsView();
+				m_isFlagsViewStale = false;
+			}
+			break;
+		case TI_EXPORTS:
+			if (m_isSubcomponentsViewStale){
+				UpdateSubcomponentsView();
+				m_isSubcomponentsViewStale = false;
+			}
+			break;
+		default:
+			break;
+	}
 }
 
 
@@ -2438,6 +2485,8 @@ void CAttributeEditorComp::OnGuiCreated()
 	if (m_registryPropGuiCompPtr.IsValid()){
 		m_registryPropGuiCompPtr->CreateGui(RegistryPropertiesFrame);
 	}
+
+	QObject::connect(ElementInfoTab, SIGNAL(currentChanged(int)), this, SLOT(OnCurrentTabChanged(int)));
 }
 
 

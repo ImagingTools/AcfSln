@@ -259,6 +259,19 @@ void CVisualRegistryEditorComp::AddConnectorsToScene()
 
 	QList<QGraphicsItem*> items = m_scenePtr->items();
 
+	// Build lookup map: element name -> shape pointer, for O(1) connector target resolution
+	QHash<QByteArray, CRegistryElementShape*> shapeMap;
+	foreach(QGraphicsItem* itemPtr, items)
+	{
+		CRegistryElementShape* shapePtr = dynamic_cast<CRegistryElementShape*>(itemPtr);
+		if (shapePtr == NULL){
+			continue;
+		}
+		CVisualRegistryElement* elementPtr = shapePtr->GetObservedObject();
+		if (elementPtr != NULL){
+			shapeMap.insert(elementPtr->GetName(), shapePtr);
+		}
+	}
 
 	foreach(QGraphicsItem* itemPtr, items)
 	{
@@ -282,7 +295,7 @@ void CVisualRegistryEditorComp::AddConnectorsToScene()
 			if (referenceAttributePtr != NULL){		
 				const QByteArray& componentId = referenceAttributePtr->GetValue();
 				
-				AddConnector(*sourceShapePtr, componentId, attributeId);
+				AddConnector(*sourceShapePtr, componentId, attributeId, false, shapeMap);
 			}
 	
 			const icomp::CMultiReferenceAttribute* multiReferenceAttributePtr = dynamic_cast<icomp::CMultiReferenceAttribute*>(attributePtr);
@@ -290,7 +303,7 @@ void CVisualRegistryEditorComp::AddConnectorsToScene()
 				for (int referenceIndex = 0; referenceIndex < multiReferenceAttributePtr->GetValuesCount(); referenceIndex++){
 					const QByteArray& componentId = multiReferenceAttributePtr->GetValueAt(referenceIndex);
 					
-					AddConnector(*sourceShapePtr, componentId, attributeId);
+					AddConnector(*sourceShapePtr, componentId, attributeId, false, shapeMap);
 				}
 			}
 
@@ -298,7 +311,7 @@ void CVisualRegistryEditorComp::AddConnectorsToScene()
 			if (factoryAttributePtr != NULL){		
 				const QByteArray& componentId = factoryAttributePtr->GetValue();
 
-				AddConnector(*sourceShapePtr, componentId, attributeId, true);
+				AddConnector(*sourceShapePtr, componentId, attributeId, true, shapeMap);
 			}
 
 			const icomp::CMultiFactoryAttribute* multiFactoryAttributePtr = dynamic_cast<icomp::CMultiFactoryAttribute*>(attributePtr);
@@ -306,7 +319,7 @@ void CVisualRegistryEditorComp::AddConnectorsToScene()
 				for (int referenceIndex = 0; referenceIndex < multiFactoryAttributePtr->GetValuesCount(); referenceIndex++){
 					const QByteArray& componentId = multiFactoryAttributePtr->GetValueAt(referenceIndex);
 
-					AddConnector(*sourceShapePtr, componentId, attributeId, true);
+					AddConnector(*sourceShapePtr, componentId, attributeId, true, shapeMap);
 				}
 			}
 		}
@@ -318,7 +331,8 @@ void CVisualRegistryEditorComp::AddConnector(
 			CRegistryElementShape& sourceShape,
 			const QByteArray& referenceComponentId,
 			const QByteArray& attributeId,
-			bool isFactory)
+			bool isFactory,
+			const QHash<QByteArray, CRegistryElementShape*>& shapeMap)
 {
 	if (m_scenePtr == NULL){
 		return;
@@ -330,40 +344,28 @@ void CVisualRegistryEditorComp::AddConnector(
 	QByteArray subId;
 	bool isEmbedded = istd::CIdManipBase::SplitId(referenceComponentId, baseId, subId);
 
-	QList<QGraphicsItem*> items = m_scenePtr->items();
-
-
-	foreach(QGraphicsItem* itemPtr, items)
-	{
-		CRegistryElementShape* destShapePtr = dynamic_cast<CRegistryElementShape*>(itemPtr);
-		if (destShapePtr == NULL){
-			continue;
-		}
-		CVisualRegistryElement* destElementPtr = destShapePtr->GetObservedObject();
-		if ((destElementPtr == NULL) || (destElementPtr->GetName() != baseId)){
-			continue;
-		}
-
-		int connectFlags = 0;
-		if (isEmbedded){
-			connectFlags = connectFlags | CGraphicsConnectorItem::CF_EMBEDDED;
-		}
-		if (isFactory){
-			connectFlags = connectFlags | CGraphicsConnectorItem::CF_FACTORY;
-		}
-
-		CGraphicsConnectorItem* connectorPtr = new CGraphicsConnectorItem(*m_sceneProviderCompPtr.GetPtr(), connectFlags);
-
-		connectorPtr->setToolTip(isFactory?
-					tr("Factory of '%1'").arg(QString(attributeId)):
-					tr("Reference of '%1'").arg(QString(attributeId)));
-
-		connectorPtr->InitEnds(&sourceShape, destShapePtr);
-
-		m_scenePtr->addItem(connectorPtr);
-
+	CRegistryElementShape* destShapePtr = shapeMap.value(baseId, NULL);
+	if (destShapePtr == NULL){
 		return;
 	}
+
+	int connectFlags = 0;
+	if (isEmbedded){
+		connectFlags = connectFlags | CGraphicsConnectorItem::CF_EMBEDDED;
+	}
+	if (isFactory){
+		connectFlags = connectFlags | CGraphicsConnectorItem::CF_FACTORY;
+	}
+
+	CGraphicsConnectorItem* connectorPtr = new CGraphicsConnectorItem(*m_sceneProviderCompPtr.GetPtr(), connectFlags);
+
+	connectorPtr->setToolTip(isFactory?
+				tr("Factory of '%1'").arg(QString(attributeId)):
+				tr("Reference of '%1'").arg(QString(attributeId)));
+
+	connectorPtr->InitEnds(&sourceShape, destShapePtr);
+
+	m_scenePtr->addItem(connectorPtr);
 }
 
 
@@ -757,6 +759,8 @@ void CVisualRegistryEditorComp::UpdateGui(const istd::IChangeable::ChangeSet& ch
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_ADDED) ||
 		changeSet.Contains(icomp::IRegistry::CF_ELEMENT_REMOVED) ||
 		changeSet.Contains(CF_DELEGATED)){
+		m_selectionInfo.InvalidateCache();
+
 		istd::CChangeNotifier selectionNotifier(&m_selectionInfo, &changeSet);
 		Q_UNUSED(selectionNotifier);
 	}
@@ -921,6 +925,8 @@ void CVisualRegistryEditorComp::OnSelectionChanged()
 	}
 
 	if (m_selectedElementIds != elementIds){
+		m_selectionInfo.InvalidateCache();
+
 		const ChangeSet selectionChangeSet(IElementSelectionInfo::CF_SELECTION);
 		istd::CChangeNotifier selectionNotifier(&m_selectionInfo, &selectionChangeSet);
 		Q_UNUSED(selectionNotifier);
@@ -1444,6 +1450,8 @@ void CVisualRegistryEditorComp::UpdateEmbeddedRegistryButtons()
 void CVisualRegistryEditorComp::UpdateEmbeddedRegistryView(const QByteArray& id)
 {
 	if (id != m_embeddedRegistryId){
+		m_selectionInfo.InvalidateCache();
+
 		const ChangeSet selectionChangeSet(IElementSelectionInfo::CF_SELECTION);
 		istd::CChangeNotifier selectionNotifier(&m_selectionInfo, &selectionChangeSet);
 		Q_UNUSED(selectionNotifier);
@@ -1503,6 +1511,14 @@ void CVisualRegistryEditorComp::EnvironmentObserver::OnUpdate(const istd::IChang
 void CVisualRegistryEditorComp::SelectionInfoImpl::SetParent(CVisualRegistryEditorComp* parentPtr)
 {
 	m_parentPtr = parentPtr;
+	m_isCacheValid = false;
+}
+
+
+void CVisualRegistryEditorComp::SelectionInfoImpl::InvalidateCache()
+{
+	m_isCacheValid = false;
+	m_cachedElements.clear();
 }
 
 
@@ -1520,7 +1536,11 @@ IElementSelectionInfo::Elements CVisualRegistryEditorComp::SelectionInfoImpl::Ge
 {
 	Q_ASSERT(m_parentPtr != NULL);	// parent should be set before any subelement can be accessed
 
-	IElementSelectionInfo::Elements retVal;
+	if (m_isCacheValid){
+		return m_cachedElements;
+	}
+
+	m_cachedElements.clear();
 
 	icomp::IRegistry* registryPtr = GetSelectedRegistry();
 	if (registryPtr != NULL){
@@ -1531,12 +1551,14 @@ IElementSelectionInfo::Elements CVisualRegistryEditorComp::SelectionInfoImpl::Ge
 
 			const icomp::IRegistry::ElementInfo* elementInfoPtr = registryPtr->GetElementInfo(elementName);
 			if (elementInfoPtr != NULL){
-				retVal[elementName] = elementInfoPtr;
+				m_cachedElements[elementName] = elementInfoPtr;
 			}
 		}
 	}
 
-	return retVal;
+	m_isCacheValid = true;
+
+	return m_cachedElements;
 }
 
 
