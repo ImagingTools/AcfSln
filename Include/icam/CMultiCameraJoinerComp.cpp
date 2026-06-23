@@ -30,7 +30,8 @@ iproc::IProcessor::TaskState CMultiCameraJoinerComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	QMutexLocker lock(&m_lock);
 
@@ -57,7 +58,7 @@ iproc::IProcessor::TaskState CMultiCameraJoinerComp::DoProcessing(
 	for (int i = 0; i < cameraCount; i++){
 		const iprm::IParamsSet* cameraParamsSet = paramsManagerPtr->GetParamsSet(i);
 
-		if (m_cameraCompPtr->DoProcessing(cameraParamsSet, inputPtr, (m_snapList[i].bitmapPtr.GetPtr()), progressManagerPtr) == TS_OK){
+		if (m_cameraCompPtr->DoProcessing(cameraParamsSet, inputPtr, (m_snapList[i].bitmapPtr.GetPtr()), progressManagerPtr, processingReportPtr) == TS_OK){
 			m_snapList[i].isSnapOk = true;
 
 			retVal = m_snapList[i].isSnapOk && retVal;

@@ -28,7 +28,8 @@ iproc::IProcessor::TaskState CHistogramStatisticsProcessorComp::DoProcessing(
 				const iprm::IParamsSet* /*paramsPtr*/,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* /*progressManagerPtr*/)
+				ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	const imeas::IDataSequence* dataSequencePtr = dynamic_cast<const imeas::IDataSequence*>(inputPtr);
 	if (dataSequencePtr == NULL){

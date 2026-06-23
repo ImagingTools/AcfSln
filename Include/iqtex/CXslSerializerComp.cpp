@@ -42,7 +42,8 @@ bool CXslSerializerComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CXslSerializerComp::LoadFromFile(
 			istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 #if QT_VERSION < 0x060000
 	if (IsOperationSupported(&data, &filePath, QF_LOAD | QF_FILE, false)){
@@ -68,7 +69,8 @@ ifile::IFilePersistence::OperationState CXslSerializerComp::LoadFromFile(
 ifile::IFilePersistence::OperationState CXslSerializerComp::SaveToFile(
 			const istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 #if QT_VERSION < 0x060000
 	if (IsOperationSupported(&data, &filePath, QF_SAVE | QF_FILE, false)){

@@ -57,7 +57,8 @@ bool CMediaLoaderComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CMediaLoaderComp::LoadFromFile(
 			istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (IsOperationSupported(&data, &filePath, QF_LOAD | QF_FILE | QF_DIRECTORY, false)){
 		imm::IMediaController* controllerPtr = dynamic_cast<imm::IMediaController*>(&data);
@@ -81,7 +82,8 @@ ifile::IFilePersistence::OperationState CMediaLoaderComp::LoadFromFile(
 ifile::IFilePersistence::OperationState CMediaLoaderComp::SaveToFile(
 			const istd::IChangeable&/* data*/,
 			const QString&/* filePath*/,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	return OS_FAILED;
 }

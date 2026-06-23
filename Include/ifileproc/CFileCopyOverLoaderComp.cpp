@@ -18,7 +18,8 @@ int CFileCopyOverLoaderComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* /*paramsSetPtr*/,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (!m_inputLoaderCompPtr.IsValid()){
 		SendErrorMessage(0, QObject::tr("Input data loader is not defined"), "FileCopyOverLoader");

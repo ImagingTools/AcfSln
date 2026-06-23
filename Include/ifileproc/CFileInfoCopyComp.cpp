@@ -31,7 +31,8 @@ int CFileInfoCopyComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* /*paramsSetPtr*/,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	QString inputFileName = inputPath;
 	QString outputFileName = outputPath;

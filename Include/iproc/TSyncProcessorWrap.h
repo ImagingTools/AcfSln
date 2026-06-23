@@ -38,7 +38,8 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL) override;
 	virtual IProcessor::TaskState WaitTaskFinished(
 					int taskId = -1,
 					double timeoutTime = -1,
@@ -99,10 +100,11 @@ int TSyncProcessorWrap<Base>::BeginTask(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	int retVal = m_nextTaskId;
-	m_taskToStateMap[retVal] = this->DoProcessing(paramsPtr, inputPtr, outputPtr, progressManagerPtr);
+	m_taskToStateMap[retVal] = this->DoProcessing(paramsPtr, inputPtr, outputPtr, progressManagerPtr, processingReportPtr);
 
 	m_nextTaskId = (m_nextTaskId + 1) & 0x7fff;
 

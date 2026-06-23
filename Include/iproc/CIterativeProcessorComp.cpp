@@ -19,7 +19,8 @@ iproc::IProcessor::TaskState CIterativeProcessorComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (outputPtr == NULL){
 		return TS_OK;

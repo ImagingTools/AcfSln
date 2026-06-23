@@ -194,7 +194,8 @@ iproc::IProcessor::TaskState CCalibratedCameraComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	iproc::IProcessor::TaskState retVal = BaseClass::DoProcessing(paramsPtr, inputPtr, outputPtr, progressManagerPtr);
 	if (retVal == TS_OK)

@@ -73,7 +73,8 @@ IProcessor::TaskState CCascadedProcessorComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	int processorsCount = m_processorsCompPtr.GetCount();
 	std::vector<std::unique_ptr<ibase::IProgressManager>> progressDelegators(processorsCount);
@@ -122,7 +123,7 @@ IProcessor::TaskState CCascadedProcessorComp::DoProcessing(
 			return TS_INVALID;
 		}
 
-		IProcessor::TaskState taskState = processorPtr->DoProcessing(paramsPtr, processorInputPtr, processorOutputPtr, progressDelegators[i].get());
+		IProcessor::TaskState taskState = processorPtr->DoProcessing(paramsPtr, processorInputPtr, processorOutputPtr, progressDelegators[i].get(), processingReportPtr);
 		if (taskState != TS_OK){
 			return taskState;
 		}

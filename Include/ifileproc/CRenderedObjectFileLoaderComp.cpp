@@ -56,7 +56,8 @@ bool CRenderedObjectFileLoaderComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CRenderedObjectFileLoaderComp::LoadFromFile(
 			istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	iimg::IBitmap* bitmapPtr = dynamic_cast<iimg::IBitmap*>(&data);
 	if (bitmapPtr == NULL){
@@ -149,7 +150,8 @@ ifile::IFilePersistence::OperationState CRenderedObjectFileLoaderComp::LoadFromF
 ifile::IFilePersistence::OperationState CRenderedObjectFileLoaderComp::SaveToFile(
 			const istd::IChangeable& /*data*/,
 			const QString& /*filePath*/,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	return ifile::IFilePersistence::OS_FAILED;
 }

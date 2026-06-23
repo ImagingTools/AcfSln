@@ -33,7 +33,8 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL);
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL);
 
 private:
 	I_REF(ifileproc::IFileConversion, m_fileConvertCompPtr);

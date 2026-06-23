@@ -70,13 +70,14 @@ iproc::IProcessor::TaskState CCameraMultiplexerComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	const iprm::IParamsSet* workingParamsPtr = GetWorkingParamsSet(paramsPtr);
 	IBitmapAcquisition* camera = GetSelectedCamera(paramsPtr);
 
 	if (camera != NULL){
-		return camera->DoProcessing(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr);
+		return camera->DoProcessing(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr, processingReportPtr);
 	}
 
 	return TS_INVALID;
@@ -87,13 +88,14 @@ int CCameraMultiplexerComp::BeginTask(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	const iprm::IParamsSet* workingParamsPtr = GetWorkingParamsSet(paramsPtr);
 	IBitmapAcquisition* camera = GetSelectedCamera(paramsPtr);
 
 	if (camera != NULL){
-		return camera->BeginTask(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr);
+		return camera->BeginTask(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr, processingReportPtr);
 	}
 
 	return -1;

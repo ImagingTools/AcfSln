@@ -27,7 +27,8 @@ iproc::IProcessor::TaskState CProcessedAcquisitionComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* /*progressManagerPtr*/)
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* processingReportPtr)
 {
 	if (!m_bitmapFactCompPtr.IsValid()){
 		SendErrorMessage(0, "Bitmap factory was not set");
@@ -46,7 +47,7 @@ iproc::IProcessor::TaskState CProcessedAcquisitionComp::DoProcessing(
 
 	istd::CChangeNotifier outputNotifier(outputBitmapPtr);
 
-	iproc::IProcessor::TaskState retVal = m_slaveAcquisitionCompPtr->DoProcessing(paramsPtr, inputPtr, outputBitmapPtr);
+	iproc::IProcessor::TaskState retVal = m_slaveAcquisitionCompPtr->DoProcessing(paramsPtr, inputPtr, outputBitmapPtr, NULL, processingReportPtr);
 	if (retVal == TS_OK){
 		if (m_processorCompPtr.IsValid()){
 			iimg::IBitmapUniquePtr tempBitmapPtr(m_bitmapFactCompPtr.CreateInstance());
@@ -56,7 +57,7 @@ iproc::IProcessor::TaskState CProcessedAcquisitionComp::DoProcessing(
 				return TS_INVALID;
 			}
 			
-			retVal = m_processorCompPtr->DoProcessing(paramsPtr, outputBitmapPtr, tempBitmapPtr.GetPtr());
+			retVal = m_processorCompPtr->DoProcessing(paramsPtr, outputBitmapPtr, tempBitmapPtr.GetPtr(), NULL, processingReportPtr);
 			if (retVal == TS_OK){
 				if (!outputBitmapPtr->CopyFrom(*tempBitmapPtr)){
 					retVal = TS_INVALID;

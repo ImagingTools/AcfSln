@@ -65,7 +65,8 @@ bool CSvgBitmapLoaderComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CSvgBitmapLoaderComp::LoadFromFile(
 			istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (IsOperationSupported(&data, &filePath, QF_LOAD | QF_FILE, false)){
 		Q_ASSERT(!filePath.isEmpty());	// should be checked by IsOperationSupported
@@ -111,7 +112,8 @@ ifile::IFilePersistence::OperationState CSvgBitmapLoaderComp::LoadFromFile(
 ifile::IFilePersistence::OperationState CSvgBitmapLoaderComp::SaveToFile(
 			const istd::IChangeable&/* data*/,
 			const QString&/* filePath*/,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	return OS_FAILED;
 }

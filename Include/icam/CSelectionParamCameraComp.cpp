@@ -48,7 +48,8 @@ iproc::IProcessor::TaskState CSelectionParamCameraComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	ParamSetPtr extParamsPtr(CreateParamsSet(paramsPtr));
 
@@ -56,7 +57,8 @@ iproc::IProcessor::TaskState CSelectionParamCameraComp::DoProcessing(
 				extParamsPtr.GetPtr(),
 				inputPtr,
 				outputPtr,
-				progressManagerPtr)
+				progressManagerPtr,
+				processingReportPtr)
 		: TS_INVALID;
 }
 
@@ -65,7 +67,8 @@ int CSelectionParamCameraComp::BeginTask(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	ParamSetPtr extParamsPtr(CreateParamsSet(paramsPtr));
 
@@ -73,7 +76,8 @@ int CSelectionParamCameraComp::BeginTask(
 				extParamsPtr.GetPtr(),
 				inputPtr,
 				outputPtr,
-				progressManagerPtr) 
+				progressManagerPtr,
+				processingReportPtr) 
 		: -1;
 
 	if (taskId >= 0){
