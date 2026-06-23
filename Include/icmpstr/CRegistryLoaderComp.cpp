@@ -86,8 +86,7 @@ bool CRegistryLoaderComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CRegistryLoaderComp::LoadFromFile(
 			istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/,
-			istd::IChangeable* /*processingReportPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/) const
 {
 	istd::CChangeNotifier notifier(&data);
 
@@ -168,8 +167,7 @@ ifile::IFilePersistence::OperationState CRegistryLoaderComp::LoadFromFile(
 ifile::IFilePersistence::OperationState CRegistryLoaderComp::SaveToFile(
 			const istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/,
-			istd::IChangeable* /*processingReportPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/) const
 {
 	if (!IsOperationSupported(&data, &filePath, QF_SAVE | QF_FILE, false)){
 		return OS_FAILED;

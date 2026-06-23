@@ -80,8 +80,7 @@ bool CWavSamplesLoaderComp::IsOperationSupported(
 ifile::IFilePersistence::OperationState CWavSamplesLoaderComp::LoadFromFile(
 			istd::IChangeable& /*data*/,
 			const QString& /*filePath*/,
-			ibase::IProgressManager* /*progressManagerPtr*/,
-			istd::IChangeable* /*processingReportPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/) const
 {
 	return OS_FAILED;
 }
@@ -90,8 +89,7 @@ ifile::IFilePersistence::OperationState CWavSamplesLoaderComp::LoadFromFile(
 ifile::IFilePersistence::OperationState CWavSamplesLoaderComp::SaveToFile(
 			const istd::IChangeable& data,
 			const QString& filePath,
-			ibase::IProgressManager* /*progressManagerPtr*/,
-			istd::IChangeable* /*processingReportPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/) const
 {
 	if (!IsOperationSupported(&data, &filePath, QF_SAVE | QF_FILE, false)){
 		return OS_FAILED;
