@@ -80,7 +80,8 @@ public:
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) override;
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL) override;
 
 protected:
 	BackgroundFillMode GetBackgroundMode(const iprm::IParamsSet* paramsPtr) const;

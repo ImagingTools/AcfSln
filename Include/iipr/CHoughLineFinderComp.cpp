@@ -19,7 +19,8 @@ iproc::IProcessor::TaskState CHoughLineFinderComp::DoExtractFeatures(
 			const iprm::IParamsSet* paramsPtr,
 			const iimg::IBitmap& image,
 			IFeaturesConsumer& results,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	ibase::CSize size = image.GetImageSize();
 	if ((size.GetX() < 3) || (size.GetY() < 3)){
@@ -199,7 +200,8 @@ iproc::IProcessor::TaskState CHoughLineFinderComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (outputPtr == NULL){
 		return TS_OK;

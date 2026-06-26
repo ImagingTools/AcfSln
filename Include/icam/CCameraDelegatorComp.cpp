@@ -58,12 +58,13 @@ iproc::IProcessor::TaskState CCameraDelegatorComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	const iprm::IParamsSet* workingParamsPtr = GetWorkingParamsSet(paramsPtr);
 
 	if (m_slaveCameraCompPtr.IsValid()){
-		return m_slaveCameraCompPtr->DoProcessing(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr);
+		return m_slaveCameraCompPtr->DoProcessing(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr, processingReportPtr);
 	}
 
 	return TS_INVALID;
@@ -74,12 +75,13 @@ int CCameraDelegatorComp::BeginTask(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr)
 {
 	const iprm::IParamsSet* workingParamsPtr = GetWorkingParamsSet(paramsPtr);
 
 	if (m_slaveCameraCompPtr.IsValid()){
-		return m_slaveCameraCompPtr->BeginTask(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr);
+		return m_slaveCameraCompPtr->BeginTask(workingParamsPtr, inputPtr, outputPtr, progressManagerPtr, processingReportPtr);
 	}
 
 	return -1;

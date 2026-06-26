@@ -22,7 +22,8 @@ int CExternalFileConverterComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* paramsSetPtr,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (!m_executablePathCompPtr.IsValid()){
 		SendErrorMessage(0, "Path for an executable was not set");

@@ -22,7 +22,8 @@ iproc::IProcessor::TaskState CFileListConverterComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* progressManagerPtr)
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (!m_outputFileNameCompPtr.IsValid()){
 		return TS_INVALID;

@@ -20,7 +20,8 @@ int CCopyFilesTreeComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* paramsPtr,
-			ibase::IProgressManager* /*progressManagerPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (!m_fileCopyCompPtr.IsValid()){
 		SendErrorMessage(MI_END_STATUS, QObject::tr("File copy provider is not present"));

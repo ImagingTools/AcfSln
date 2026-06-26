@@ -445,7 +445,8 @@ iproc::IProcessor::TaskState CImageCropDecalibrateProcessorComp::DoProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
-			ibase::IProgressManager* /*progressManagerPtr*/)
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	iprm::TParamsPtr<i2d::CRectangle> aoiParamPtr(paramsPtr, m_aoiParamIdAttrPtr, m_defaultAoiCompPtr, true);
 	if (!aoiParamPtr.IsValid()){

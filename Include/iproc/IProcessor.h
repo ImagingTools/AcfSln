@@ -113,34 +113,43 @@ public:
 
 	/**
 		Do synchronized processing.
+		\param	paramsPtr				set of parameters controlling processing task. It can be NULL.
+		\param	inputPtr				input object typically being source object used to processing. It can be NULL.
+		\param	outputPtr				output object storing processing result. It can be NULL.
+		\param	progressManagerPtr		optional progress manager for tracking processing progress.
+		\param	processingReportPtr		optional processing report object for storing additional processing information.
 		\return		state of processing task \sa TaskState.
 	*/
 	virtual TaskState DoProcessing(
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) = 0;
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL) = 0;
 
 	/**
 		Begin new task for this processor and add them to queue.
 		If this method success, new task is added into the queue.
 							To remove it from queue you have to call \c WaitTaskFinished or \c CancelTask.
-		\param	paramsPtr	set of parameters controlling processing task.
-							Pointed object can be used till task is finished.
-							It can be NULL.
-		\param	inputPtr	input object typically being source object used to processing.
-							Pointed object can be used till task is finished.
-							It can be NULL.
-		\param	outputPtr	output object storing processing result.
-							Pointed object can be used till task is finished.
-							It can be NULL.
+		\param	paramsPtr				set of parameters controlling processing task.
+										Pointed object can be used till task is finished.
+										It can be NULL.
+		\param	inputPtr				input object typically being source object used to processing.
+										Pointed object can be used till task is finished.
+										It can be NULL.
+		\param	outputPtr				output object storing processing result.
+										Pointed object can be used till task is finished.
+										It can be NULL.
+		\param	progressManagerPtr		optional progress manager for tracking processing progress.
+		\param	processingReportPtr		optional processing report object for storing additional processing information.
 		\return				task ID or -1 if it was not possible to add new task.
 	*/
 	virtual int BeginTask(
 				const iprm::IParamsSet* paramsPtr,
 				const istd::IPolymorphic* inputPtr,
 				istd::IChangeable* outputPtr,
-				ibase::IProgressManager* progressManagerPtr = NULL) = 0;
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL) = 0;
 
 	/**
 		Wait for task is finished.
