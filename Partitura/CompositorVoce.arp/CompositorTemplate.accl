@@ -2,9 +2,9 @@
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Id="0" Number="6405" Description="ACF"/>
-            <Version Id="1" Number="2394" Description="ACF-Solutions"/>
-            <Version Id="1023" Number="395266" Description="Qt Framework"/>
+            <Version Id="0" Number="6418" Description="ACF"/>
+            <Version Id="1" Number="2402" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="396033" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <PositionMap>
@@ -15,6 +15,7 @@
         <Element ComponentName="RegistryCodeSaver" X="400" Y="475" Note=""/>
         <Element ComponentName="RegistryConsistInfo" X="1000" Y="700" Note=""/>
         <Element ComponentName="RegistryLoader" X="625" Y="100" Note=""/>
+        <Element ComponentName="TracingConfiguration" X="400" Y="225" Note=""/>
         <Element ComponentName="UndoManager" X="1000" Y="75" Note=""/>
         <Element ComponentName="VisualRegistryView" X="1000" Y="600" Note=""/>
     </PositionMap>
