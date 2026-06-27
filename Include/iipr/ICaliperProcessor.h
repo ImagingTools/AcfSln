@@ -33,7 +33,8 @@ public:
 	virtual bool DoCaliper(
 				const imeas::IDataSequence& derivative,
 				const ICaliperParams* paramsPtr,
-				IFeaturesConsumer& results) = 0;
+				IFeaturesConsumer& results,
+				istd::IChangeable* processingReportPtr = NULL) = 0;
 };
 
 

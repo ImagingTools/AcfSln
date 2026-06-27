@@ -38,7 +38,8 @@ namespace iedge
 bool CFastEdgesExtractorComp::DoContourExtraction(
 			const iprm::IParamsSet* paramsPtr,
 			const iimg::IBitmap& bitmap,
-			CEdgeLineContainer& result) const
+			CEdgeLineContainer& result,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	istd::CChangeNotifier notifier(&result);
 

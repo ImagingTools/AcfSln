@@ -21,7 +21,8 @@ iproc::IProcessor::TaskState CBlobProcessorCompBase::DoExtractFeatures(
 			const iprm::IParamsSet* paramsPtr,
 			const iimg::IBitmap& image,
 			iipr::IFeaturesConsumer& results,
-			ibase::IProgressManager* /*progressManagerPtr*/)
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (paramsPtr == NULL){
 		return TS_INVALID;
@@ -56,7 +57,7 @@ iproc::IProcessor::TaskState CBlobProcessorCompBase::DoProcessing(
 			const istd::IPolymorphic* inputPtr,
 			istd::IChangeable* outputPtr,
 			ibase::IProgressManager* progressManagerPtr,
-			istd::IChangeable* /*processingReportPtr*/)
+			istd::IChangeable* processingReportPtr)
 {
 	const iimg::IBitmap* inputBitmapPtr = dynamic_cast<const iimg::IBitmap*>(inputPtr);
 	if (inputBitmapPtr == NULL){
@@ -72,7 +73,7 @@ iproc::IProcessor::TaskState CBlobProcessorCompBase::DoProcessing(
 		return TS_INVALID;
 	}
 
-	return DoExtractFeatures(paramsPtr, *inputBitmapPtr, *outputConsumerPtr, progressManagerPtr);
+	return DoExtractFeatures(paramsPtr, *inputBitmapPtr, *outputConsumerPtr, progressManagerPtr, processingReportPtr);
 }
 
 

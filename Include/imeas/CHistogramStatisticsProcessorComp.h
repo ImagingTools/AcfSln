@@ -42,7 +42,8 @@ public:
 	// reimplemented (imeas::IDataSequenceStatisticsProcessor)
 	virtual iproc::IProcessor::TaskState CalculateDataStatistics(
 				const imeas::IDataSequence& dataSequence,
-				imeas::IDataSequenceStatistics& dataStatistics) const override;
+				imeas::IDataSequenceStatistics& dataStatistics,
+				istd::IChangeable* processingReportPtr = NULL) const override;
 
 private:
 	bool CalculateChannelStatistics(const imeas::IDataSequence& input, int inputIndex, imeas::CSimpleDataStatistics& dataStatistics) const;

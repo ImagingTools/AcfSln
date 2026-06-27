@@ -59,7 +59,8 @@ public:
 	virtual iproc::IProcessor::TaskState DoConvertFeatures(
 				const iprm::IParamsSet* paramsPtr,
 				const IFeaturesProvider& container,
-				IFeaturesConsumer& results) override;
+				IFeaturesConsumer& results,
+				istd::IChangeable* processingReportPtr = NULL) override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(

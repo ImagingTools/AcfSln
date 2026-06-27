@@ -26,7 +26,8 @@ public:
 	*/
 	virtual iproc::IProcessor::TaskState CalculateDataStatistics(
 				const imeas::IDataSequence& dataSequence,
-				imeas::IDataSequenceStatistics& dataStatistics) const = 0;
+				imeas::IDataSequenceStatistics& dataStatistics,
+				istd::IChangeable* processingReportPtr = NULL) const = 0;
 };
 
 

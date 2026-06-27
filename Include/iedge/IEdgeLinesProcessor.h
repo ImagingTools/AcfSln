@@ -29,7 +29,8 @@ public:
 	virtual bool DoLinesProcessing(
 				const iprm::IParamsSet* paramsPtr,
 				const CEdgeLineContainer& edgeLines,
-				CEdgeLineContainer& result) const = 0;
+				CEdgeLineContainer& result,
+				istd::IChangeable* processingReportPtr = NULL) const = 0;
 };
 
 

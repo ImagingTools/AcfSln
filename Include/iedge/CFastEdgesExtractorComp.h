@@ -44,7 +44,8 @@ public:
 	virtual bool DoContourExtraction(
 				const iprm::IParamsSet* paramsPtr,
 				const iimg::IBitmap& bitmap,
-				CEdgeLineContainer& result) const override;
+				CEdgeLineContainer& result,
+				istd::IChangeable* processingReportPtr = NULL) const override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(

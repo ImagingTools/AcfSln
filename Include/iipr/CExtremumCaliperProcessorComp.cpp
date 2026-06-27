@@ -24,7 +24,8 @@ namespace iipr
 bool CExtremumCaliperProcessorComp::DoCaliper(
 			const imeas::IDataSequence& derivative,
 			const ICaliperParams* paramsPtr,
-			IFeaturesConsumer& results)
+			IFeaturesConsumer& results,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (paramsPtr == NULL){
 		return false;

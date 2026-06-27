@@ -41,7 +41,8 @@ iproc::IProcessor::TaskState CCircleFindProcessorComp::DoExtractFeatures(
 			const iprm::IParamsSet* paramsPtr,
 			const iimg::IBitmap& image,
 			IFeaturesConsumer& results,
-			ibase::IProgressManager* /*progressManagerPtr*/)
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (!m_featuresMapperCompPtr.IsValid() || (paramsPtr == NULL)){
 		return TS_INVALID;

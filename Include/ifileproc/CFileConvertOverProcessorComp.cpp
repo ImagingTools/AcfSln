@@ -18,7 +18,8 @@ int CFileConvertOverProcessorComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* paramsSetPtr,
-			ibase::IProgressManager* progressManagerPtr) const
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* processingReportPtr) const
 {
 	QMutexLocker blocker(&m_mutex);
 
@@ -68,7 +69,8 @@ int CFileConvertOverProcessorComp::ConvertFiles(
 				processingParamsPtr,
 				m_inputDataCompPtr.GetPtr(),
 				m_outputDataCompPtr.GetPtr(),
-				processingProgressManagerPtr);
+				processingProgressManagerPtr,
+				processingReportPtr);
 	if (processingResult != iproc::IProcessor::TS_OK){
 		SendErrorMessage(0, "File conversion failed", "File processing component");
 

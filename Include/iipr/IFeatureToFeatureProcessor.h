@@ -26,7 +26,8 @@ public:
 	virtual iproc::IProcessor::TaskState DoConvertFeatures(
 				const iprm::IParamsSet* paramsPtr,
 				const IFeaturesProvider& container,
-				IFeaturesConsumer& results) = 0;
+				IFeaturesConsumer& results,
+				istd::IChangeable* processingReportPtr = NULL) = 0;
 };
 
 

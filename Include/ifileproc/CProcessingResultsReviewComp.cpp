@@ -34,7 +34,8 @@ int CProcessingResultsReviewComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* /*paramsPtr*/,
-			ibase::IProgressManager* progressManagerPtr) const
+			ibase::IProgressManager* progressManagerPtr,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	if (		!m_currentProcessedFilePathCompPtr.IsValid() ||
 				!m_outputSupplierCompPtr.IsValid() ||

@@ -30,7 +30,8 @@ public:
 	virtual bool DoContourExtraction(
 				const iprm::IParamsSet* paramsPtr,
 				const iimg::IBitmap& bitmap,
-				CEdgeLineContainer& result) const = 0;
+				CEdgeLineContainer& result,
+				istd::IChangeable* processingReportPtr = NULL) const = 0;
 };
 
 

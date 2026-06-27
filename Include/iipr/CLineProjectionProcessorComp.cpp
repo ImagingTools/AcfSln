@@ -215,7 +215,8 @@ bool CLineProjectionProcessorComp::DoProjection(
 			const iimg::IBitmap& bitmap,
 			const i2d::CLine2d& projectionLine,
 			const IProjectionParams* /*paramsPtr*/,
-			imeas::IDataSequence& results)
+			imeas::IDataSequence& results,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	i2d::CLine2d bitmapLine;
 	bitmapLine.SetCalibration(bitmap.GetCalibration());

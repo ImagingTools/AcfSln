@@ -29,7 +29,8 @@ public:
 				const iimg::IBitmap& bitmap,
 				const i2d::CLine2d& projectionLine,
 				const IProjectionParams* paramsPtr,
-				imeas::IDataSequence& results) = 0;
+				imeas::IDataSequence& results,
+				istd::IChangeable* processingReportPtr = NULL) = 0;
 };
 
 

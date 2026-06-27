@@ -55,7 +55,8 @@ public:
 	virtual bool DoLinesProcessing(
 				const iprm::IParamsSet* paramsPtr,
 				const CEdgeLineContainer& edgeLines,
-				CEdgeLineContainer& result) const override;
+				CEdgeLineContainer& result,
+				istd::IChangeable* processingReportPtr = NULL) const override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(
