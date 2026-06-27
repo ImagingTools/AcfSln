@@ -68,7 +68,8 @@ iproc::IProcessor::TaskState CCheckerboardPointGridExtractorComp::DoExtractFeatu
 			const iprm::IParamsSet* paramsPtr,
 			const iimg::IBitmap& image,
 			IFeaturesConsumer& results,
-			ibase::IProgressManager* /*progressManagerPtr*/)
+			ibase::IProgressManager* /*progressManagerPtr*/,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	LinesConsumer processedLines;
 	if (m_lineFinderCompPtr->DoExtractFeatures(paramsPtr, image, processedLines) != iproc::IProcessor::TS_OK) {

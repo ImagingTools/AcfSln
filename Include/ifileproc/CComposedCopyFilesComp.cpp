@@ -16,8 +16,7 @@ int CComposedCopyFilesComp::ConvertFiles(
 			const QString& inputPath,
 			QString& outputPath,
 			const iprm::IParamsSet* paramsPtr,
-			ibase::IProgressManager* /*progressManagerPtr*/,
-			istd::IChangeable* /*processingReportPtr*/) const
+			ibase::IProgressManager* /*progressManagerPtr*/) const
 {
 	int retVal = iproc::IProcessor::TS_NONE;
 

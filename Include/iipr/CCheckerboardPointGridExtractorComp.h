@@ -25,21 +25,19 @@ public:
 
 	// reimplemented (iipr::IImageToFeatureProcessor)
 	virtual iproc::IProcessor::TaskState DoExtractFeatures(
-		const iprm::IParamsSet* paramsPtr,
-		const iimg::IBitmap& image,
-		IFeaturesConsumer& results,
-		ibase::IProgressManager* progressManagerPtr = NULL)  override;
+				const iprm::IParamsSet* paramsPtr,
+				const iimg::IBitmap& image,
+				IFeaturesConsumer& results,
+				ibase::IProgressManager* progressManagerPtr = nullptr,
+				istd::IChangeable* processingReportPtr = nullptr)  override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(
-		const iprm::IParamsSet* paramsPtr,
-		const istd::IPolymorphic* inputPtr,
-		istd::IChangeable* outputPtr,
-		ibase::IProgressManager* progressManagerPtr = NULL,
-				istd::IChangeable* processingReportPtr = NULL) override;
-
-protected:
-
+				const iprm::IParamsSet* paramsPtr,
+				const istd::IPolymorphic* inputPtr,
+				istd::IChangeable* outputPtr,
+				ibase::IProgressManager* progressManagerPtr = nullptr,
+				istd::IChangeable* processingReportPtr = nullptr) override;
 private:
 	I_REF(ilog::IMessageConsumer, m_resultConsumerCompPtr);
 	I_REF(iipr::IImageToFeatureProcessor, m_lineFinderCompPtr);
