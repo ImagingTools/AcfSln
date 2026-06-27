@@ -32,7 +32,8 @@ public:
 	virtual bool CalculateCorrelation(
 				const imeas::IDataSequence& input1,
 				const imeas::IDataSequence& input2,
-				imeas::IDataSequence& correlation) const;
+				imeas::IDataSequence& correlation,
+				istd::IChangeable* processingReportPtr = NULL) const;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(

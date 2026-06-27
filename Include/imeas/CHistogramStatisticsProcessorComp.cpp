@@ -53,7 +53,8 @@ iproc::IProcessor::TaskState CHistogramStatisticsProcessorComp::DoProcessing(
 
 iproc::IProcessor::TaskState CHistogramStatisticsProcessorComp::CalculateDataStatistics(
 			const imeas::IDataSequence& dataSequence,
-			imeas::IDataSequenceStatistics& dataStatistics) const
+			imeas::IDataSequenceStatistics& dataStatistics,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	istd::CChangeNotifier changePtr(&dataStatistics);
 

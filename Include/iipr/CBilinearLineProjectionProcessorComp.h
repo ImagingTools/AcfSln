@@ -50,7 +50,8 @@ public:
 				const iimg::IBitmap& bitmap,
 				const i2d::CLine2d& projectionLine,
 				const iipr::IProjectionParams* paramsPtr,
-				imeas::IDataSequence& results) override;
+				imeas::IDataSequence& results,
+				istd::IChangeable* processingReportPtr = NULL) override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(

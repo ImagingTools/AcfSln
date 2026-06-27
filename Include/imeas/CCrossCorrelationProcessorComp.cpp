@@ -27,7 +27,8 @@ namespace imeas
 bool CCrossCorrelationProcessorComp::CalculateCorrelation(
 			const imeas::IDataSequence& input1,
 			const imeas::IDataSequence& input2,
-			imeas::IDataSequence& correlationSequence) const
+			imeas::IDataSequence& correlationSequence,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	int workingChannelsCount = qMin(input1.GetChannelsCount(), input2.GetChannelsCount());
 	int samplesCountPerChannel1 = input1.GetSamplesCount() / input1.GetChannelsCount();

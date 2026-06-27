@@ -26,7 +26,8 @@ public:
 	virtual bool CalculateCorrelation(
 				const imeas::IDataSequence& input1,
 				const imeas::IDataSequence& input2,
-				imeas::IDataSequence& correlation) const = 0;
+				imeas::IDataSequence& correlation,
+				istd::IChangeable* processingReportPtr = NULL) const = 0;
 };
 
 

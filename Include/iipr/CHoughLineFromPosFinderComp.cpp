@@ -19,7 +19,8 @@ namespace iipr
 iproc::IProcessor::TaskState CHoughLineFromPosFinderComp::DoConvertFeatures(
 			const iprm::IParamsSet* paramsPtr,
 			const IFeaturesProvider& container,
-			IFeaturesConsumer& results)
+			IFeaturesConsumer& results,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	int maxLines = -1;
 

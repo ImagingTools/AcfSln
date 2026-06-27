@@ -69,7 +69,8 @@ public:
 				const QString& inputPath,
 				QString& outputPath,
 				const iprm::IParamsSet* paramsPtr = NULL,
-				ibase::IProgressManager* progressManagerPtr = NULL) const;
+				ibase::IProgressManager* progressManagerPtr = NULL,
+				istd::IChangeable* processingReportPtr = NULL) const;
 
 protected:
 	bool ProcessSubstitutionTag(

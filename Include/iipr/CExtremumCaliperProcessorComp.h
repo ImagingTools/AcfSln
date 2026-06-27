@@ -36,7 +36,8 @@ public:
 	virtual bool DoCaliper(
 				const imeas::IDataSequence& derivative,
 				const ICaliperParams* paramsPtr,
-				IFeaturesConsumer& results) override;
+				IFeaturesConsumer& results,
+				istd::IChangeable* processingReportPtr = NULL) override;
 
 	// reimplemented (iproc::IProcessor)
 	virtual iproc::IProcessor::TaskState DoProcessing(

@@ -13,7 +13,8 @@ namespace iipr
 iproc::IProcessor::TaskState CFeatureToImageMapperProcessorComp::DoConvertFeatures(
 			const iprm::IParamsSet* paramsPtr,
 			const IFeaturesProvider& container,
-			IFeaturesConsumer& results)
+			IFeaturesConsumer& results,
+			istd::IChangeable* /*processingReportPtr*/)
 {
 	if (!m_featuresMapperCompPtr.IsValid()){
 		return TS_INVALID;

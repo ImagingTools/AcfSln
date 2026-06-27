@@ -102,7 +102,8 @@ void CEdgesReductorComp::GetReducedLines(
 bool CEdgesReductorComp::DoLinesProcessing(
 			const iprm::IParamsSet* paramsPtr,
 			const CEdgeLineContainer& edgeLines,
-			CEdgeLineContainer& result) const
+			CEdgeLineContainer& result,
+			istd::IChangeable* /*processingReportPtr*/) const
 {
 	imath::CVarVector toleranceValues;
 	if ((paramsPtr != NULL) && m_toleranceParamsIdAttrPtr.IsValid()){
