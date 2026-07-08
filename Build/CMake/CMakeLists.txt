@@ -23,6 +23,23 @@ endif()
 include(${ACFDIR}/Config/CMake/ProjectRoot.cmake)
 include(${ACFSLNDIR}/Config/CMake/AcfSlnEnv.cmake)
 
+# Collect the AcfSln libraries in their own export set (instead of the Acf
+# module's "AcfTargets") so they are published as the AcfSln:: package rather
+# than being folded into the Acf package. The shared StaticConfig.cmake /
+# acf_register_library() machinery from Acf reads this variable when registering
+# each library for export.
+set(ACF_EXPORT_SET "AcfSlnTargets")
+
+# Additively discover the ACF package published by Acf (PR #228). When found,
+# the Acf::<lib> imported targets become available so the AcfSln libraries can
+# declare their dependencies onto them (see AcfSlnLibraryDependencies.cmake) and
+# so the exported AcfSln package can reference them through find_dependency(Acf).
+# QUIET/optional keeps the legacy in-tree build (which resolves Acf through the
+# AcfSlnEnv.cmake include/link-dir shim) working unchanged when the package is
+# not present. GLOBAL promotes the imported targets so they are visible in the
+# library subdirectories added below.
+find_package(Acf QUIET GLOBAL)
+
 get_target_name(TARGETNAME)
 
 include_directories("${ACFDIR}/Include")
@@ -124,5 +141,24 @@ endif()
 if (BUILD_TESTING)
 	add_subdirectory("../../Tests/JsonArchiveIntergrationTest/CMake" "${AUX_INCLUDE_DIR}/Tests/JsonArchiveIntergrationTest")
 	add_dependencies(JsonArchiveIntergrationTest imeas)
+endif()
+
+# Declare the clean, target-based inter-library dependency graph so include
+# paths and link order propagate transitively between the AcfSln libraries and
+# onto the underlying Acf:: libraries.
+#
+# Both steps rely on the acf_register_library() helper (Acf PR #228) having
+# turned the libraries into aliased, exportable targets. When building against
+# an older Acf that predates that helper, the AcfSln:: aliases and the
+# AcfSlnTargets export set do not exist, so the modern packaging is skipped and
+# the build falls back to the legacy AcfSlnEnv.cmake include/link-dir shim.
+if(COMMAND acf_register_library)
+	include("${ACFSLNDIR}/Config/CMake/AcfSlnLibraryDependencies.cmake")
+
+	# Export the AcfSln libraries as a find_package(AcfSln) package (build tree
+	# + install tree) so downstream modules (IAcf, ImtCore) can consume them
+	# through AcfSln::<lib> imported targets instead of environment variables
+	# and manual paths.
+	include("${ACFSLNDIR}/Config/CMake/AcfSlnPackageExport.cmake")
 endif()
 

@@ -1,0 +1,32 @@
+@PACKAGE_INIT@
+
+# ---------------------------------------------------------------------------
+# CMake package configuration for the AcfSln module.
+#
+# Usage in a consuming project:
+#
+#     find_package(AcfSln REQUIRED)
+#     target_link_libraries(myTarget PUBLIC AcfSln::iqtinsp AcfSln::iipr)
+#
+# All AcfSln libraries are exposed as imported targets under the "AcfSln::"
+# namespace and carry their include directories and inter-library dependencies
+# (including the dependencies onto the underlying Acf:: libraries) as transitive
+# usage requirements.
+# ---------------------------------------------------------------------------
+
+include(CMakeFindDependencyMacro)
+
+# AcfSln is built on top of the ACF foundation; pull in its package so the
+# Acf::<lib> imported targets referenced by the exported AcfSln targets resolve.
+find_dependency(Acf)
+
+# AcfSln was built against a specific Qt major version; pin the very same one so
+# the Qt imported targets referenced by the exported AcfSln targets
+# (Qt@ACFSLN_QT_VERSION_MAJOR@::*) resolve to a compatible Qt installation.
+set(ACFSLN_QT_VERSION_MAJOR "@ACFSLN_QT_VERSION_MAJOR@")
+find_dependency(Qt${ACFSLN_QT_VERSION_MAJOR}
+	COMPONENTS Core Gui Widgets Xml Network Svg Concurrent)
+
+include("${CMAKE_CURRENT_LIST_DIR}/AcfSlnTargets.cmake")
+
+check_required_components(AcfSln)
