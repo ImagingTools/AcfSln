@@ -70,6 +70,10 @@ acfsln_declare_library_dependencies(icmpstr		Acf::i2d Acf::ibase Acf::icomp Acf:
 
 # --- Qt integration and GUI -------------------------------------------------
 acfsln_declare_library_dependencies(iqtex		Acf::ifile Acf::imod Acf::iqt Acf::iqtgui Acf::iser Acf::istd)
+if(QT_VERSION_MAJOR EQUAL 5)
+	acfsln_declare_library_dependencies(iqtex	Qt${QT_VERSION_MAJOR}::XmlPatterns)
+endif()
+
 acfsln_declare_library_dependencies(iqtauth		AcfSln::iauth Acf::ilog Acf::imod Acf::iqt Acf::iqtgui Acf::iser Acf::istd)
 acfsln_declare_library_dependencies(iqtmeas		AcfSln::iinsp AcfSln::imeas Acf::imath Acf::imod Acf::iqt Acf::iqtgui Acf::istd)
 acfsln_declare_library_dependencies(icalibgui	AcfSln::icalib Acf::i2d Acf::imod Acf::iqt Acf::iqt2d Acf::istd Acf::iview)
