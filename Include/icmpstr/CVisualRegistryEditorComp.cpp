@@ -689,6 +689,12 @@ void CVisualRegistryEditorComp::UpdateScene()
 		m_scenePtr->removeItem(itemPtr);
 	}
 
+	// The items were only removed from the scene above, so ownership is now with us.
+	// They must be deleted explicitly, otherwise the shapes stay attached as observers
+	// of their registry elements and receive change notifications after being detached
+	// from the scene, which leads to sporadic crashes when a component is renamed or edited.
+	qDeleteAll(itemsToRemove);
+
 	// add element shapes to scene
 	icomp::IRegistry* registryPtr = GetSelectedRegistry();
 	if (registryPtr != NULL){
