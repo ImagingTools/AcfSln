@@ -3,19 +3,30 @@ cmake_minimum_required(VERSION 3.26)
 project(AcfSln)
 
 
+set(BUILD_TESTING ON CACHE BOOL "Configures projects for testing")
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core)
-if(QT_VERSION_MAJOR EQUAL 6)
-	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Gui Xml Network Svg SvgWidgets Concurrent PrintSupport REQUIRED)
-else()
-	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Gui Xml Network Svg Concurrent PrintSupport REQUIRED)
+
+set(ACF_QT_COMPONENTS Core Widgets Gui Xml Network Svg Concurrent PrintSupport)
+
+if(QT_VERSION_MAJOR EQUAL 5)
+	list(APPEND ACF_QT_COMPONENTS XmlPatterns)
 endif()
 
-set(BUILD_TESTING ON CACHE BOOL "Configures projects for testing")
+if(QT_VERSION_MAJOR EQUAL 6)
+	list(APPEND ACF_QT_COMPONENTS SvgWidgets)
+endif()
+
+if(BUILD_TESTING)
+	list(APPEND ACF_QT_COMPONENTS Test)
+endif()
+
+find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS ${ACF_QT_COMPONENTS} REQUIRED)
 
 # Enable modern target-based architecture:
 # find_package(Acf) provides Acf::<lib> imported targets with transitive include dirs and link deps.
 # Legacy global include_directories()/link_directories() in the Env chain are skipped.
-set(ACF_MODERN_CMAKE ON CACHE BOOL "Enable modern target-based architecture")
+set(ACF_MODERN_CMAKE OFF CACHE BOOL "Enable modern target-based architecture")
 
 if(NOT DEFINED ACFDIR)
 	if(DEFINED ENV{ACFDIR})
@@ -139,8 +150,6 @@ endif()
 
 #-------- Tests -----------
 if (BUILD_TESTING)
-	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Test REQUIRED)
-
 	add_subdirectory("../../Tests/JsonArchiveIntergrationTest/CMake" "${AUX_INCLUDE_DIR}/Tests/JsonArchiveIntergrationTest")
 	add_dependencies(JsonArchiveIntergrationTest imeas)
 endif()
