@@ -2,10 +2,24 @@ cmake_minimum_required(VERSION 3.26)
 
 project(AcfSln)
 
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core)
+if(QT_VERSION_MAJOR EQUAL 6)
+	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Gui Xml Network Svg SvgWidgets Concurrent PrintSupport REQUIRED)
+else()
+	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Gui Xml Network Svg Concurrent PrintSupport REQUIRED)
+endif()
+
+set(BUILD_TESTING ON CACHE BOOL "Configures projects for testing")
+
+# Enable modern target-based architecture:
+# find_package(Acf) provides Acf::<lib> imported targets with transitive include dirs and link deps.
+# Legacy global include_directories()/link_directories() in the Env chain are skipped.
+set(ACF_MODERN_CMAKE ON CACHE BOOL "Enable modern target-based architecture")
+
 if(NOT DEFINED ACFDIR)
-	message("NOT ACFDIR " "${ACFDIR}")
 	if(DEFINED ENV{ACFDIR})
-		set(ACFDIR $ENV{ACFDIR})
+		file(TO_CMAKE_PATH "$ENV{ACFDIR}" ACFDIR)
 	else()
 		set(ACFDIR "${CMAKE_CURRENT_LIST_DIR}/../../../Acf")
 	endif()
@@ -13,49 +27,30 @@ endif()
 
 set(ACFSLNDIR "${CMAKE_CURRENT_LIST_DIR}/../../../AcfSln")
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core)
-find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Core Widgets Core Gui Xml Network Svg Concurrent REQUIRED)
-
-if(NOT DEFINED BUILDDIR)
-	set(BUILDDIR "${CMAKE_CURRENT_LIST_DIR}/../../../")
-endif()
-
-include(${ACFDIR}/Config/CMake/ProjectRoot.cmake)
 include(${ACFSLNDIR}/Config/CMake/AcfSlnEnv.cmake)
 
-# Collect the AcfSln libraries in their own export set (instead of the Acf
-# module's "AcfTargets") so they are published as the AcfSln:: package rather
-# than being folded into the Acf package. The shared StaticConfig.cmake /
-# acf_register_library() machinery from Acf reads this variable when registering
-# each library for export.
-set(ACF_EXPORT_SET "AcfSlnTargets")
+if(NOT DEFINED ACFSLNDIR_BUILD)
+	set(ACFSLNDIR_BUILD "${ACFSLNDIR}")
+endif()
 
-# Additively discover the ACF package published by Acf (PR #228). When found,
-# the Acf::<lib> imported targets become available so the AcfSln libraries can
-# declare their dependencies onto them (see AcfSlnLibraryDependencies.cmake) and
-# so the exported AcfSln package can reference them through find_dependency(Acf).
-# QUIET/optional keeps the legacy in-tree build (which resolves Acf through the
-# AcfSlnEnv.cmake include/link-dir shim) working unchanged when the package is
-# not present. GLOBAL promotes the imported targets so they are visible in the
-# library subdirectories added below.
-find_package(Acf QUIET GLOBAL)
+# Collect AcfSln libraries in their own export set so they are published as the
+# AcfSln:: package. Read by StaticConfig.cmake / acf_register_library().
+set(ACF_PACKAGE_NAME "AcfSln")
 
-get_target_name(TARGETNAME)
+if(ACF_MODERN_CMAKE)
+	acf_define_link_scope_var(ACF_QT_MODULE_LINK_SCOPE "PRIVATE" "Link scope used by acf_use_qt_base_modules and acf_use_qt_graphics_modules")
+	acf_define_link_scope_var(ACF_LIBRARY_LINK_SCOPE "PUBLIC" "Link scope used by AcfSln inter-library dependencies")
+	acf_define_link_scope_var(ACF_PACKAGE_LINK_SCOPE "PRIVATE" "Link scope used by package (Pck) libraries linking their dependencies")
+	acf_define_link_scope_var(ACF_APPLICATION_LINK_SCOPE "PRIVATE" "Link scope used by executables linking their dependencies")
+endif()
 
-include_directories("${ACFDIR}/Include")
-include_directories("${ACFDIR}/Impl")
-include_directories("${ACFDIR}/AuxInclude/${TARGETNAME}")
-link_directories(${ACFDIR}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME})
+# Discover the Acf package published by the Acf build tree.
+set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake" CACHE PATH "Path to the Acf build-tree CMake package")
+find_package(Acf REQUIRED GLOBAL)
 
-set(INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../Include")
-set(IMPL_DIR "${CMAKE_CURRENT_LIST_DIR}/../../Impl")
-
-set(AUX_INCLUDE_DIR "${BUILDDIR}/AcfSln/AuxInclude/${TARGETNAME}/GeneratedFiles")
-
-include_directories("${BUILDDIR}/AcfSln/AuxInclude/${TARGETNAME}")
-include_directories("${BUILDDIR}/Acf/AuxInclude/${TARGETNAME}")
-
-message("${AUX_INCLUDE_DIR}")
+set(INCLUDE_DIR "${ACFSLNDIR_BUILD}/Include")
+set(IMPL_DIR "${ACFSLNDIR_BUILD}/Impl")
+set(AUX_INCLUDE_DIR "${ACFSLNDIR_BUILD}/AuxInclude/${TARGETNAME}/GeneratedFiles")
 
 # Include
 add_subdirectory("${INCLUDE_DIR}/ialgo/CMake" "${AUX_INCLUDE_DIR}/ialgo")
@@ -139,26 +134,16 @@ endif()
 
 #-------- Tests -----------
 if (BUILD_TESTING)
+	find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS Test REQUIRED)
+
 	add_subdirectory("../../Tests/JsonArchiveIntergrationTest/CMake" "${AUX_INCLUDE_DIR}/Tests/JsonArchiveIntergrationTest")
 	add_dependencies(JsonArchiveIntergrationTest imeas)
 endif()
 
-# Declare the clean, target-based inter-library dependency graph so include
-# paths and link order propagate transitively between the AcfSln libraries and
-# onto the underlying Acf:: libraries.
-#
-# Both steps rely on the acf_register_library() helper (Acf PR #228) having
-# turned the libraries into aliased, exportable targets. When building against
-# an older Acf that predates that helper, the AcfSln:: aliases and the
-# AcfSlnTargets export set do not exist, so the modern packaging is skipped and
-# the build falls back to the legacy AcfSlnEnv.cmake include/link-dir shim.
-if(COMMAND acf_register_library)
-	include("${ACFSLNDIR}/Config/CMake/AcfSlnLibraryDependencies.cmake")
+# Declare target-based deps so include paths/link order propagate transitively across AcfSln libraries.
+include("${ACFSLNDIR}/Config/CMake/AcfSlnLibraryDependencies.cmake")
 
-	# Export the AcfSln libraries as a find_package(AcfSln) package (build tree
-	# + install tree) so downstream modules (IAcf, ImtCore) can consume them
-	# through AcfSln::<lib> imported targets instead of environment variables
-	# and manual paths.
-	include("${ACFSLNDIR}/Config/CMake/AcfSlnPackageExport.cmake")
-endif()
+# Export AcfSln libraries as a find_package(AcfSln) package (build + install tree) so downstream
+# modules (IAcf, ImtCore) consume them via AcfSln::<lib> targets instead of env vars/manual paths.
+include("${ACFSLNDIR}/Config/CMake/AcfSlnPackageExport.cmake")
 
