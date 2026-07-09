@@ -22,11 +22,11 @@ include(${ACFDIR}/Config/CMake/ApplicationConfig.cmake)
 include(${ACFDIR}/Config/CMake/WindeployQt.cmake)
 
 target_link_libraries(${PROJECT_NAME} ${ACF_APPLICATION_LINK_SCOPE}
-	Acf::iqtprm
-	Acf::iloggui
-	Acf::AcfLoc
 	icmpstr
 	AcfSlnLoc
+	Acf::AcfLoc
+	Acf::iqtprm
+	Acf::iloggui
 )
 
 if(WIN32)
