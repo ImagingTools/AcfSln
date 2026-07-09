@@ -20,14 +20,14 @@ endif()
 
 include(${ACFDIR}/Config/CMake/CustomBuild.cmake)
 include(${ACFDIR}/Config/CMake/ApplicationConfig.cmake)
-include(${ACFDIR}/Config/CMake/AcfQt.cmake)
-include(${ACFDIR}/Config/CMake/AcfStd.cmake)
-include(${ACFDIR}/Config/CMake/AcfStdGui.cmake)
 
-find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS PrintSupport REQUIRED)
-
-target_link_libraries(${PROJECT_NAME} AcfLoc icmpstr AcfSlnLoc)
-target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(${PROJECT_NAME} ${ACF_APPLICATION_LINK_SCOPE}
+	Acf::ipackage
+	Acf::AcfLoc
+	Acf::iloggui
+	icmpstr
+	AcfSlnLoc
+)
 
 mac_deploy_qt(
 	REMOVE_DEBUGSYM

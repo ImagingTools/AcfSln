@@ -2,10 +2,7 @@ project(DocumentProcessingPck LANGUAGES CXX)
 
 include(${ACFDIR}/Config/CMake/ComponentConfig.cmake)
 
-target_link_libraries(${PROJECT_NAME} iprm iimg idocproc)
-include(${ACFDIR}/Config/CMake/AcfQt.cmake)
-include(${ACFDIR}/Config/CMake/AcfStdGui.cmake)
-include(${ACFDIR}/Config/CMake/AcfStd.cmake)
-
-acf_use_qt_graphics_modules()
+target_link_libraries(${PROJECT_NAME} ${ACF_PACKAGE_LINK_SCOPE}
+	idocproc
+)
 
