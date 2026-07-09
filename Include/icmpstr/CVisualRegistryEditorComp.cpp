@@ -689,6 +689,16 @@ void CVisualRegistryEditorComp::UpdateScene()
 		m_scenePtr->removeItem(itemPtr);
 	}
 
+	// delete the removed items - otherwise the old element shapes stay alive
+	// and remain attached as observers to the registry element models,
+	// leading to updates of stale shapes and sporadic crashes when
+	// an element is renamed or edited
+	foreach (QGraphicsItem* itemPtr, itemsToRemove){
+		if (itemPtr->parentItem() == NULL){
+			delete itemPtr;
+		}
+	}
+
 	// add element shapes to scene
 	icomp::IRegistry* registryPtr = GetSelectedRegistry();
 	if (registryPtr != NULL){
@@ -1094,7 +1104,10 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 		return;
 	}
 
-	const QByteArray& oldName = *firstIter;
+	// take a copy of the name - the modal dialog below runs a nested event loop
+	// in which m_selectedElementIds can be modified (e.g. by selection or model
+	// updates), which would invalidate a reference into the container
+	const QByteArray oldName = *firstIter;
 
 	bool isOk = false;
 	QByteArray newName = QInputDialog::getText(
@@ -1105,6 +1118,11 @@ void CVisualRegistryEditorComp::OnRenameComponent()
 				oldName,
 				&isOk).toLocal8Bit();
 	if (!isOk || newName.isEmpty() || (oldName == newName)){
+		return;
+	}
+
+	// the registry may have changed while the modal dialog was open:
+	if (registryPtr->GetElementInfo(oldName) == NULL){
 		return;
 	}
 
@@ -1127,9 +1145,6 @@ void CVisualRegistryEditorComp::NewEmbeddedComponent()
 		return;
 	}
 
-	istd::CChangeNotifier registryNotifier(registryPtr, &s_addEmbeddedRegistryChangeSet);
-	Q_UNUSED(registryNotifier);
-
 	bool isOk = false;
 	QByteArray newName = QInputDialog::getText(
 				NULL,
@@ -1141,6 +1156,11 @@ void CVisualRegistryEditorComp::NewEmbeddedComponent()
 	if (!isOk || newName.isEmpty()){
 		return;
 	}
+
+	// create the notifier only after the modal dialog is closed - keeping a change
+	// notification open during a nested event loop leads to sporadic crashes
+	istd::CChangeNotifier registryNotifier(registryPtr, &s_addEmbeddedRegistryChangeSet);
+	Q_UNUSED(registryNotifier);
 
 	icomp::IRegistry* newEmbeddedRegistryPtr = registryPtr->InsertEmbeddedRegistry(newName);
 	if (newEmbeddedRegistryPtr == NULL){
@@ -1157,9 +1177,6 @@ void CVisualRegistryEditorComp::ToEmbeddedComponent()
 		return;
 	}
 
-	istd::CChangeNotifier registryNotifier(registryPtr, &s_toEmbeddedRegistryChangeSet);
-	Q_UNUSED(registryNotifier);
-
 	bool isOk = false;
 	QByteArray newName = QInputDialog::getText(
 				NULL,
@@ -1171,6 +1188,11 @@ void CVisualRegistryEditorComp::ToEmbeddedComponent()
 	if (!isOk || newName.isEmpty()){
 		return;
 	}
+
+	// create the notifier only after the modal dialog is closed - keeping a change
+	// notification open during a nested event loop leads to sporadic crashes
+	istd::CChangeNotifier registryNotifier(registryPtr, &s_toEmbeddedRegistryChangeSet);
+	Q_UNUSED(registryNotifier);
 
 	icomp::IRegistry* newEmbeddedRegistryPtr = registryPtr->InsertEmbeddedRegistry(newName);
 	if (newEmbeddedRegistryPtr == NULL){
