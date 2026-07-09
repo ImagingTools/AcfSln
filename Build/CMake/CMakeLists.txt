@@ -45,8 +45,13 @@ if(ACF_MODERN_CMAKE)
 endif()
 
 # Discover the Acf package published by the Acf build tree.
-set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake" CACHE PATH "Path to the Acf build-tree CMake package")
-find_package(Acf REQUIRED GLOBAL)
+# In a composite build (Acf and AcfSln in the same CMake tree),
+# Acf:: alias targets are already visible - skip find_package to avoid requiring
+# the not-yet-generated AcfTargets.cmake export file.
+if(NOT TARGET Acf::istd)
+	set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake" CACHE PATH "Path to the Acf build-tree CMake package")
+	find_package(Acf REQUIRED GLOBAL)
+endif()
 
 set(INCLUDE_DIR "${ACFSLNDIR_BUILD}/Include")
 set(IMPL_DIR "${ACFSLNDIR_BUILD}/Impl")
