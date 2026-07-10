@@ -2,9 +2,9 @@
 <Acf>
     <AcfHeader>
         <VersionInfos>
-            <Version Id="0" Number="6405" Description="ACF"/>
-            <Version Id="1" Number="2394" Description="ACF-Solutions"/>
-            <Version Id="1023" Number="395266" Description="Qt Framework"/>
+            <Version Id="0" Number="6418" Description="ACF"/>
+            <Version Id="1" Number="2402" Description="ACF-Solutions"/>
+            <Version Id="1023" Number="396033" Description="Qt Framework"/>
         </VersionInfos>
     </AcfHeader>
     <Description>Document template for Compositor</Description>
@@ -125,6 +125,11 @@
                         <Data IsEnabled="false"/>
                     </AttributeInfo>
                 </AttributeInfoMap>
+            </Data>
+        </Element>
+        <Element Id="TracingConfiguration" PackageId="BasePck" ComponentId="TracingConfiguration">
+            <Data IsEnabled="true" Flags="0">
+                <AttributeInfoMap/>
             </Data>
         </Element>
         <Element Id="UndoManager" PackageId="BasePck" ComponentId="SerializedUndoManager">
