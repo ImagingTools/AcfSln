@@ -45,7 +45,7 @@ endif()
 
 # Build-tree location: alongside the produced libraries, mirroring the existing
 # Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME} layout.
-set(ACFSLN_LIB_OUTPUT_DIR "${BUILDDIR}/AcfSln/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}")
+set(ACFSLN_LIB_OUTPUT_DIR "${ACFSLNDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}")
 set(ACFSLN_PACKAGE_BUILD_DIR "${ACFSLN_LIB_OUTPUT_DIR}/cmake")
 
 # --- Build-tree export ------------------------------------------------------
