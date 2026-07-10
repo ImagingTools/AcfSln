@@ -683,21 +683,11 @@ void CVisualRegistryEditorComp::UpdateScene()
 
 	UpdateBlocker blocker(this);
 
-	QList<QGraphicsItem*> itemsToRemove = m_scenePtr->items();
-
-	foreach (QGraphicsItem* itemPtr, itemsToRemove){
-		m_scenePtr->removeItem(itemPtr);
-	}
-
-	// delete the removed items - otherwise the old element shapes stay alive
+	// remove and delete all items - otherwise the old element shapes stay alive
 	// and remain attached as observers to the registry element models,
 	// leading to updates of stale shapes and sporadic crashes when
 	// an element is renamed or edited
-	foreach (QGraphicsItem* itemPtr, itemsToRemove){
-		if (itemPtr->parentItem() == NULL){
-			delete itemPtr;
-		}
-	}
+	m_scenePtr->clear();
 
 	// add element shapes to scene
 	icomp::IRegistry* registryPtr = GetSelectedRegistry();
