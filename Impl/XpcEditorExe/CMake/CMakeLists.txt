@@ -1,5 +1,6 @@
 project(XpcEditor LANGUAGES CXX)
 
+
 set(ARXC_CONFIG "${ACFSLNDIR}/Config/AcfSlnConfig.awc")
 set(ARXC_FILES "${PROJECT_SOURCE_DIR}/../${PROJECT_NAME}.acc")
 set(ARX_ENABLE_GENERATE_DEPENDENCIES_LIST OFF)
@@ -20,14 +21,13 @@ endif()
 
 include(${ACFDIR}/Config/CMake/CustomBuild.cmake)
 include(${ACFDIR}/Config/CMake/ApplicationConfig.cmake)
-include(${ACFDIR}/Config/CMake/AcfQt.cmake)
-include(${ACFDIR}/Config/CMake/AcfStd.cmake)
-include(${ACFDIR}/Config/CMake/AcfStdGui.cmake)
 
-find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS PrintSupport REQUIRED)
-
-target_link_libraries(${PROJECT_NAME} AcfLoc icmpstr AcfSlnLoc)
-target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(${PROJECT_NAME} ${ACF_APPLICATION_LINK_SCOPE}
+	icmpstr
+	AcfSlnLoc
+	Acf::AcfLoc
+	Acf::iloggui
+)
 
 mac_deploy_qt(
 	REMOVE_DEBUGSYM

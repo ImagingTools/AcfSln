@@ -83,4 +83,13 @@ set_property(
 
 acf_use_qt_base_modules()
 
+# Turn this manually-defined library into a first-class, exportable target, just
+# like the StaticConfig.cmake based libraries: attach transitive include
+# directories, define the Acf::<lib> alias and register it for the AcfSln
+# package export. Guarded so the in-tree build keeps working with an Acf that
+# predates the acf_register_library() helper (Acf PR #228).
+if(COMMAND acf_register_library)
+	acf_register_library(${PROJECT_NAME})
+endif()
+
 
