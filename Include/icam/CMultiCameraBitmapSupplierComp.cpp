@@ -115,7 +115,7 @@ iinsp::ISupplier::WorkStatus CMultiCameraBitmapSupplierComp::ProduceObject(Produ
 
 		switch (status){
 				case iproc::IProcessor::TS_OK:
-					result.push_back(iimg::IBitmapSharedPtr::CreateFromUnique(cameraBitmapPtr));
+					result.push_back(iimg::IBitmapSharedPtr::CreateFromUnique(std::move(cameraBitmapPtr)));
 					break;
 
 				case iproc::IProcessor::TS_CANCELED:
@@ -135,5 +135,4 @@ iinsp::ISupplier::WorkStatus CMultiCameraBitmapSupplierComp::ProduceObject(Produ
 
 
 } // namespace icam
-
 
