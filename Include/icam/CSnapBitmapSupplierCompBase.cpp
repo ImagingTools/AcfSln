@@ -55,7 +55,7 @@ iinsp::ISupplier::WorkStatus CSnapBitmapSupplierCompBase::ProduceObject(ProductT
 	if (!result.second.IsValid()){
 		iimg::IBitmapUniquePtr instancePtr = CreateBitmap();
 
-		result.second = iimg::IBitmapSharedPtr::CreateFromUnique(instancePtr);
+		result.second = iimg::IBitmapSharedPtr::CreateFromUnique(std::move(instancePtr));
 		if (!result.second.IsValid()){
 			SendErrorMessage(0, "Bitmap instance could not be created");
 
@@ -141,5 +141,4 @@ void CSnapBitmapSupplierCompBase::OnComponentCreated()
 
 
 } // namespace icam
-
 

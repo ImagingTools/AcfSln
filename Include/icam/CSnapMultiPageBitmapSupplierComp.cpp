@@ -89,7 +89,7 @@ iinsp::ISupplier::WorkStatus CSnapMultiPageBitmapSupplierComp::ProduceObject(Pro
 	if (!result.IsValid()){
 		iimg::IMultiBitmapProviderUniquePtr bitmapInstancePtr = m_bitmapCompFact.CreateInstance();
 
-		result.FromUnique(bitmapInstancePtr);
+		result.FromUnique(std::move(bitmapInstancePtr));
 		if (!result.IsValid()){
 			SendErrorMessage(0, "Bitmap instance could not be created");
 
@@ -118,4 +118,3 @@ iinsp::ISupplier::WorkStatus CSnapMultiPageBitmapSupplierComp::ProduceObject(Pro
 
 
 } // namespace icam
-

@@ -64,7 +64,7 @@ iinsp::ISupplier::WorkStatus CBitmapSupplierMultiplexerComp::ProduceObject(Produ
 	if (!result.second.IsValid()){
 		iimg::IBitmapUniquePtr bitmapInstancePtr = m_bitmapCompFact.CreateInstance();
 
-		result.second.FromUnique(bitmapInstancePtr);
+		result.second.FromUnique(std::move(bitmapInstancePtr));
 		if (!result.second.IsValid()){
 			SendErrorMessage(0, "Bitmap instance could not be created");
 
@@ -166,4 +166,3 @@ void CBitmapSupplierMultiplexerComp::OnComponentDestroyed()
 
 
 } // namespace icam
-
