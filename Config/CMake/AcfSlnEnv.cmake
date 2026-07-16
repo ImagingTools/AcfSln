@@ -19,11 +19,22 @@ endif()
 # AuxInclude for generated files — always needed.
 include_directories("${ACFSLNDIR_BUILD}/AuxInclude/${TARGETNAME}")
 
-# Legacy mode: global include/link dirs. Skipped when ACF_MODERN_CMAKE is ON.
 if(NOT ACF_MODERN_CMAKE)
+	# Legacy mode: global include/link dirs. Skipped when ACF_MODERN_CMAKE is ON.
 	include_directories("${ACFSLNDIR}/Include")
 	include_directories("${ACFSLNDIR}/Impl")
 	link_directories(${ACFSLNDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME})
+elseif(NOT TARGET Acf::istd)
+	# Discover the Acf package published by the Acf build tree.
+	# In a composite build (Acf and AcfSln in the same CMake tree),
+	# Acf:: alias targets are already visible - skip find_package to avoid requiring
+	# the not-yet-generated AcfTargets.cmake export file.
+	if(NOT DEFINED ACFDIR_BUILD)
+		set(ACFDIR_BUILD "${ACFDIR}")
+	endif()
+
+	set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake" CACHE PATH "Path to the Acf build-tree CMake package")
+	find_package(Acf REQUIRED GLOBAL)
 endif()
 
 message(VERBOSE "AcfSln link_directories ${ACFSLNDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}")
