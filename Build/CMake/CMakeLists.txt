@@ -44,6 +44,8 @@ if(NOT DEFINED ACFSLNDIR_BUILD)
 	set(ACFSLNDIR_BUILD "${ACFSLNDIR}")
 endif()
 
+file(TO_CMAKE_PATH "${ACFSLNDIR_BUILD}" ACFSLNDIR_BUILD)
+
 # Collect AcfSln libraries in their own export set so they are published as the
 # AcfSln:: package. Read by StaticConfig.cmake / acf_register_library().
 set(ACF_PACKAGE_NAME "AcfSln")
