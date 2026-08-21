@@ -27,12 +27,6 @@ int main(int argc, char *argv[])
 	QApplication::setStyle("fusion");
 	qputenv("QT_QPA_PLATFORM", "windows:darkmode=0");
 #endif
-#if defined(Q_OS_MACOS) || defined(Q_OS_OSX)
-	// The native file panels of macOS are shown by AppKit outside of the application process.
-	// If they cannot be presented, Qt reports the dialog as shown, so that no file selection
-	// dialog appears and no error is reported. Use the widget based dialogs of Qt instead.
-	QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
-#endif
 	CCompositor instance(NULL, true);
 
 	QGuiApplication::setDesktopSettingsAware(false);
