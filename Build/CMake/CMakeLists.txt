@@ -50,13 +50,6 @@ file(TO_CMAKE_PATH "${ACFSLNDIR_BUILD}" ACFSLNDIR_BUILD)
 # AcfSln:: package. Read by StaticConfig.cmake / acf_register_library().
 set(ACF_PACKAGE_NAME "AcfSln")
 
-if(ACF_MODERN_CMAKE)
-	acf_define_link_scope_var(ACF_QT_MODULE_LINK_SCOPE "PRIVATE" "Link scope used by acf_use_qt_base_modules and acf_use_qt_graphics_modules")
-	acf_define_link_scope_var(ACF_LIBRARY_LINK_SCOPE "PUBLIC" "Link scope used by AcfSln inter-library dependencies")
-	acf_define_link_scope_var(ACF_PACKAGE_LINK_SCOPE "PRIVATE" "Link scope used by package (Pck) libraries linking their dependencies")
-	acf_define_link_scope_var(ACF_APPLICATION_LINK_SCOPE "PRIVATE" "Link scope used by executables linking their dependencies")
-endif()
-
 set(INCLUDE_DIR "${ACFSLNDIR}/Include")
 set(IMPL_DIR "${ACFSLNDIR}/Impl")
 set(AUX_INCLUDE_DIR "${ACFSLNDIR_BUILD}/AuxInclude/${TARGETNAME}/GeneratedFiles")
