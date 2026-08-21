@@ -221,6 +221,9 @@ conan install . --build=missing
 On **Windows**, the Fusion style is applied automatically and Windows dark mode is disabled
 for consistent rendering across OS versions.
 
+On **macOS**, the widget based file selection dialogs of Qt are used instead of the native
+panels, because the native panels of AppKit can silently fail to appear.
+
 ## File Formats
 
 | Extension | Description |
