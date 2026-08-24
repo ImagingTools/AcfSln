@@ -33,7 +33,9 @@ elseif(NOT TARGET Acf::istd)
 		set(ACFDIR_BUILD "${ACFDIR}")
 	endif()
 
-	set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake" CACHE PATH "Path to the Acf build-tree CMake package")
+	set(Acf_DIR "${ACFDIR_BUILD}/Lib/${CMAKE_BUILD_TYPE}_${TARGETNAME}/cmake")
+	message(VERBOSE "AcfSln: find_package(Acf) from ${Acf_DIR}")
+
 	find_package(Acf REQUIRED GLOBAL)
 endif()
 
