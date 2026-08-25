@@ -21,6 +21,7 @@ endif()
 
 include(${ACFDIR}/Config/CMake/CustomBuild.cmake)
 include(${ACFDIR}/Config/CMake/ApplicationConfig.cmake)
+include(${ACFDIR}/Config/CMake/DeployQt.cmake)
 
 target_link_libraries(${PROJECT_NAME} ${ACF_APPLICATION_LINK_SCOPE}
 	icmpstr
@@ -29,9 +30,5 @@ target_link_libraries(${PROJECT_NAME} ${ACF_APPLICATION_LINK_SCOPE}
 	Acf::iloggui
 )
 
-mac_deploy_qt(
-	REMOVE_DEBUGSYM
-	TARGET ${PROJECT_NAME}
-	TARGET_FILE_NAME ${PROJECT_NAME}
-)
+deploy_qt(TARGET ${PROJECT_NAME})
 
