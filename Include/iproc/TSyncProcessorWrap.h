@@ -43,7 +43,7 @@ public:
 	virtual IProcessor::TaskState WaitTaskFinished(
 					int taskId = -1,
 					double timeoutTime = -1,
-					bool killOnTimeout = true);
+					bool killOnTimeout = true) override;
 	virtual void CancelTask(int taskId = -1) override;
 	virtual int GetReadyTask() override;
 	virtual IProcessor::TaskState GetTaskState(int taskId = -1) const override;
