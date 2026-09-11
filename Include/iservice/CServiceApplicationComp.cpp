@@ -98,6 +98,26 @@ int CServiceApplicationComp::Execute(int argc, char** argv)
 			
 			m_servicePtr->setServiceDescription(*m_serviceDescriptionAttrPtr);
 
+			// Configure the Windows service failure/recovery policy from the
+			// component attributes. The reset period is entered in minutes; the
+			// per-failure recovery actions and their delays are entered as two
+			// parallel lists (1st, 2nd, 3rd-and-subsequent failures). Convert to
+			// the units expected by the SCM: seconds for the reset period and
+			// milliseconds for each action delay.
+			const int failureResetSec = (*m_failureResetPeriodMinutesAttrPtr) * 60; // minutes -> seconds
+
+			QList<QtServiceBase::FailureAction> failureActions;
+			const int actionTypeCount = m_failureActionTypesAttrPtr.GetCount();
+			for (int failureIndex = 0; failureIndex < m_failureRetryDelaysSecAttrPtr.GetCount(); ++failureIndex){
+				QtServiceBase::FailureAction action;
+				// Reuse the last action type if fewer types than delays were configured.
+				const int typeIndex = (failureIndex < actionTypeCount) ? failureIndex : (actionTypeCount - 1);
+				action.actionType = (actionTypeCount > 0) ? m_failureActionTypesAttrPtr[typeIndex] : int(SFA_Restart);
+				action.delayMs = m_failureRetryDelaysSecAttrPtr[failureIndex] * 1000; // seconds -> milliseconds
+				failureActions.append(action);
+			}
+			m_servicePtr->setFailureActions(failureResetSec, failureActions);
+
 			QtServiceController::StartupType serviceStartUp = QtServiceController::AutoStartup;
 			if (m_manualStartupAttrPtr.IsValid() && *m_manualStartupAttrPtr){
 				serviceStartUp = QtServiceController::ManualStartup;
