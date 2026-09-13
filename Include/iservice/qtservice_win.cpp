@@ -859,7 +859,7 @@ bool QtServiceBasePrivate::install(const QString &account, const QString &passwo
 				sfa.lpCommand = 0;      // leave run-command unchanged
 				sfa.cActions = (DWORD)scActions.size();
 				sfa.lpsaActions = scActions.data();
-				pChangeServiceConfig2(hService, SERVICE_CONFIG_FAILURE_ACTIONS, &sfa);
+result = pChangeServiceConfig2(hService, SERVICE_CONFIG_FAILURE_ACTIONS, &sfa);
 			}
 			pCloseServiceHandle(hService);
 		}
