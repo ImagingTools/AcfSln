@@ -43,6 +43,7 @@
 #define QTSERVICE_H
 
 #include <QCoreApplication>
+#include <QList>
 
 #if defined(Q_OS_WIN)
 #  if !defined(QT_QTSERVICE_EXPORT) && !defined(QT_QTSERVICE_IMPORT)
@@ -129,6 +130,19 @@ public:
 
     QtServiceController::StartupType startupType() const;
     void setStartupType(QtServiceController::StartupType startupType);
+
+    // A single recovery action taken by the SCM when the service fails.
+    // Mirrors one entry of "sc failure <svc> actions= <type>/<delayMs>/...".
+    struct FailureAction
+    {
+        int actionType;   // matches Win32 SC_ACTION_TYPE (0=None, 1=Restart, 2=Reboot, 3=RunCommand)
+        int delayMs;      // delay before the action is taken, in milliseconds
+    };
+
+    // Configures the service's failure/recovery policy, applied at install time.
+    // resetPeriodSec maps to SERVICE_FAILURE_ACTIONS::dwResetPeriod (seconds);
+    // an empty list leaves the existing policy untouched. Windows only.
+    void setFailureActions(int resetPeriodSec, const QList<FailureAction> &actions);
 
     ServiceFlags serviceFlags() const;
     void setServiceFlags(ServiceFlags flags);

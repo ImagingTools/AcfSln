@@ -68,6 +68,10 @@ public:
     QtServiceBase::ServiceFlags serviceFlags;
     QStringList args;
 
+    // Failure/recovery policy applied in install() (Windows only).
+    QList<QtServiceBase::FailureAction> failureActions;
+    int failureResetPeriodSec;
+
     static class QtServiceBase *instance;
 
     QtServiceController controller;

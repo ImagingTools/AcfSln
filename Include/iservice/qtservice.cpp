@@ -655,6 +655,19 @@ void QtServiceBase::setStartupType(QtServiceController::StartupType type)
 }
 
 /*!
+    Sets the service's failure/recovery policy, applied when the service is
+    installed. \a resetPeriodSec is the period (in seconds) after which the
+    failure counter is reset; \a actions lists the recovery actions taken on
+    successive failures. Passing an empty \a actions list leaves the existing
+    policy untouched. Has an effect on Windows only.
+*/
+void QtServiceBase::setFailureActions(int resetPeriodSec, const QList<FailureAction> &actions)
+{
+    d_ptr->failureResetPeriodSec = resetPeriodSec;
+    d_ptr->failureActions = actions;
+}
+
+/*!
     Returns the service's state which is decribed using the
     ServiceFlag enum.
 
@@ -1054,6 +1067,7 @@ QtServiceBase *QtServiceBasePrivate::instance = 0;
 QtServiceBasePrivate::QtServiceBasePrivate(const QString &name)
     : startupType(QtServiceController::ManualStartup),
 	serviceFlags(0),
+	failureResetPeriodSec(0),
 	controller(name)
 {
 }

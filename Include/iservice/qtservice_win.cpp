@@ -843,6 +843,24 @@ bool QtServiceBasePrivate::install(const QString &account, const QString &passwo
 				sdesc.lpDescription = (wchar_t *)serviceDescription.utf16();
 				pChangeServiceConfig2(hService, SERVICE_CONFIG_DESCRIPTION, &sdesc);
 			}
+			// Failure/recovery policy (equivalent of "sc failure <svc> reset= <sec> actions= ...").
+			// hService was opened with SERVICE_ALL_ACCESS above, which covers the
+			// SERVICE_CHANGE_CONFIG and SERVICE_START rights required here.
+			if (!failureActions.isEmpty()) {
+				QVector<SC_ACTION> scActions(failureActions.size());
+				for (int i = 0; i < failureActions.size(); ++i) {
+					scActions[i].Type = (SC_ACTION_TYPE)failureActions.at(i).actionType;
+					scActions[i].Delay = (DWORD)failureActions.at(i).delayMs;
+				}
+				SERVICE_FAILURE_ACTIONS sfa;
+				ZeroMemory(&sfa, sizeof(sfa));
+				sfa.dwResetPeriod = (DWORD)failureResetPeriodSec;
+				sfa.lpRebootMsg = 0;    // leave reboot message unchanged
+				sfa.lpCommand = 0;      // leave run-command unchanged
+				sfa.cActions = (DWORD)scActions.size();
+				sfa.lpsaActions = scActions.data();
+result = pChangeServiceConfig2(hService, SERVICE_CONFIG_FAILURE_ACTIONS, &sfa);
+			}
 			pCloseServiceHandle(hService);
 		}
 		pCloseServiceHandle(hSCM);
