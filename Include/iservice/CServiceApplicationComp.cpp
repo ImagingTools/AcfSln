@@ -104,7 +104,7 @@ int CServiceApplicationComp::Execute(int argc, char** argv)
 			// parallel lists (1st, 2nd, 3rd-and-subsequent failures). Convert to
 			// the units expected by the SCM: seconds for the reset period and
 			// milliseconds for each action delay.
-			const int failureResetSec = (*m_failureResetPeriodMinutesAttrPtr) * 60; // minutes -> seconds
+			const int failureResetSec = std::max(0, (*m_failureResetPeriodMinutesAttrPtr)) * 60; // minutes -> seconds
 
 			QList<QtServiceBase::FailureAction> failureActions;
 			const int actionTypeCount = m_failureActionTypesAttrPtr.GetCount();
@@ -113,7 +113,7 @@ int CServiceApplicationComp::Execute(int argc, char** argv)
 				// Reuse the last action type if fewer types than delays were configured.
 				const int typeIndex = (failureIndex < actionTypeCount) ? failureIndex : (actionTypeCount - 1);
 				action.actionType = (actionTypeCount > 0) ? m_failureActionTypesAttrPtr[typeIndex] : int(SFA_Restart);
-				action.delayMs = m_failureRetryDelaysSecAttrPtr[failureIndex] * 1000; // seconds -> milliseconds
+				action.delayMs = std::max(0, m_failureRetryDelaysSecAttrPtr[failureIndex]) * 1000; // seconds -> milliseconds
 				failureActions.append(action);
 			}
 			m_servicePtr->setFailureActions(failureResetSec, failureActions);
