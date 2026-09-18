@@ -3,12 +3,17 @@ cmake_minimum_required(VERSION 3.26)
 project(AcfSln)
 
 
-set(BUILD_TESTING ON CACHE BOOL "Configures projects for testing")
+# Enable modern target-based architecture:
+# find_package(Acf) provides Acf::<lib> imported targets with transitive include dirs and link deps.
+set(ACF_MODERN_CMAKE ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core)
+if(NOT DEFINED ACFSLNDIR)
+	set(ACFSLNDIR "${CMAKE_CURRENT_LIST_DIR}/../..")
+endif()
+
+include(${ACFSLNDIR}/Config/CMake/AcfSlnEnv.cmake)
 
 set(ACF_QT_COMPONENTS Core Widgets Gui Xml Network Svg Concurrent PrintSupport)
-
 if(QT_VERSION_MAJOR EQUAL 5)
 	list(APPEND ACF_QT_COMPONENTS XmlPatterns)
 endif()
@@ -17,41 +22,19 @@ if(QT_VERSION_MAJOR EQUAL 6)
 	list(APPEND ACF_QT_COMPONENTS SvgWidgets)
 endif()
 
+set(BUILD_TESTING ON CACHE BOOL "Configures projects for testing")
 if(BUILD_TESTING)
 	list(APPEND ACF_QT_COMPONENTS Test)
 endif()
 
 find_package("Qt${QT_VERSION_MAJOR}" COMPONENTS ${ACF_QT_COMPONENTS} REQUIRED)
 
-# Enable modern target-based architecture:
-# find_package(Acf) provides Acf::<lib> imported targets with transitive include dirs and link deps.
-# Legacy global include_directories()/link_directories() in the Env chain are skipped.
-set(ACF_MODERN_CMAKE ON CACHE BOOL "Enable modern target-based architecture")
-
-if(NOT DEFINED ACFDIR)
-	if(DEFINED ENV{ACFDIR})
-		file(TO_CMAKE_PATH "$ENV{ACFDIR}" ACFDIR)
-	else()
-		set(ACFDIR "${CMAKE_CURRENT_LIST_DIR}/../../../Acf")
-	endif()
-endif()
-
-set(ACFSLNDIR "${CMAKE_CURRENT_LIST_DIR}/../../../AcfSln")
-
-include(${ACFSLNDIR}/Config/CMake/AcfSlnEnv.cmake)
-
-if(NOT DEFINED ACFSLNDIR_BUILD)
-	set(ACFSLNDIR_BUILD "${ACFSLNDIR}")
-endif()
-
-file(TO_CMAKE_PATH "${ACFSLNDIR_BUILD}" ACFSLNDIR_BUILD)
-
 # Collect AcfSln libraries in their own export set so they are published as the
 # AcfSln:: package. Read by StaticConfig.cmake / acf_register_library().
 set(ACF_PACKAGE_NAME "AcfSln")
 
-set(INCLUDE_DIR "${ACFSLNDIR}/Include")
-set(IMPL_DIR "${ACFSLNDIR}/Impl")
+set(INCLUDE_DIR		"${ACFSLNDIR}/Include")
+set(IMPL_DIR		"${ACFSLNDIR}/Impl")
 set(AUX_INCLUDE_DIR "${ACFSLNDIR_BUILD}/AuxInclude/${TARGETNAME}/GeneratedFiles")
 
 # Include
