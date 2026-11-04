@@ -757,18 +757,6 @@ void CPackageOverviewComp::on_FilterEdit_editingFinished()
 }
 
 
-void CPackageOverviewComp::on_GroupByCB_currentIndexChanged(int /*index*/)
-{
-	if (IsUpdateBlocked()){
-		return;
-	}
-
-	UpdateBlocker blocker(this);
-
-	GenerateComponentTree(true);
-}
-
-
 void CPackageOverviewComp::on_PackagesList_itemSelectionChanged()
 {
 	if (IsUpdateBlocked()){
@@ -1441,5 +1429,4 @@ const icomp::IComponentStaticInfo* CPackageOverviewComp::MetaInfoManager::GetEmb
 
 
 } // namespace icmpstr
-
 

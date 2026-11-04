@@ -114,7 +114,6 @@ protected:
 
 protected Q_SLOTS:
 	void on_FilterEdit_editingFinished();
-	void on_GroupByCB_currentIndexChanged(int index);
 	void on_PackagesList_itemSelectionChanged();
 	void on_PackagesList_itemExpanded(QTreeWidgetItem* item);
 	void on_PackagesList_itemClicked(QTreeWidgetItem* item, int column);
@@ -272,4 +271,3 @@ private:
 
 
 #endif // !icmpstr_CPackageOverviewComp_included
-
