@@ -4,6 +4,7 @@
 
 
 // Qt includes
+#include <QtCore/QHash>
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 
@@ -172,7 +173,8 @@ protected:
 				CRegistryElementShape& sourceShape,
 				const QByteArray& referenceComponentId,
 				const QByteArray& attributeId,
-				bool isFactory = false);
+				bool isFactory,
+				const QHash<QByteArray, CRegistryElementShape*>& shapeMap);
 
 	/**
 		Used on drop/paste action
@@ -256,6 +258,11 @@ private:
 	public:
 		void SetParent(CVisualRegistryEditorComp* parentPtr);
 
+		/*!
+			Invalidate cached selected elements (call when selection or registry changes).
+		*/
+		void InvalidateCache();
+
 		// reimplemented (icmpstr::IElementSelectionInfo)
 		virtual icomp::IRegistry* GetSelectedRegistry() const override;
 		virtual Elements GetSelectedElements() const override;
@@ -263,6 +270,9 @@ private:
 
 	private:
 		CVisualRegistryEditorComp* m_parentPtr;
+
+		mutable bool m_isCacheValid;
+		mutable Elements m_cachedElements;
 	};
 
 	friend class imod::TModelWrap<SelectionInfoImpl>;
