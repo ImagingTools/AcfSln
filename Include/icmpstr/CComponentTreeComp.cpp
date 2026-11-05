@@ -9,6 +9,7 @@
 
 // ACF includes
 #include <icomp/CCompositeComponentStaticInfo.h>
+#include <icomp/CComponentMetaDescriptionEncoder.h>
 #include <icomp/CRegistryElement.h>
 #include <ilog/CMessageContainer.h>
 
@@ -179,12 +180,43 @@ QTreeWidgetItem* CComponentTreeComp::AddRegistryElementItem(
 		QTreeWidgetItem* elementItemPtr = new QTreeWidgetItem();
 
 		QByteArray packageId = elementPtr->address.GetPackageId();
+		QByteArray componentId = elementPtr->address.GetComponentId();
 
 		elementItemPtr->setText(0, elementId);
 		elementItemPtr->setData(0, DR_ELEMENT_NAME, elementId);
-		elementItemPtr->setData(0, DR_ELEMENT_ID, elementPtr->address.GetComponentId());
+		elementItemPtr->setData(0, DR_ELEMENT_ID, componentId);
 		elementItemPtr->setData(0, DR_ELEMENT_PACKAGE_ID, packageId);
 		elementItemPtr->setData(0, DR_REGISTRY, quintptr(&registry));
+
+		// Build comprehensive filter text including all searchable fields:
+		// element name, component-ID, component-type-ID, package-ID, attribute IDs, tags/keywords
+		QStringList filterParts;
+		filterParts << elementId;
+		if (!componentId.isEmpty()){
+			filterParts << componentId;
+		}
+		if (!packageId.isEmpty()){
+			filterParts << packageId;
+		}
+
+		// Add attribute IDs from the registry element
+		iattr::IAttributesProvider::AttributeIds attributeIds = registryElementPtr->GetAttributeIds();
+		for (		iattr::IAttributesProvider::AttributeIds::ConstIterator attrIter = attributeIds.constBegin();
+					attrIter != attributeIds.constEnd();
+					++attrIter){
+			filterParts << *attrIter;
+		}
+
+		// Add keywords/tags from component meta info
+		if (!packageId.isEmpty() && m_envManagerCompPtr.IsValid()){
+			const icomp::IComponentStaticInfo* metaInfoPtr = m_envManagerCompPtr->GetComponentMetaInfo(elementPtr->address);
+			if (metaInfoPtr != NULL){
+				icomp::CComponentMetaDescriptionEncoder encoder(metaInfoPtr->GetKeywords());
+				filterParts << encoder.GetValues();
+			}
+		}
+
+		elementItemPtr->setData(0, DR_FILTER_TEXT, filterParts.join(QChar('\n')));
 
 		static QIcon okIcon(":/Icons/Ok");
 		elementItemPtr->setIcon(0, okIcon);
@@ -354,10 +386,18 @@ void CComponentTreeComp::UpdateTreeItemsVisibility()
 	while (*treeIter != NULL){
 		QTreeWidgetItem* itemPtr = *treeIter;
 
-		QString itemName = itemPtr->text(0);
+		bool showItem = filterText.isEmpty();
 
-		bool showItem = filterText.isEmpty() ||
-					itemName.contains(filterText, Qt::CaseInsensitive);
+		if (!showItem){
+			QString searchableText = itemPtr->data(0, DR_FILTER_TEXT).toString();
+			if (!searchableText.isEmpty()){
+				showItem = searchableText.contains(filterText, Qt::CaseInsensitive);
+			}
+			else{
+				// Fallback for root items or items without filter data
+				showItem = itemPtr->text(0).contains(filterText, Qt::CaseInsensitive);
+			}
+		}
 
 		itemPtr->setHidden(!showItem);
 
