@@ -8,7 +8,7 @@
 #include <iprm/IEnableableParam.h>
 #include <iprm/TParamsPtr.h>
 #include <icmm/CVarColor.h>
-#include <icmm/CRgbToHsvTranformation.h>
+#include <icmm/CRgbToHsvTransformation.h>
 #include <icmm/CRgb.h>
 
 
@@ -362,7 +362,7 @@ bool CColorPatternComparatorComp::GetHsvColorValue(const imeas::IDataSequenceSta
 	double greenMedian = greenStatisticsPtr->GetAverage(); 
 	double blueMedian = blueStatisticsPtr->GetAverage();
 
-	icmm::CRgbToHsvTranformation rgbToHsv;
+	icmm::CRgbToHsvTransformation rgbToHsv;
 	icmm::CRgb rgbMedian(redMedian, greenMedian, blueMedian);
 	icmm::CVarColor rgbColor(rgbMedian);
 	icmm::CVarColor hsvColor(3);
