@@ -239,9 +239,12 @@ void CComponentTreeComp::SyncSelectionFromModel()
 
 	m_isSyncingSelection = true;
 
+	ComponentTree->setUpdatesEnabled(false);
+
 	ComponentTree->clearSelection();
 
 	if (selectedElements.isEmpty()){
+		ComponentTree->setUpdatesEnabled(true);
 		m_isSyncingSelection = false;
 		return;
 	}
@@ -270,6 +273,8 @@ void CComponentTreeComp::SyncSelectionFromModel()
 			ComponentTree->scrollToItem(foundItem);
 		}
 	}
+
+	ComponentTree->setUpdatesEnabled(true);
 
 	m_isSyncingSelection = false;
 }
