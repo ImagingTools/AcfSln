@@ -204,6 +204,8 @@ class AcfSlnConan(ConanFile):
                 compiler = 'GCCLinux'
             else:
                 compiler = 'ClangLinux'
+        elif self.settings.os == 'Emscripten':
+            compiler = 'ClangWasm'
         else:
             compiler = 'ClangOSX'
 
@@ -211,6 +213,8 @@ class AcfSlnConan(ConanFile):
             arch = 'x64'
         elif self.settings.arch == 'armv8':
             arch = 'arm64'
+        elif self.settings.arch == 'wasm':
+            arch = 'wasm32'
         else:
             arch = 'x86'
 

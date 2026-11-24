@@ -68,16 +68,22 @@ add_subdirectory("${INCLUDE_DIR}/iwiz/CMake" "${AUX_INCLUDE_DIR}/iwiz")
 add_subdirectory("${INCLUDE_DIR}/iwizgui/CMake" "${AUX_INCLUDE_DIR}/iwizgui")
 add_subdirectory("${INCLUDE_DIR}/iedge/CMake" "${AUX_INCLUDE_DIR}/iedge")
 add_subdirectory("${INCLUDE_DIR}/iedgegui/CMake" "${AUX_INCLUDE_DIR}/iedgegui")
-add_subdirectory("${INCLUDE_DIR}/icmpstr/CMake" "${AUX_INCLUDE_DIR}/icmpstr")
+# needs QProcess, which WebAssembly does not have
+if (NOT EMSCRIPTEN)
+	add_subdirectory("${INCLUDE_DIR}/icmpstr/CMake" "${AUX_INCLUDE_DIR}/icmpstr")
+endif()
 add_subdirectory("${INCLUDE_DIR}/idocproc/CMake" "${AUX_INCLUDE_DIR}/idocproc")
 add_subdirectory("${INCLUDE_DIR}/iblob/CMake" "${AUX_INCLUDE_DIR}/iblob")
 add_subdirectory("${INCLUDE_DIR}/iblobgui/CMake" "${AUX_INCLUDE_DIR}/iblobgui")
-add_subdirectory("${INCLUDE_DIR}/iservice/CMake" "${AUX_INCLUDE_DIR}/iservice")
+# needs QProcess, which WebAssembly does not have
+if (NOT EMSCRIPTEN)
+	add_subdirectory("${INCLUDE_DIR}/iservice/CMake" "${AUX_INCLUDE_DIR}/iservice")
+endif()
 add_subdirectory("${INCLUDE_DIR}/imm/CMake" "${AUX_INCLUDE_DIR}/imm")
 
 
-# Impl
-if (NOT ANDROID)
+# Impl: component packages and tools, not needed when cross-compiling for WebAssembly
+if (NOT ANDROID AND NOT EMSCRIPTEN)
 	add_subdirectory("${IMPL_DIR}/FileProcessingPck/CMake" "${AUX_INCLUDE_DIR}/FileProcessingPck")
 	add_subdirectory("${IMPL_DIR}/ProcessingPck/CMake" "${AUX_INCLUDE_DIR}/ProcessingPck")
 	add_subdirectory("${IMPL_DIR}/AcfSlnLoc/CMake" "${AUX_INCLUDE_DIR}/AcfSlnLoc")
